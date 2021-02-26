@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller\Modules\Admin;
+namespace App\Modules\Admin;
 
 
 use App\Components\Helpers\Assets;
@@ -41,7 +41,7 @@ abstract class BaseController
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
         );
         $loader = $twig->getLoader();
-        $loader->addPath($_ENV['APP_DIR'].'/Modules/Admin/template', 'a');
+        $loader->addPath(__DIR__.'/template', 'a');
         $this->twig = $twig;
 
         Assets::css(

@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Controller\Modules\Admin\Core\Users;
+namespace App\Modules\Admin\Core\Users;
 
 
 use App\Components\Helpers\Error;
 use App\Components\Helpers\Redirect;
-use App\Controller\Modules\Admin\Core\ModelInterface;
+use App\Modules\Admin\Core\ModelInterface;
 use App\Entities\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;

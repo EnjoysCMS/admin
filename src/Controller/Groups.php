@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Controller\Modules\Admin\Controller;
+namespace App\Modules\Admin\Controller;
 
 
-use App\Controller\Modules\Admin\BaseController;
+use App\Modules\Admin\BaseController;
 
 class Groups extends BaseController
 {

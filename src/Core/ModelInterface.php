@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Controller\Modules\Admin\Core;
+namespace App\Modules\Admin\Core;
 
 
 interface ModelInterface
