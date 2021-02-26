@@ -1,6 +1,6 @@
 admin/index:
   path: /admin
-  controller: ['App\Modules\Admin\Controller\Index', 'dashboard']
+  controller: ['App\Module\Admin\Controller\Index', 'dashboard']
   options: {
     aclComment: Доступ к главной странице в админке (dashboard)
   }
@@ -9,21 +9,21 @@ admin/index:
 #  USERS
 admin/users:
   path: /admin/users
-  controller: ['App\Modules\Admin\Controller\Users', 'list']
+  controller: ['App\Module\Admin\Controller\Users', 'list']
   options: {
     aclComment: Доступ к просмотру списка пользователей
   }
 
 admin/adduser:
   path: /admin/adduser
-  controller: ['App\Modules\Admin\Controller\Users', 'add']
+  controller: ['App\Module\Admin\Controller\Users', 'add']
   options: {
     aclComment: Добавление пользователей
   }
 
 admin/edituser:
   path: /admin/edituser@{id}
-  controller: ['App\Modules\Admin\Controller\Users', 'edit']
+  controller: ['App\Module\Admin\Controller\Users', 'edit']
   requirements:
     id: '\d+'
   options: {
@@ -32,7 +32,7 @@ admin/edituser:
 
 admin/deleteuser:
   path: /admin/deleteuser@{id}
-  controller: ['App\Modules\Admin\Controller\Users', 'delete']
+  controller: ['App\Module\Admin\Controller\Users', 'delete']
   requirements:
     id: '\d+'
   options: {
@@ -41,7 +41,7 @@ admin/deleteuser:
 
 admin/user/changepassword:
   path: /admin/user/changepassword@{id}
-  controller: ['App\Modules\Admin\Controller\Users', 'changePassword']
+  controller: ['App\Module\Admin\Controller\Users', 'changePassword']
   requirements:
     id: '\d+'
   options: {
@@ -51,7 +51,7 @@ admin/user/changepassword:
 
 admin/groups:
   path: /admin/groups
-  controller: ['App\Modules\Admin\Controller\Groups', 'list']
+  controller: ['App\Module\Admin\Controller\Groups', 'list']
   options: {
     aclComment: Доступ к просмотру списка групп
   }
