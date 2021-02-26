@@ -1,16 +1,16 @@
 <?php
 
 
-namespace App\Modules\Admin\Controller;
+namespace App\Module\Admin\Controller;
 
 
 use App\Components\Helpers\Assets;
-use App\Modules\Admin\BaseController;
-use App\Modules\Admin\Core\ModelInterface;
-use App\Modules\Admin\Core\Users\Add;
-use App\Modules\Admin\Core\Users\ChangePassword;
-use App\Modules\Admin\Core\Users\Delete;
-use App\Modules\Admin\Core\Users\Edit;
+use App\Module\Admin\BaseController;
+use App\Module\Admin\Core\ModelInterface;
+use App\Module\Admin\Core\Users\Add;
+use App\Module\Admin\Core\Users\ChangePassword;
+use App\Module\Admin\Core\Users\Delete;
+use App\Module\Admin\Core\Users\Edit;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Modules\Admin;
+namespace App\Module\Admin;
 
 
 use App\Components\Helpers\Assets;

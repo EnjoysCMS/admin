@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Modules\Admin\Controller;
+namespace App\Module\Admin\Controller;
 
 
-use App\Modules\Admin\BaseController;
+use App\Module\Admin\BaseController;
 
 class Index extends BaseController
 {
