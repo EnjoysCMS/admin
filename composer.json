@@ -3,7 +3,8 @@
   "description": "Module Admin for EnjoysCMS",
   "type": "enjoyscms-module",
   "require": {
-    "oomphinc/composer-installers-extender": "^2.0"
+    "oomphinc/composer-installers-extender": "^2.0",
+    "almasaeed2010/adminlte": "^3.0"
   },
   "autoload": {
     "psr-4": {
