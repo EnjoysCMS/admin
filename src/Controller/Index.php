@@ -1,11 +1,10 @@
 <?php
 
 
-namespace App\Modules\Admin\Controller;
+namespace App\Controller\Modules\Admin\Controller;
 
 
-use App\Components\Helpers\ACL;
-use App\Modules\Admin\BaseController;
+use App\Controller\Modules\Admin\BaseController;
 
 class Index extends BaseController
 {

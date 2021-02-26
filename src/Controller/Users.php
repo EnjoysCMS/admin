@@ -1,16 +1,16 @@
 <?php
 
 
-namespace App\Modules\Admin\Controller;
+namespace App\Controller\Modules\Admin\Controller;
 
 
 use App\Components\Helpers\Assets;
-use App\Modules\Admin\BaseController;
-use App\Modules\Admin\Core\ModelInterface;
-use App\Modules\Admin\Core\Users\Add;
-use App\Modules\Admin\Core\Users\ChangePassword;
-use App\Modules\Admin\Core\Users\Delete;
-use App\Modules\Admin\Core\Users\Edit;
+use App\Controller\Modules\Admin\BaseController;
+use App\Controller\Modules\Admin\Core\ModelInterface;
+use App\Controller\Modules\Admin\Core\Users\Add;
+use App\Controller\Modules\Admin\Core\Users\ChangePassword;
+use App\Controller\Modules\Admin\Core\Users\Delete;
+use App\Controller\Modules\Admin\Core\Users\Edit;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
@@ -38,7 +38,7 @@ class Users extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $em, $urlGenerator);
-        $this->usersRepository = $em->getRepository(\App\Modules\System\Entities\Users::class);
+        $this->usersRepository = $em->getRepository(\App\Entities\Users::class);
         $this->renderer = $renderer;
     }
 
