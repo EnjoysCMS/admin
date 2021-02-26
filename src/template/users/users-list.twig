@@ -1,0 +1,64 @@
+{% extends "@a/layout.twig" %}
+
+{% block scripts %}
+    <script>
+        $(function () {
+            $("#users-list").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+            });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+
+    <section class="content">
+
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Список пользователей</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table id="users-list" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Login</th>
+                        {# <th>Email</th> #}
+                        <th>Password</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.getName }}
+                                <small class="d-block">
+                                    {% for group in user.getGroups %}
+                                        <span class="badge bg-secondary">{{ group.getName }}</span>
+
+                                    {% endfor %}
+                                </small>
+                            </td>
+                            <td>{{ user.getLogin }}</td>
+                            {# <td>{{ user.getEmail }}</td> #}
+                            <td>{{ user.getPasswordHash }}</td>
+                            <td>
+                                {% if user.isEditable %}
+                                    <a href="{{ url('admin/edituser', {'id': user.getId}) }}">Редактировать</a>
+                                    <a href="{{ url('admin/deleteuser', {'id': user.getId}) }}">Удалить</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+    </section>
+{% endblock %}

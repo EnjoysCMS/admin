@@ -1,2 +1,2 @@
-# Admin
-Module Admin for EnjoysCSM
+# Module **Admin** for EnjoysCSM
+

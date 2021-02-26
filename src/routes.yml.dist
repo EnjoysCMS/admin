@@ -1,0 +1,59 @@
+admin/index:
+  path: /admin
+  controller: ['App\Modules\Admin\Controller\Index', 'dashboard']
+  options: {
+    aclComment: Доступ к главной странице в админке (dashboard)
+  }
+
+
+#  USERS
+admin/users:
+  path: /admin/users
+  controller: ['App\Modules\Admin\Controller\Users', 'list']
+  options: {
+    aclComment: Доступ к просмотру списка пользователей
+  }
+
+admin/adduser:
+  path: /admin/adduser
+  controller: ['App\Modules\Admin\Controller\Users', 'add']
+  options: {
+    aclComment: Добавление пользователей
+  }
+
+admin/edituser:
+  path: /admin/edituser@{id}
+  controller: ['App\Modules\Admin\Controller\Users', 'edit']
+  requirements:
+    id: '\d+'
+  options: {
+    aclComment: Редактирование пользователей
+  }
+
+admin/deleteuser:
+  path: /admin/deleteuser@{id}
+  controller: ['App\Modules\Admin\Controller\Users', 'delete']
+  requirements:
+    id: '\d+'
+  options: {
+    aclComment: Удаление пользователей
+  }
+
+admin/user/changepassword:
+  path: /admin/user/changepassword@{id}
+  controller: ['App\Modules\Admin\Controller\Users', 'changePassword']
+  requirements:
+    id: '\d+'
+  options: {
+    aclComment: Изменение паролей у пользователей
+  }
+
+
+admin/groups:
+  path: /admin/groups
+  controller: ['App\Modules\Admin\Controller\Groups', 'list']
+  options: {
+    aclComment: Доступ к просмотру списка групп
+  }
+
+
