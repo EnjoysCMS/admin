@@ -12,6 +12,23 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <a href="" class="btn-sm btn btn-primary">Добавить новую группу</a>
+                <ul class="list-group">
+                    {% for group in groups %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <h2 class="h2 flex-grow-1">{{ group.getName }}
+                                <small>
+                                    <a class="btn-sm btn btn-secondary mx-3">Редактировать</a>
+                                    <a class="btn-sm btn btn-danger">Удалить</a>
+                                </small>
+                            </h2>
+                            {# <span class="badge bg-primary rounded-pill">14</span> #}
+
+                        </li>
+                    {% endfor %}
+                </ul>
+                <ul>
+
+                </ul>
             </div>
             <!-- /.card-body -->
         </div>

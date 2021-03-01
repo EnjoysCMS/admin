@@ -5,6 +5,7 @@ namespace App\Module\Admin;
 
 
 use App\Components\Helpers\Assets;
+use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use Enjoys\Http\ServerRequestInterface;
@@ -81,6 +82,17 @@ abstract class BaseController
             $_ENV['PUBLIC_DIR'] . '/assets/vendor/almasaeed2010/adminlte/plugins/fontawesome-free/webfonts',
             $_ENV['ADMINLTE'] . '/plugins/fontawesome-free/webfonts'
         );
+    }
+
+
+    protected function getContext(ModelInterface $model)
+    {
+        return $model->getContext();
+    }
+
+    protected function view(string $twigTemplatePath, array $context)
+    {
+        return $this->twig->render($twigTemplatePath, $context);
     }
 
 

@@ -115,13 +115,4 @@ class Users extends BaseController
         );
     }
 
-    private function getContext(ModelInterface $model)
-    {
-        return $model->getContext();
-    }
-
-    private function view(string $twigTemplatePath, array $context)
-    {
-        return $this->twig->render($twigTemplatePath, $context);
-    }
 }
