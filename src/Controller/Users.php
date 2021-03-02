@@ -6,12 +6,12 @@ namespace App\Module\Admin\Controller;
 
 use App\Components\Helpers\Assets;
 use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\ModelInterface;
 use App\Module\Admin\Core\Users\Add;
 use App\Module\Admin\Core\Users\ChangePassword;
 use App\Module\Admin\Core\Users\Delete;
 use App\Module\Admin\Core\Users\Edit;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,25 +21,19 @@ class Users extends BaseController
 {
 
     /**
-     * @var \Doctrine\Persistence\ObjectRepository
+     * @var ObjectRepository
      */
     private $usersRepository;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
-
 
     public function __construct(
         Environment $twig,
         ServerRequestInterface $serverRequest,
-        EntityManager $em,
+        EntityManager $entityManager,
         UrlGeneratorInterface $urlGenerator,
         RendererInterface $renderer
     ) {
-        parent::__construct($twig, $serverRequest, $em, $urlGenerator);
-        $this->usersRepository = $em->getRepository(\App\Entities\Users::class);
-        $this->renderer = $renderer;
+        parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
+        $this->usersRepository = $entityManager->getRepository(\App\Entities\Users::class);
     }
 
 
@@ -72,7 +66,7 @@ class Users extends BaseController
     {
         return $this->view(
             '@a/users/edituser.twig',
-            $this->getContext(new Edit($this->em, $this->serverRequest, $this->urlGenerator, $this->usersRepository))
+            $this->getContext(new Edit($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository))
         );
     }
 
@@ -81,7 +75,7 @@ class Users extends BaseController
         return $this->view(
             '@a/users/adduser.twig',
             $this->getContext(
-                new Add($this->em, $this->serverRequest, $this->urlGenerator, $this->usersRepository)
+                new Add($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository)
             )
         );
     }
@@ -93,7 +87,7 @@ class Users extends BaseController
             '@a/users/deleteuser.twig',
             $this->getContext(
                 new Delete(
-                    $this->em, $this->serverRequest, $this->urlGenerator, $this->usersRepository, $this->renderer
+                    $this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository, $this->renderer
                 )
             )
         );
@@ -105,7 +99,7 @@ class Users extends BaseController
             '@a/users/change-password.twig',
             $this->getContext(
                 new ChangePassword(
-                    $this->em,
+                    $this->entityManager,
                     $this->serverRequest,
                     $this->urlGenerator,
                     $this->usersRepository,

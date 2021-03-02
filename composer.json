@@ -12,6 +12,7 @@
     }
   },
   "extra": {
+    "module-name": "Admin panel",
     "use-migrations": false
   }
 }

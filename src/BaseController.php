@@ -8,6 +8,7 @@ use App\Components\Helpers\Assets;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
+use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -26,14 +27,23 @@ abstract class BaseController
     /**
      * @var EntityManager
      */
-    protected EntityManager $em;
+    protected EntityManager $entityManager;
     /**
      * @var UrlGeneratorInterface
      */
     protected UrlGeneratorInterface $urlGenerator;
+    /**
+     * @var RendererInterface
+     */
+    protected RendererInterface $renderer;
 
-    public function __construct(Environment $twig, ServerRequestInterface $serverRequest, EntityManager $em, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        Environment $twig,
+        ServerRequestInterface $serverRequest,
+        EntityManager $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        RendererInterface $renderer
+    ) {
         $this->initAssets();
 
         /** @var AssetsExtension $AssetsExtension */
@@ -42,7 +52,7 @@ abstract class BaseController
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
         );
         $loader = $twig->getLoader();
-        $loader->addPath(__DIR__.'/template', 'a');
+        $loader->addPath(__DIR__ . '/template', 'a');
         $this->twig = $twig;
 
         Assets::css(
@@ -62,14 +72,13 @@ abstract class BaseController
             ]
         );
         $this->serverRequest = $serverRequest;
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
+        $this->renderer = $renderer;
     }
 
     protected function initAssets()
     {
-
-
         Assets::createSymlink(
             $_ENV['PUBLIC_DIR'] . '/dist',
             $_ENV['ADMINLTE'] . '/dist'

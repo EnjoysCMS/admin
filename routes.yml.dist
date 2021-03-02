@@ -55,5 +55,25 @@ admin/groups:
   options:
     aclComment: Доступ к просмотру списка групп
 
+admin/addgroup:
+  path: /admin/addgroup
+  controller: ['App\Module\Admin\Controller\Groups', 'add']
+  options:
+    aclComment: Добаление групп пользователей
 
+admin/editgroup:
+  path: /admin/editgroups@{id}
+  controller: ['App\Module\Admin\Controller\Groups', 'edit']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Редактирование групп пользователей
+
+admin/deletegroup:
+  path: /admin/deletegroups@{id}
+  controller: ['App\Module\Admin\Controller\Groups', 'delete']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Удаление групп пользователей
 
