@@ -85,6 +85,19 @@ class Add implements ModelInterface
             ]
         );
 
+
+
+        $aclIds = array_map(function($e) {
+            return $e->getId();
+        }, $this->groupsRepository->find(3)->getAcl()->toArray());
+
+
+        $form->setDefaults(
+            [
+                'acl1' => $aclIds
+            ]
+        );
+
         $form->header('Информация о группе');
 
         $form->text('name', 'Название')
@@ -108,7 +121,7 @@ class Add implements ModelInterface
         $i = 0;
         foreach ($this->getAclArrayForForm() as $name => $item) {
             $i++;
-            $form->checkbox("acl[{$i}][]", $name)->fill($item);
+            $form->checkbox("acl{$i}[]", $name)->fill($item);
         }
 
 
