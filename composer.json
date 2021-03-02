@@ -10,5 +10,8 @@
     "psr-4": {
       "App\\Module\\Admin\\": "src/"
     }
+  },
+  "extra": {
+    "use-migrations": false
   }
 }
