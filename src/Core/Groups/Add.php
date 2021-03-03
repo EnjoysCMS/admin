@@ -5,11 +5,16 @@ namespace App\Module\Admin\Core\Groups;
 
 
 use App\Components\Composer\Utils;
+use App\Components\Helpers\Error;
 use App\Components\Helpers\Modules;
+use App\Components\Helpers\Redirect;
 use App\Entities\ACL;
+use App\Entities\Groups;
 use App\Module\Admin\Core\ModelInterface;
 use DI\Annotation\Inject;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
@@ -86,15 +91,15 @@ class Add implements ModelInterface
         );
 
 
-
-        $aclIds = array_map(function($e) {
-            return $e->getId();
-        }, $this->groupsRepository->find(3)->getAcl()->toArray());
-
+//
+//        $aclIds = array_map(function($e) {
+//            return $e->getId();
+//        }, $this->groupsRepository->find(3)->getAcl()->toArray());
+//
 
         $form->setDefaults(
             [
-                'acl' => [1,7]
+                'acl' => [1, 7]
             ]
         );
 
@@ -130,22 +135,27 @@ class Add implements ModelInterface
 
     private function doAction()
     {
-        var_dump($this->serverRequest->post());
-        exit;
-//        $group = new Groups();
-//        $group->setName($this->serverRequest->post('name'));
-//        $group->setDescription($this->serverRequest->post('description'));
-//        $group->setStatus(1);
-//        $group->setSystem(false);
-//
-//
-//        try {
-//            $this->entityManager->persist($group);
-//            $this->entityManager->flush();
-//            Redirect::http($this->urlGenerator->generate('admin/groups'));
-//        } catch (OptimisticLockException | ORMException $e) {
-//            Error::code(500, $e->__toString());
-//        }
+        $acls = $this->entityManager->getRepository(ACL::class)->findBy(
+            ['id' => $this->serverRequest->post('acl', [])]
+        );
+
+        $group = new Groups();
+        $group->setName($this->serverRequest->post('name'));
+        $group->setDescription($this->serverRequest->post('description'));
+        $group->setStatus(1);
+        $group->setSystem(false);
+        foreach ($acls as $acl) {
+            $group->setAcl($acl);
+        }
+
+
+        try {
+            $this->entityManager->persist($group);
+            $this->entityManager->flush();
+            Redirect::http($this->urlGenerator->generate('admin/groups'));
+        } catch (OptimisticLockException | ORMException $e) {
+            Error::code(500, $e->__toString());
+        }
     }
 
     private function getAclArrayForForm()
