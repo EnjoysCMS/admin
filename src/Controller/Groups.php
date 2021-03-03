@@ -6,6 +6,7 @@ namespace App\Module\Admin\Controller;
 
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Groups\Add;
+use App\Module\Admin\Core\Groups\Edit;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
