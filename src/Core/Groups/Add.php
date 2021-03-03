@@ -94,7 +94,7 @@ class Add implements ModelInterface
 
         $form->setDefaults(
             [
-                'acl1' => $aclIds
+                'acl' => [1,7]
             ]
         );
 
@@ -119,9 +119,8 @@ class Add implements ModelInterface
 
 
         $i = 0;
-        foreach ($this->getAclArrayForForm() as $name => $item) {
-            $i++;
-            $form->checkbox("acl{$i}[]", $name)->fill($item);
+        foreach ($this->getAclArrayForForm() as $label => $item) {
+            $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
         }
 
 
