@@ -6,6 +6,7 @@ namespace App\Module\Admin\Controller;
 
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Groups\Add;
+use App\Module\Admin\Core\Groups\Delete;
 use App\Module\Admin\Core\Groups\Edit;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Renderer\RendererInterface;
@@ -64,6 +65,22 @@ class Groups extends BaseController
             '@a/groups/add.twig',
             $this->getContext(
                 new Add(
+                    $this->groupsRepository,
+                    $this->entityManager,
+                    $this->serverRequest,
+                    $this->urlGenerator,
+                    $this->renderer
+                )
+            )
+        );
+    }
+
+    public function delete(): string
+    {
+        return $this->view(
+            '@a/groups/delete.twig',
+            $this->getContext(
+                new Delete(
                     $this->groupsRepository,
                     $this->entityManager,
                     $this->serverRequest,
