@@ -6,7 +6,9 @@ namespace App\Module\Admin\Core\Groups;
 
 use App\Components\Helpers\Error;
 use App\Components\Helpers\Redirect;
+use App\Entities\ACL;
 use App\Entities\Groups;
+use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
@@ -87,10 +89,15 @@ class Edit implements ModelInterface
                 'method' => 'POST'
             ]
         );
+
+
         $form->setDefaults(
             [
                 'name' => $this->group->getName(),
-                'description' => $this->group->getDescription()
+                'description' => $this->group->getDescription(),
+                'acl' => array_map(function($o){
+                    return $o->getId();
+                }, $this->group->getAcl()->toArray())
             ]
         );
 
@@ -114,6 +121,11 @@ class Edit implements ModelInterface
 
         $form->textarea('description', 'Описание группы');
 
+        $i = 0;
+        $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
+        foreach ($aclsForCheckbox as $label => $item) {
+            $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
+        }
 
         $form->submit('sbmt1', 'Изменить');
 
@@ -122,8 +134,20 @@ class Edit implements ModelInterface
 
     private function doAction()
     {
+        $acls = $this->entityManager->getRepository(ACL::class)->findBy(
+            ['id' => $this->serverRequest->post('acl', [])]
+        );
+
+
         $this->group->setName($this->serverRequest->post('name'));
         $this->group->setDescription($this->serverRequest->post('description'));
+
+        $this->group->removeAcl();
+
+        foreach ($acls as $acl) {
+            $this->group->setAcl($acl);
+        }
+
         $this->entityManager->flush();
         Redirect::http($this->urlGenerator->generate('admin/groups'));
     }

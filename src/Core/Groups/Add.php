@@ -4,12 +4,11 @@
 namespace App\Module\Admin\Core\Groups;
 
 
-use App\Components\Composer\Utils;
 use App\Components\Helpers\Error;
-use App\Components\Helpers\Modules;
 use App\Components\Helpers\Redirect;
 use App\Entities\ACL;
 use App\Entities\Groups;
+use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use DI\Annotation\Inject;
 use Doctrine\ORM\EntityManager;
@@ -124,7 +123,8 @@ class Add implements ModelInterface
 
 
         $i = 0;
-        foreach ($this->getAclArrayForForm() as $label => $item) {
+        $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
+        foreach ($aclsForCheckbox as $label => $item) {
             $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
         }
 
@@ -158,52 +158,5 @@ class Add implements ModelInterface
         }
     }
 
-    private function getAclArrayForForm()
-    {
-        $aclFromDb = $this->entityManager->getRepository(ACL::class)->getAllActiveACL();
 
-
-        $ACList = [];
-        $tACList = [];
-        foreach (Modules::installed() as $module) {
-            foreach ($module->namespaces as $ns) {
-                $tACList[$module->moduleName] = array_filter(
-                    $aclFromDb,
-                    function ($v) use ($ns) {
-                        return str_starts_with($v->getAction(), $ns);
-                    }
-                );
-            }
-            /** @var ACL $v */
-            foreach ($tACList[$module->moduleName] as $v) {
-                $ACList[$module->moduleName][' ' . $v->getId()] = [
-                    $v->getComment() . '<br><small>' . $v->getAction() . '</small>',
-                    ['id' => $v->getId()]
-                ];
-            }
-
-            $aclFromDb = array_diff_key($aclFromDb, $tACList[$module->moduleName]);
-        }
-
-        $systemNamespaces = Utils::parseComposerJson($_ENV['PROJECT_DIR'] . '/composer.json')->namespaces;
-        foreach ($systemNamespaces as $ns) {
-            $tACList['System Core'] = array_filter(
-                $aclFromDb,
-                function ($v) use ($ns) {
-                    return str_starts_with($v->getAction(), $ns);
-                }
-            );
-        }
-
-        /** @var ACL $v */
-        foreach ($tACList['System Core'] as $v) {
-            $ACList['System Core'][' ' . $v->getId()] = [
-                $v->getComment() . '<br><small>' . $v->getAction() . '</small>',
-                ['id' => $v->getId()]
-            ];
-        }
-
-
-        return $ACList;
-    }
 }
