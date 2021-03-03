@@ -16,4 +16,12 @@
         <!-- /.card -->
 
     </section>
+    <script>
+
+        console.log(
+            function(){
+                return ((new URLSearchParams(window.location.search)).set("by", this.value)).toString();
+            }
+        );
+    </script>
 {% endblock %}

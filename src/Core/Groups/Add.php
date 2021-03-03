@@ -5,9 +5,11 @@ namespace App\Module\Admin\Core\Groups;
 
 
 use App\Components\Helpers\Error;
+use App\Components\Helpers\Http;
 use App\Components\Helpers\Redirect;
 use App\Entities\ACL;
 use App\Entities\Groups;
+use App\Entities\Users;
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use DI\Annotation\Inject;
@@ -90,17 +92,36 @@ class Add implements ModelInterface
         );
 
 
-//
-//        $aclIds = array_map(function($e) {
-//            return $e->getId();
-//        }, $this->groupsRepository->find(3)->getAcl()->toArray());
-//
+        $aclGroupByIds = [];
+
+        if (null !== $group = $this->groupsRepository->find($this->serverRequest->get('by', 0))) {
+            $aclGroupByIds = array_map(
+                function ($o) {
+                    return $o->getId();
+                },
+                $group->getAcl()->toArray()
+            );
+        }
+
 
         $form->setDefaults(
             [
-                'acl' => [1, 7]
+                'acl' => $aclGroupByIds,
+                'by' => $this->serverRequest->get('by')
             ]
         );
+
+        $queryStrings = Http::getQueryParams($this->serverRequest->getRequest()->getUri(), ['by']);
+
+        $urlModify = $this->serverRequest->getRequest()->getUri()->withQuery(
+            (empty($queryStrings)) ? uniqid() : $queryStrings
+        );
+        //var_dump($urlModify); die();
+        $form->select('by', 'Заполнить права доступа по...')
+            ->setDescription('')
+            ->fill(
+                [''] + $this->groupsRepository->getListGroupsForSelectForm()
+            )->setAttribute('onchange', "location.href='{$urlModify}&by=' + this.value;");
 
         $form->header('Информация о группе');
 
