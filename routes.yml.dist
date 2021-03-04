@@ -4,7 +4,12 @@ admin/index:
   options:
     aclComment: Доступ к главной странице в админке (dashboard)
 
-
+# Setting
+admin/setting:
+  path: /admin/setting
+  controller: ['App\Module\Admin\Controller\Setting', 'setting']
+  options:
+    aclComment: Настройки сайта
 
 #  USERS
 admin/users:
