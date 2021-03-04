@@ -142,7 +142,7 @@ class Add implements ModelInterface
 
         $form->textarea('description', 'Описание группы');
 
-
+        $form->header('Права доступа');
         $i = 0;
         $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
         foreach ($aclsForCheckbox as $label => $item) {

@@ -60,7 +60,7 @@
                 </li>
                 {% endif %}
 
-                {% if accessInRoutes(['admin/users', 'admin/adduser', 'admin/groups', 'admin/acl']) %}
+                {% if accessInRoutes(['admin/users', 'admin/adduser', 'admin/groups']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-users-cog"></i>
@@ -98,14 +98,14 @@
                         </li>
                         {% endif %}
 
-                        {% if access2route('admin/acl') %}
-                        <li class="nav-item">
-                            <a href="pages/charts/uplot.html" class="nav-link">
-                                <i class="fas fa-user-shield nav-icon"></i>
-                                <p>Списки доступа</p>
-                            </a>
-                        </li>
-                        {% endif %}
+{#                        {% if access2route('admin/acl') %}#}
+{#                        <li class="nav-item">#}
+{#                            <a href="pages/charts/uplot.html" class="nav-link">#}
+{#                                <i class="fas fa-user-shield nav-icon"></i>#}
+{#                                <p>Списки доступа</p>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                        {% endif %}#}
                     </ul>
                 </li>
                 {% endif %}

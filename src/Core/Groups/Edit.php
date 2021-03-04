@@ -8,6 +8,7 @@ use App\Components\Helpers\Error;
 use App\Components\Helpers\Redirect;
 use App\Entities\ACL;
 use App\Entities\Groups;
+use App\Entities\Users;
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
@@ -121,10 +122,18 @@ class Edit implements ModelInterface
 
         $form->textarea('description', 'Описание группы');
 
-        $i = 0;
-        $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
-        foreach ($aclsForCheckbox as $label => $item) {
-            $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
+
+        if($this->group->getId() === Users::ADMIN_GROUP_ID){
+            $form->header('Группа имеет все привилегии (доступ ко всему)');
+        }else{
+            $form->header('Права доступа');
+
+            $i = 0;
+            $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
+            foreach ($aclsForCheckbox as $label => $item) {
+                $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
+            }
+
         }
 
         $form->submit('sbmt1', 'Изменить');
