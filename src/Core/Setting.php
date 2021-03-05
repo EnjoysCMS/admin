@@ -4,14 +4,13 @@
 namespace App\Module\Admin\Core;
 
 
+use App\Components\Helpers\Redirect;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use function DI\string;
 
 class Setting implements ModelInterface
 {
@@ -55,6 +54,9 @@ class Setting implements ModelInterface
     public function getContext(): array
     {
         $form = $this->getForm();
+        if($form->isSubmitted()){
+            $this->doAction();
+        }
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer
@@ -63,9 +65,18 @@ class Setting implements ModelInterface
 
     private function getForm()
     {
-        $form = new Form();
-        $form->setDefaults($this->settingRepository->findAllKeyVar());
         $settings = (array)$this->settingRepository->findAll();
+
+        $form = new Form(['method'=>'post']);
+        $form->setDefaults(
+            function () use ($settings) {
+                $data = [];
+                foreach ($settings as $setting) {
+                    $data[$setting->getVar()] = $setting->getValue();
+                }
+                return $data;
+            }
+        );
 
 
         /** @var \App\Entities\Setting $setting */
@@ -94,11 +105,22 @@ class Setting implements ModelInterface
                     break;
             }
         }
+        $form->submit('save', 'Сохранить');
         return $form;
         // die();
     }
 
     private function doAction()
     {
+        foreach ($this->serverRequest->post() as $k => $v) {
+            /** @var \App\Entities\Setting $item */
+            if(null === $item = $this->settingRepository->find($k)){
+                continue;
+            }
+            $item->setValue($v);
+            $this->entityManager->persist($item);
+        }
+        $this->entityManager->flush();
+        Redirect::http($this->urlGenerator->generate('admin/setting'));
     }
 }
