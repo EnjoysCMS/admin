@@ -57,7 +57,8 @@ class Users extends BaseController
         return $this->view(
             '@a/users/users-list.twig',
             [
-                'users' => $this->usersRepository->findAll()
+                'users' => $this->usersRepository->findAll(),
+                'title' => 'Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
             ]
         );
     }

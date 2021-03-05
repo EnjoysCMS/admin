@@ -79,7 +79,8 @@ class Edit implements ModelInterface
         $this->renderer->setForm($form);
 
         return [
-            'form' => $this->renderer
+            'form' => $this->renderer,
+            'title' => 'Редактирование группы | Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
         ];
     }
 

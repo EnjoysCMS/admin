@@ -38,7 +38,10 @@ class Groups extends BaseController
     {
         return $this->view(
             '@a/groups/list.twig',
-            ['groups' => $this->groupsRepository->findAll()]
+            [
+                'groups' => $this->groupsRepository->findAll(),
+                'title' => 'Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            ]
         );
     }
 

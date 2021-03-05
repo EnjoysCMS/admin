@@ -70,7 +70,8 @@ class Edit implements ModelInterface
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Редактирование пользователя',
-            ]
+            ],
+            'title' => 'Редактирование пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
         ];
     }
 

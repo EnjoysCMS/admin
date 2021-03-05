@@ -59,7 +59,8 @@ class Setting implements ModelInterface
         }
         $this->renderer->setForm($form);
         return [
-            'form' => $this->renderer
+            'form' => $this->renderer,
+            'title' => 'Настройки | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
         ];
     }
 

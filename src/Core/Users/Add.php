@@ -59,7 +59,8 @@ class Add implements ModelInterface
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Добавить нового пользователя'
-            ]
+            ],
+            'title' => 'Добавление пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
         ];
     }
 

@@ -79,7 +79,8 @@ class Add implements ModelInterface
 
         $this->renderer->setForm($form);
         return [
-            'form' => $this->renderer
+            'form' => $this->renderer,
+            'title' => 'Добавление группы | Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
         ];
     }
 
