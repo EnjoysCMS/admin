@@ -52,7 +52,7 @@ abstract class BaseController
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
         );
         $loader = $twig->getLoader();
-        $loader->addPath(__DIR__ . '/template', 'a');
+        $loader->addPath(__DIR__ . '/../template', 'a');
         $this->twig = $twig;
 
         Assets::css(
