@@ -42,7 +42,7 @@ class ACList
 
     }
 
-    public function getGroupedAcl()
+    public function getGroupedAcl(): array
     {
         $activeAcl = $this->getActiveACL();
         $groupedAcl = [];
@@ -60,6 +60,8 @@ class ACList
             }
 
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
+
+            rsort($groupedAcl[$module->moduleName]);
         }
 
         /**
@@ -73,6 +75,7 @@ class ACList
                     return str_starts_with($v->getAction(), $ns);
                 }
             );
+            rsort($groupedAcl['System Core']);
         }
 
 
