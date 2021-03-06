@@ -67,7 +67,9 @@ class Users extends BaseController
     {
         return $this->view(
             '@a/users/edituser.twig',
-            $this->getContext(new Edit($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository))
+            $this->getContext(
+                new Edit($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository)
+            )
         );
     }
 
@@ -88,7 +90,11 @@ class Users extends BaseController
             '@a/users/deleteuser.twig',
             $this->getContext(
                 new Delete(
-                    $this->entityManager, $this->serverRequest, $this->urlGenerator, $this->usersRepository, $this->renderer
+                    $this->entityManager,
+                    $this->serverRequest,
+                    $this->urlGenerator,
+                    $this->usersRepository,
+                    $this->renderer
                 )
             )
         );

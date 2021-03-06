@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
+    {% do asset('js', [
+        {0: 'modules/admin/template/assets/custom.js', 'minify': false},
+        {0: 'vendor/almasaeed2010/adminlte/dist/js/demo.js', 'minify': false},
+    ]) %}
     {{ eCSS() }}
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -76,6 +80,16 @@
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 {# <script> #}
 {# $.widget.bridge('uibutton', $.ui.button) #}
+<script>
+    $(document).ready(function () {
 
+
+        let url = window.location;
+        let element = $('.nav-link').filter(function () {
+            return this.href === url || url.href.indexOf(this.href) === 0;
+        }).addClass('active').parents().addClass('menu-open');
+    });
+
+</script>
 </body>
 </html>

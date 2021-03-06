@@ -82,3 +82,24 @@ admin/deletegroup:
   options:
     aclComment: Удаление групп пользователей
 
+# Blocks
+
+# Blocks
+
+admin/manage:
+  path: /admin/blocks
+  controller: ['App\Module\Admin\Controller\Blocks', 'manage']
+  options:
+    aclComment: Просмотр активных блоков
+
+admin/addblock:
+  path: /admin/addblock
+  controller: ['App\Module\Admin\Controller\Blocks', 'add']
+  options:
+    aclComment: Добавление пользовательского блока (простой текстовый блок)
+
+admin/setupblocks:
+  path: /admin/setupblocks
+  controller: ['App\Module\Admin\Controller\Blocks', 'setUp']
+  options:
+    aclComment: Активация, регистрация, отключение и тд. блоков
