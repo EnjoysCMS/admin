@@ -13,21 +13,21 @@ admin/setting:
 
 #  USERS
 admin/users:
-  path: /admin/users
+  path: /admin/users/list
   controller: ['App\Module\Admin\Controller\Users', 'list']
   options:
     aclComment: Доступ к просмотру списка пользователей
 
 
 admin/adduser:
-  path: /admin/adduser
+  path: /admin/users/add
   controller: ['App\Module\Admin\Controller\Users', 'add']
   options:
     aclComment: Добавление пользователей
 
 
 admin/edituser:
-  path: /admin/edituser@{id}
+  path: /admin/users/edit/@{id}
   controller: ['App\Module\Admin\Controller\Users', 'edit']
   requirements:
     id: '\d+'
@@ -36,7 +36,7 @@ admin/edituser:
 
 
 admin/deleteuser:
-  path: /admin/deleteuser@{id}
+  path: /admin/users/delete/{id}
   controller: ['App\Module\Admin\Controller\Users', 'delete']
   requirements:
     id: '\d+'
@@ -45,7 +45,7 @@ admin/deleteuser:
 
 
 admin/user/changepassword:
-  path: /admin/user/changepassword@{id}
+  path: /admin/users/changepassword@{id}
   controller: ['App\Module\Admin\Controller\Users', 'changePassword']
   requirements:
     id: '\d+'
@@ -61,13 +61,13 @@ admin/groups:
     aclComment: Доступ к просмотру списка групп
 
 admin/addgroup:
-  path: /admin/addgroup
+  path: /admin/groups/add
   controller: ['App\Module\Admin\Controller\Groups', 'add']
   options:
     aclComment: Добаление групп пользователей
 
 admin/editgroup:
-  path: /admin/editgroups@{id}
+  path: /admin/groups/edit/{id}
   controller: ['App\Module\Admin\Controller\Groups', 'edit']
   requirements:
     id: '\d+'
@@ -84,22 +84,20 @@ admin/deletegroup:
 
 # Blocks
 
-# Blocks
-
-admin/manage:
-  path: /admin/blocks
+admin/blocks:
+  path: /admin/blocks/setting
   controller: ['App\Module\Admin\Controller\Blocks', 'manage']
   options:
     aclComment: Просмотр активных блоков
 
 admin/addblock:
-  path: /admin/addblock
+  path: /admin/blocks/add
   controller: ['App\Module\Admin\Controller\Blocks', 'add']
   options:
     aclComment: Добавление пользовательского блока (простой текстовый блок)
 
 admin/setupblocks:
-  path: /admin/setupblocks
+  path: /admin/blocks/setup
   controller: ['App\Module\Admin\Controller\Blocks', 'setUp']
   options:
     aclComment: Активация, регистрация, отключение и тд. блоков

@@ -21,7 +21,7 @@ class Add implements ModelInterface
     /**
      * @var EntityManager
      */
-    private EntityManager $em;
+    private EntityManager $entityManager;
     /**
      * @var ServerRequestInterface
      */
@@ -38,7 +38,7 @@ class Add implements ModelInterface
         UrlGeneratorInterface $urlGenerator,
         ObjectRepository $usersRepository
     ) {
-        $this->em = $em;
+        $this->entityManager = $em;
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
         $this->usersRepository = $usersRepository;
@@ -60,7 +60,9 @@ class Add implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Добавить нового пользователя'
             ],
-            'title' => 'Добавление пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Добавление пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get(
+                    'sitename'
+                )
         ];
     }
 
@@ -71,15 +73,15 @@ class Add implements ModelInterface
         $newUser->setLogin($this->serverRequest->post('login'));
         $newUser->genAdnSetPasswordHash($this->serverRequest->post('password'));
 
-        $groups = $this->em->getRepository(Groups::class)->findBy(
+        $groups = $this->entityManager->getRepository(Groups::class)->findBy(
             ['id' => $this->serverRequest->post('groups', [])]
         );
         foreach ($groups as $group) {
             $newUser->setGroups($group);
         }
 
-        $this->em->persist($newUser);
-        $this->em->flush();
+        $this->entityManager->persist($newUser);
+        $this->entityManager->flush();
 
         Redirect::http($this->urlGenerator->generate('admin/users'));
     }
@@ -98,7 +100,7 @@ class Add implements ModelInterface
                 Rules::CALLBACK,
                 'Такой логин уже занят',
                 function () {
-                    if (null === $this->em->getRepository(Users::class)->findOneBy(
+                    if (null === $this->entityManager->getRepository(Users::class)->findOneBy(
                             ['login' => $this->serverRequest->post('login')]
                         )) {
                         return true;
@@ -109,20 +111,13 @@ class Add implements ModelInterface
         $form->text('password', 'Пароль')->addRule(Rules::REQUIRED);
 
 
-        $form->checkbox('groups', 'Группа')->fill($this->getGroupsArray())->addRule(Rules::REQUIRED);
+        $form->checkbox('groups', 'Группа')->fill(
+            $this->entityManager->getRepository(Groups::class)->getGroupsArray()
+        )->addRule(Rules::REQUIRED);
 
         $form->submit('sbmt1', 'Добавить');
 
         return $form;
     }
 
-    private function getGroupsArray(): array
-    {
-        $groupsArray = [];
-        $groups = $this->em->getRepository(Groups::class)->findAll();
-        foreach ($groups as $group) {
-            $groupsArray[$group->getId() . ' '] = $group->getName();
-        }
-        return $groupsArray;
-    }
 }

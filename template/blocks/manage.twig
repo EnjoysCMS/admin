@@ -12,11 +12,54 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+                <ul class="list-group">
+                    {% for block in blocks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <b>{{ block.getName }}</b>
+                                {% if block.isCloned %}
+                                    <span class="badge badge-primary badge-pill">cloned</span>
+                                {% endif %}
+                                <br>
+                                <small>{{ block.getClass }}</small>
+                                <div class="collapse" id="collapseExample{{ block.getId }}">
+                                    <div class="card card-body">
+                                        <code>
+                                            &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
+                                            {{ block.getTwigTemplateString }}<br>
+                                            &lt;!-- /Блок: "{{ block.getName }}" --&gt;
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark " href="{{ url('admin/editblock', {"id": block.getId}) }}"><i class="fa fa-edit"></i>  Редактировать </a>
+                            <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
+                               href="{{ url('admin/cloneblocks', {"id": block.getId}) }}"><i class="fa fa-clone"></i>
+                                Клонировать </a>
+                            {% if block.isRemovable %}
+                                <a class="mx-1 btn btn-sm  btn-sm btn-danger "
+                                   href="{{ url('admin/deleteblocks', {"id": block.getId}) }}"><i
+                                            class="fa fa-trash"></i> Удалить</a>
+                            {% endif %}
+                            <a class="mx-1 btn btn-sm  btn-sm btn-secondary " data-toggle="collapse"
+                               aria-expanded="false"
+                               aria-controls="collapseExample{{ block.getId }}"
+                               href="#collapseExample{{ block.getId }}">
+                                <i class="fa fa-code"></i> Код для вставки в шаблон
+                            </a>
 
+                        </li>
+
+
+
+                    {% endfor %}
+                </ul>
             </div>
             <!-- /.card-body -->
         </div>
         <!-- /.card -->
 
     </section>
+
+
 {% endblock %}
