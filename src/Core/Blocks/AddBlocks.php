@@ -2,6 +2,7 @@
 
 namespace App\Module\Admin\Core\Blocks;
 
+use App\Blocks\Custom;
 use App\Components\Helpers\Error;
 use App\Components\Helpers\Redirect;
 use App\Entities\ACL;
@@ -81,6 +82,7 @@ class AddBlocks implements ModelInterface
             $block->setName($this->serverRequest->post('name'));
             $block->setBody($this->serverRequest->post('body'));
             $block->setRemovable(true);
+            $block->setOptions(Custom::stockOptions());
 
             $this->entityManager->beginTransaction();
             $this->entityManager->persist($block);

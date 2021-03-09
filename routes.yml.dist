@@ -90,6 +90,31 @@ admin/blocks:
   options:
     aclComment: Просмотр активных блоков
 
+admin/editblock:
+  path: /admin/blocks/edit/{id}
+  controller: ['App\Module\Admin\Controller\Blocks', 'edit']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Редактирование блоков
+
+
+admin/cloneblocks:
+  path: /admin/blocks/clone/{id}
+  controller: ['App\Module\Admin\Controller\Blocks', 'clone']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Клонирование блоков
+
+admin/deleteblocks:
+  path: /admin/blocks/delete/{id}
+  controller: ['App\Module\Admin\Controller\Blocks', 'delete']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Удаление блоков
+
 admin/addblock:
   path: /admin/blocks/add
   controller: ['App\Module\Admin\Controller\Blocks', 'add']

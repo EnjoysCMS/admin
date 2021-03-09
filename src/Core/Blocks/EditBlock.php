@@ -4,6 +4,8 @@
 namespace App\Module\Admin\Core\Blocks;
 
 
+use App\Blocks\Custom;
+use App\Components\Helpers\Redirect;
 use App\Entities\Blocks;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
@@ -34,6 +36,10 @@ class EditBlock implements ModelInterface
 
 
     private Blocks $block;
+    /**
+     * @var mixed
+     */
+    private ?object $blockOptions = null;
 
     public function __construct(
         EntityManager $entityManager,
@@ -67,16 +73,72 @@ class EditBlock implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form(['method' => 'post']);
+
+
         $form->setDefaults(
             [
-            'name' => $this->block->getName()
+                'name' => $this->block->getName(),
+                'body' => $this->block->getBody(),
+                'options' => $this->block->getOptionsKeyValue()
             ]
         );
         $form->text('name', 'Название');
+
+
+        if ($this->block->getClass() === Custom::class) {
+            $form->textarea('body', 'Контент');
+        }
+
+
+        if (null !== $this->block->getOptions()) {
+            $form->header('Параметры (опции) блока');
+            foreach ($this->block->getOptions() as $key => $option) {
+                if (isset($option['form']['type'])) {
+                    switch ($option['form']['type']) {
+                        case 'radio':
+                            $form->radio(
+                                "options[{$key}]",
+                                (isset($option['name'])) ? $option['name'] : $key
+                            )->setDescription($option['description'])->fill($option['form']['data']);
+                            break;
+                    }
+
+                    continue;
+                }
+                $form->text("options[{$key}]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
+                    $option['description']
+                );
+            }
+        }
+
+        $form->submit('send');
+
         return $form;
+    }
+
+    private function getBlockOptions(array $options): ?array
+    {
+        if (empty($options)) {
+            return null;
+        }
+
+        $blockOptions = $this->block->getOptions();
+
+        foreach ($options as $key => $value) {
+            if (array_key_exists($key, $blockOptions)) {
+                $blockOptions[$key]['value'] = $value;
+            }
+        }
+
+        return $blockOptions;
     }
 
     private function doAction()
     {
+        $this->block->setName($this->serverRequest->post('name'));
+        $this->block->setBody($this->serverRequest->post('body'));
+        $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
+        $this->entityManager->flush();
+        Redirect::http($this->urlGenerator->generate('admin/blocks'));
     }
 }
