@@ -91,7 +91,6 @@ class EditBlock implements ModelInterface
 
 
         if (null !== $this->block->getOptions()) {
-            $form->header('Параметры (опции) блока');
             foreach ($this->block->getOptions() as $key => $option) {
                 if (isset($option['form']['type'])) {
                     switch ($option['form']['type']) {
