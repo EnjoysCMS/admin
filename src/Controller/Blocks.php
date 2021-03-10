@@ -87,7 +87,7 @@ class Blocks extends BaseController
         return $this->view(
             '@a/blocks/edit.twig',
             $this->getContext(
-                new EditBlock($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
+                new EditBlock($this->twig, $this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
             )
         );
     }

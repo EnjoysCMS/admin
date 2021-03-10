@@ -6,6 +6,7 @@ namespace App\Module\Admin\Core\Blocks;
 
 use App\Blocks\Custom;
 use App\Components\Helpers\Redirect;
+use App\Components\WYSIWYG\WYSIWYG;
 use App\Entities\Blocks;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
@@ -13,6 +14,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
 
 class EditBlock implements ModelInterface
 {
@@ -40,13 +42,19 @@ class EditBlock implements ModelInterface
      * @var mixed
      */
     private ?object $blockOptions = null;
+    /**
+     * @var Environment
+     */
+    private Environment $twig;
 
     public function __construct(
+        Environment $twig,
         EntityManager $entityManager,
         ServerRequestInterface $serverRequest,
         UrlGeneratorInterface $urlGenerator,
         RendererInterface $renderer
     ) {
+        $this->twig = $twig;
         $this->entityManager = $entityManager;
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
@@ -56,6 +64,7 @@ class EditBlock implements ModelInterface
         }
 
         $this->block = $block;
+
     }
 
     public function getContext(): array
@@ -66,7 +75,8 @@ class EditBlock implements ModelInterface
         }
         $this->renderer->setForm($form);
         return [
-            'form' => $this->renderer
+            'form' => $this->renderer,
+            'wysiwyg' => (new WYSIWYG($this->twig))->attach('#body')
         ];
     }
 
