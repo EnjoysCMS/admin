@@ -14,6 +14,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\WYSIWYG\Summernote\Summernote;
+use EnjoysCMS\WYSIWYG\TinyMCE\TinyMCE;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
@@ -75,8 +76,9 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = new WYSIWYG(new Summernote());
+        $wysiwyg = new WYSIWYG(new TinyMCE());
         $wysiwyg->setTwig($this->twig);
+
         return [
             'form' => $this->renderer,
             'wysiwyg' => $wysiwyg->selector('#body')
