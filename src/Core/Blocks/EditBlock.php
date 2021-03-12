@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\WYSIWYG\N1ED\N1ED;
 use EnjoysCMS\WYSIWYG\Summernote\Summernote;
 use EnjoysCMS\WYSIWYG\TinyMCE\TinyMCE;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -76,7 +77,7 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = new WYSIWYG(new TinyMCE());
+        $wysiwyg = new WYSIWYG(new N1ED());
         $wysiwyg->setTwig($this->twig);
 
         return [
