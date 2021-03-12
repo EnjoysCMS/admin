@@ -77,7 +77,7 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = new WYSIWYG(new N1ED());
+        $wysiwyg = new WYSIWYG(new TinyMCE());
         $wysiwyg->setTwig($this->twig);
 
         return [
