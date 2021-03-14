@@ -53,6 +53,10 @@ class EditBlock implements ModelInterface
      */
     private Environment $twig;
     private ?\App\Entities\ACL $acl;
+    /**
+     * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
+     */
+    private $groupsRepository;
 
     public function __construct(
         Environment $twig,
@@ -74,6 +78,7 @@ class EditBlock implements ModelInterface
         }
         $this->block = $block;
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
+        $this->groupsRepository = $this->entityManager->getRepository(Groups::class);
     }
 
     public function getContext(): array
@@ -142,7 +147,7 @@ class EditBlock implements ModelInterface
         }
 
         $form->checkbox('groups', 'Права доступа')->fill(
-            $this->entityManager->getRepository(Groups::class)->getGroupsArray()
+           $this->groupsRepository->getGroupsArray()
         )->addRule(Rules::REQUIRED);
 
         $form->submit('send');
@@ -174,17 +179,18 @@ class EditBlock implements ModelInterface
         $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
 
 
+
         $groups = $this->entityManager->getRepository(Groups::class)->findBy(
             ['id' => $this->serverRequest->post('groups', [])]
         );
         $this->acl->removeGroups();
-
+        /** @var Groups $group */
         foreach ($groups as $group) {
             $this->acl->setGroups($group);
         }
-
+        $this->entityManager->persist($this->acl);
         $this->entityManager->flush();
-
+die();
 //        Redirect::http($this->urlGenerator->generate('admin/blocks'));
         Redirect::http();
     }
