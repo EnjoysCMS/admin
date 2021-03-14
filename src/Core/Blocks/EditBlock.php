@@ -5,13 +5,16 @@ namespace App\Module\Admin\Core\Blocks;
 
 
 use App\Blocks\Custom;
+use App\Components\Helpers\ACL;
 use App\Components\Helpers\Redirect;
 use App\Components\WYSIWYG\WYSIWYG;
 use App\Entities\Blocks;
+use App\Entities\Groups;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\WYSIWYG\N1ED\N1ED;
 use EnjoysCMS\WYSIWYG\Summernote\Summernote;
@@ -49,6 +52,7 @@ class EditBlock implements ModelInterface
      * @var Environment
      */
     private Environment $twig;
+    private ?\App\Entities\ACL $acl;
 
     public function __construct(
         Environment $twig,
@@ -67,7 +71,7 @@ class EditBlock implements ModelInterface
         }
 
         $this->block = $block;
-
+        $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
     }
 
     public function getContext(): array
@@ -91,11 +95,19 @@ class EditBlock implements ModelInterface
         $form = new Form(['method' => 'post']);
 
 
+
+
         $form->setDefaults(
             [
                 'name' => $this->block->getName(),
                 'body' => $this->block->getBody(),
-                'options' => $this->block->getOptionsKeyValue()
+                'options' => $this->block->getOptionsKeyValue(),
+                'groups' => array_map(
+                    function ($item) {
+                        return $item->getId();
+                    },
+                    $this->acl->getGroups()->toArray()
+                ),
             ]
         );
         $form->text('name', 'Название');
@@ -126,6 +138,10 @@ class EditBlock implements ModelInterface
             }
         }
 
+        $form->checkbox('groups', 'Права доступа')->fill(
+            $this->entityManager->getRepository(Groups::class)->getGroupsArray()
+        )->addRule(Rules::REQUIRED);
+
         $form->submit('send');
 
         return $form;
@@ -153,7 +169,19 @@ class EditBlock implements ModelInterface
         $this->block->setName($this->serverRequest->post('name'));
         $this->block->setBody($this->serverRequest->post('body'));
         $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
+
+
+        $groups = $this->entityManager->getRepository(Groups::class)->findBy(
+            ['id' => $this->serverRequest->post('groups', [])]
+        );
+        $this->acl->removeGroups();
+
+        foreach ($groups as $group) {
+            $this->acl->setGroups($group);
+        }
+
         $this->entityManager->flush();
+
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
     }
 }

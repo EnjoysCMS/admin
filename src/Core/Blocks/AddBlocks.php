@@ -104,6 +104,7 @@ class AddBlocks implements ModelInterface
             $this->entityManager->persist($acl);
             $this->entityManager->flush();
             $this->entityManager->commit();
+
             Redirect::http($this->urlGenerator->generate('admin/blocks'));
         } catch (OptimisticLockException | ORMException $e) {
             Error::code(500, $e->__toString());
