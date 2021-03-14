@@ -7,10 +7,30 @@
 
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Блоки</h2>
+                <h2 class="card-title">Редактирование блока <b>{{ block.getName }}</b></h2>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+
+                {% if access2route('admin/blocklocation') %}
+                <div class="my-3">
+                    <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark"
+                       href="{{ url('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-edit"></i>
+                        Управление местоположением блока </a>
+                </div>
+                {% endif %}
+                <div class="my-3">
+                    <p>
+                        Для отображения блока в шаблоне, вставьте туда код
+                    </p>
+                    <code>
+                        &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
+                            {{ block.getTwigTemplateString }}<br>
+                        &lt;!-- /Блок: "{{ block.getName }}" --&gt;
+                    </code>
+
+                </div>
+
                 {{ form.render|raw }}
             </div>
             <!-- /.card-body -->

@@ -115,6 +115,15 @@ admin/deleteblocks:
   options:
     aclComment: Удаление блоков
 
+
+admin/blocklocation:
+  path: /admin/blocks/locations/{id}
+  controller: ['App\Module\Admin\Controller\Blocks', 'location']
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Установка расположения блоков
+
 admin/addblock:
   path: /admin/blocks/add
   controller: ['App\Module\Admin\Controller\Blocks', 'add']

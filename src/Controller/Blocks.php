@@ -8,6 +8,7 @@ namespace App\Module\Admin\Controller;
 use App\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Blocks\AddBlocks;
+use App\Module\Admin\Core\Blocks\BlockLocations;
 use App\Module\Admin\Core\Blocks\EditBlock;
 use App\Module\Admin\Core\Blocks\ManageBlocks;
 
@@ -98,6 +99,17 @@ class Blocks extends BaseController
             '@a/blocks/add.twig',
             $this->getContext(
                 new AddBlocks($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
+            )
+        );
+    }
+
+
+    public function location()
+    {
+        return $this->view(
+            '@a/blocks/locations.twig',
+            $this->getContext(
+                new BlockLocations($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
             )
         );
     }

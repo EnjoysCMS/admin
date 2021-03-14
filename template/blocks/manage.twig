@@ -32,6 +32,12 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if access2route('admin/blocklocation') %}
+                                <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
+                                   href="{{ url('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-th"></i>
+                                    Расположение </a>
+                            {% endif %}
+
                             {% if access2route('admin/editblock') %}
                                 <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
                                    href="{{ url('admin/editblock', {"id": block.getId}) }}"><i class="fa fa-edit"></i>

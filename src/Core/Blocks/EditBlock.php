@@ -67,9 +67,11 @@ class EditBlock implements ModelInterface
         $this->urlGenerator = $urlGenerator;
         $this->renderer = $renderer;
         if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
-            throw new \InvalidArgumentException('Invalid argument');
+            throw new \InvalidArgumentException('Invalid block ID');
         }
-
+        if(!($block instanceof Blocks)){
+            throw new \InvalidArgumentException('Invalid block');
+        }
         $this->block = $block;
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
     }
@@ -86,6 +88,7 @@ class EditBlock implements ModelInterface
 
         return [
             'form' => $this->renderer,
+            'block' => $this->block,
             'wysiwyg' => $wysiwyg->selector('#body')
         ];
     }
@@ -182,6 +185,7 @@ class EditBlock implements ModelInterface
 
         $this->entityManager->flush();
 
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+//        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+        Redirect::http();
     }
 }

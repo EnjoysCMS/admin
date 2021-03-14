@@ -1,0 +1,22 @@
+{% extends "@a/layout.twig" %}
+
+{% block content %}
+
+    <section class="content">
+
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Управление местоположением блока</h2>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+{#                {{ dump(block.getLocationsIds) }}#}
+                {{ form.render|raw }}
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+    </section>
+{% endblock %}
