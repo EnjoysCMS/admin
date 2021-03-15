@@ -159,7 +159,7 @@ class Edit implements ModelInterface
         }
 
         $this->entityManager->flush();
-//        Redirect::http($this->urlGenerator->generate('admin/groups'));
-        Redirect::http();
+        Redirect::http($this->urlGenerator->generate('admin/groups'));
+//        Redirect::http();
     }
 }

@@ -16,8 +16,6 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\WYSIWYG\N1ED\N1ED;
-use EnjoysCMS\WYSIWYG\Summernote\Summernote;
 use EnjoysCMS\WYSIWYG\TinyMCE\TinyMCE;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -179,19 +177,19 @@ class EditBlock implements ModelInterface
         $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
 
 
-
-        $groups = $this->entityManager->getRepository(Groups::class)->findBy(
-            ['id' => $this->serverRequest->post('groups', [])]
-        );
-        $this->acl->removeGroups();
         /** @var Groups $group */
-        foreach ($groups as $group) {
-            $this->acl->setGroups($group);
+        foreach ($this->groupsRepository->findAll() as $group) {
+            if(in_array($group->getId(), $this->serverRequest->post('groups', []))){
+                $this->acl->setGroups($group);
+                continue;
+            }
+            $this->acl->removeGroups($group);
+
         }
-        $this->entityManager->persist($this->acl);
+
         $this->entityManager->flush();
-die();
-//        Redirect::http($this->urlGenerator->generate('admin/blocks'));
-        Redirect::http();
+
+        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+//        Redirect::http();
     }
 }
