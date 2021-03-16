@@ -4,11 +4,6 @@
 namespace App\Module\Admin\Core\Groups;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
-use App\Entities\ACL;
-use App\Entities\Groups;
-use App\Entities\Users;
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +12,12 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Users;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
@@ -80,7 +81,7 @@ class Edit implements ModelInterface
 
         return [
             'form' => $this->renderer,
-            'title' => 'Редактирование группы | Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Редактирование группы | Группы | Admin | ' . Setting::get('sitename')
         ];
     }
 

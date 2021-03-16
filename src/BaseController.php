@@ -4,7 +4,7 @@
 namespace App\Module\Admin;
 
 
-use App\Components\Helpers\Assets;
+use EnjoysCMS\Core\Components\Helpers\Assets;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;

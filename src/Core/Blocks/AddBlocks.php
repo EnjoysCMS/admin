@@ -2,12 +2,12 @@
 
 namespace App\Module\Admin\Core\Blocks;
 
-use App\Blocks\Custom;
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
-use App\Entities\ACL;
-use App\Entities\Blocks;
-use App\Entities\Groups;
+use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Groups;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;

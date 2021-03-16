@@ -4,7 +4,7 @@
 namespace App\Module\Admin\Controller;
 
 
-use App\Components\Helpers\Assets;
+use EnjoysCMS\Core\Components\Helpers\Assets;
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Users\Add;
 use App\Module\Admin\Core\Users\ChangePassword;
@@ -33,7 +33,7 @@ class Users extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->usersRepository = $entityManager->getRepository(\App\Entities\Users::class);
+        $this->usersRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\Users::class);
     }
 
 
@@ -58,7 +58,7 @@ class Users extends BaseController
             '@a/users/users-list.twig',
             [
                 'users' => $this->usersRepository->findAll(),
-                'title' => 'Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+                'title' => 'Пользователи | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
             ]
         );
     }

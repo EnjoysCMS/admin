@@ -4,12 +4,6 @@
 namespace App\Module\Admin\Core\Groups;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Http;
-use App\Components\Helpers\Redirect;
-use App\Entities\ACL;
-use App\Entities\Groups;
-use App\Entities\Users;
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use DI\Annotation\Inject;
@@ -21,6 +15,12 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Http;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\Entities\Groups;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
@@ -80,7 +80,7 @@ class Add implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            'title' => 'Добавление группы | Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Добавление группы | Группы | Admin | ' . Setting::get('sitename')
         ];
     }
 

@@ -1,9 +1,9 @@
 <?php
 namespace App\Module\Admin\Core\ACL;
 
-use App\Components\Composer\Utils;
-use App\Components\Helpers\Modules;
-use App\Repositories\ACL;
+use EnjoysCMS\Core\Components\Composer\Utils;
+use EnjoysCMS\Core\Components\Helpers\Modules;
+use EnjoysCMS\Core\Repositories\ACL;
 use Doctrine\Persistence\ObjectRepository;
 
 class ACList
@@ -29,7 +29,7 @@ class ACList
         $ret = [];
         $groupedAcl = $this->getGroupedAcl();
         foreach ($groupedAcl as $group => $acls) {
-            /** @var \App\Entities\ACL $acl */
+            /** @var \EnjoysCMS\Core\Entities\ACL $acl */
             foreach ($acls as $acl) {
                 $ret[$group][' ' . $acl->getId()]  = [
                     $acl->getComment() . '<br><small>' . $acl->getAction() . '</small>',

@@ -4,9 +4,10 @@
 namespace App\Module\Admin\Core\Groups;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
-use App\Entities\Groups;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\Groups;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
@@ -75,7 +76,7 @@ class Delete implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Группы пользователей',
                 'Удаление группы',
             ],
-            'title' => 'Удаление группы | Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Удаление группы | Группы | Admin | ' . Setting::get('sitename')
         ];
     }
 

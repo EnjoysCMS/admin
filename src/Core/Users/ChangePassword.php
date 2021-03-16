@@ -4,10 +4,11 @@
 namespace App\Module\Admin\Core\Users;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
-use App\Entities\Users;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
@@ -73,7 +74,7 @@ class ChangePassword implements ModelInterface
         $this->renderer->setForm($form);
 
         return [
-            'title' => 'Смена пароля пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename'),
+            'title' => 'Смена пароля пользователя | Пользователи | Admin | ' . Setting::get('sitename'),
             'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user

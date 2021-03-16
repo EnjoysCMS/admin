@@ -4,16 +4,17 @@
 namespace App\Module\Admin\Core\Users;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
-use App\Entities\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\Users;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
@@ -78,7 +79,7 @@ class Delete implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Удаление пользователя',
             ],
-            'title' => 'Удаление пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Удаление пользователя | Пользователи | Admin | ' . Setting::get('sitename')
         ];
     }
 
@@ -101,7 +102,7 @@ class Delete implements ModelInterface
                     ->select('COUNT(u) as cnt')
                     ->join('u.groups', 'g')
                     ->where('g.id = :id')
-                    ->setParameter('id', \App\Entities\Users::ADMIN_GROUP_ID)
+                    ->setParameter('id', Users::ADMIN_GROUP_ID)
                     ->getQuery()
                     ->getSingleResult()['cnt'];
 

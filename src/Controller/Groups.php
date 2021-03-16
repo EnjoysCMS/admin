@@ -31,7 +31,7 @@ class Groups extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->groupsRepository = $entityManager->getRepository(\App\Entities\Groups::class);
+        $this->groupsRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\Groups::class);
     }
 
     public function list(): string
@@ -40,7 +40,7 @@ class Groups extends BaseController
             '@a/groups/list.twig',
             [
                 'groups' => $this->groupsRepository->findAll(),
-                'title' => 'Группы | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+                'title' => 'Группы | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
             ]
         );
     }

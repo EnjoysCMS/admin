@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Admin\Controller;
 
 
-use App\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Blocks\AddBlocks;
 use App\Module\Admin\Core\Blocks\BlockLocations;
@@ -29,8 +29,8 @@ class Blocks extends BaseController
      */
     public function delete()
     {
-        /** @var \App\Entities\Blocks $block */
-        if(null === $block = $this->entityManager->getRepository(\App\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
+        /** @var \EnjoysCMS\Core\Entities\Blocks $block */
+        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
             throw new \InvalidArgumentException('Invalid Arguments');
         }
 
@@ -55,8 +55,8 @@ class Blocks extends BaseController
      */
     public function clone()
     {
-        /** @var \App\Entities\Blocks $block */
-        if(null === $block = $this->entityManager->getRepository(\App\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
+        /** @var \EnjoysCMS\Core\Entities\Blocks $block */
+        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
             throw new \InvalidArgumentException('Invalid Arguments');
         }
 

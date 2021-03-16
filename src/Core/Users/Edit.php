@@ -4,17 +4,18 @@
 namespace App\Module\Admin\Core\Users;
 
 
-use App\Components\Helpers\Error;
-use App\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
-use App\Entities\Groups;
-use App\Entities\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
+use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Users;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
@@ -71,7 +72,7 @@ class Edit implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Редактирование пользователя',
             ],
-            'title' => 'Редактирование пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Редактирование пользователя | Пользователи | Admin | ' . Setting::get('sitename')
         ];
     }
 

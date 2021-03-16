@@ -4,19 +4,19 @@
 namespace App\Module\Admin\Core\Blocks;
 
 
-use App\Blocks\Custom;
-use App\Components\Helpers\ACL;
-use App\Components\Helpers\Redirect;
-use App\Components\WYSIWYG\WYSIWYG;
-use App\Entities\Blocks;
-use App\Entities\Groups;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\WYSIWYG\TinyMCE\TinyMCE;
+use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Components\Helpers\ACL;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
+use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\WYSIWYG\Summernote\Summernote;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
@@ -50,7 +50,7 @@ class EditBlock implements ModelInterface
      * @var Environment
      */
     private Environment $twig;
-    private ?\App\Entities\ACL $acl;
+    private ?\EnjoysCMS\Core\Entities\ACL $acl;
     /**
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
      */
@@ -86,7 +86,7 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = new WYSIWYG(new TinyMCE());
+        $wysiwyg = new WYSIWYG(new Summernote());
         $wysiwyg->setTwig($this->twig);
 
         return [

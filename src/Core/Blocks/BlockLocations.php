@@ -4,17 +4,18 @@
 namespace App\Module\Admin\Core\Blocks;
 
 
-use App\Components\Helpers\Redirect;
-use App\Entities\Blocks;
-use App\Entities\Groups;
-use App\Entities\Locations;
+use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Locations;
+use InvalidArgumentException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BlockLocations implements \App\Module\Admin\Core\ModelInterface
+class BlockLocations implements ModelInterface
 {
     /**
      * @var EntityManager
@@ -45,11 +46,11 @@ class BlockLocations implements \App\Module\Admin\Core\ModelInterface
         $this->urlGenerator = $urlGenerator;
         $this->renderer = $renderer;
         if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
-            throw new \InvalidArgumentException('Invalid block ID');
+            throw new InvalidArgumentException('Invalid block ID');
         }
 
         if (!($block instanceof Blocks)) {
-            throw new \InvalidArgumentException('Invalid block');
+            throw new InvalidArgumentException('Invalid block');
         }
 
         $this->block = $block;

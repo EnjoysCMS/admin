@@ -27,7 +27,7 @@ class Setting extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->settingRepository = $this->entityManager->getRepository(\App\Entities\Setting::class);
+        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
 
     public function setting()

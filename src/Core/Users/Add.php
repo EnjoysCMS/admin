@@ -4,10 +4,11 @@
 namespace App\Module\Admin\Core\Users;
 
 
-use App\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Components\Helpers\Setting;
 use App\Module\Admin\Core\ModelInterface;
-use App\Entities\Groups;
-use App\Entities\Users;
+use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
@@ -60,7 +61,7 @@ class Add implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Добавить нового пользователя'
             ],
-            'title' => 'Добавление пользователя | Пользователи | Admin | ' . \App\Components\Helpers\Setting::get(
+            'title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
                     'sitename'
                 )
         ];

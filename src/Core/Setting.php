@@ -4,12 +4,12 @@
 namespace App\Module\Admin\Core;
 
 
-use App\Components\Helpers\Redirect;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Setting implements ModelInterface
@@ -60,7 +60,7 @@ class Setting implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            'title' => 'Настройки | Admin | ' . \App\Components\Helpers\Setting::get('sitename')
+            'title' => 'Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
         ];
     }
 
@@ -80,7 +80,7 @@ class Setting implements ModelInterface
         );
 
 
-        /** @var \App\Entities\Setting $setting */
+        /** @var \EnjoysCMS\Core\Entities\Setting $setting */
         foreach ($settings as $setting) {
             switch ($setting->getType()) {
                 case 'radio':
@@ -114,7 +114,7 @@ class Setting implements ModelInterface
     private function doAction()
     {
         foreach ($this->serverRequest->post() as $k => $v) {
-            /** @var \App\Entities\Setting $item */
+            /** @var \EnjoysCMS\Core\Entities\Setting $item */
             if(null === $item = $this->settingRepository->find($k)){
                 continue;
             }
