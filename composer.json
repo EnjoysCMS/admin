@@ -2,6 +2,7 @@
   "name": "enjoyscms/admin",
   "description": "Module Admin for EnjoysCMS",
   "type": "enjoyscms-module",
+  "minimum-stability": "dev",
   "require": {
     "oomphinc/composer-installers-extender": "^2.0",
     "almasaeed2010/adminlte": "^3.0",
