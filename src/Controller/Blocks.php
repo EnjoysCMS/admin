@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Module\Admin\Controller;
 
 
+use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Blocks\AddBlocks;
 use App\Module\Admin\Core\Blocks\BlockLocations;
 use App\Module\Admin\Core\Blocks\EditBlock;
 use App\Module\Admin\Core\Blocks\ManageBlocks;
+use Exception;
+use InvalidArgumentException;
 
 class Blocks extends BaseController
 {
@@ -25,17 +28,17 @@ class Blocks extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete()
     {
         /** @var \EnjoysCMS\Core\Entities\Blocks $block */
         if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
-            throw new \InvalidArgumentException('Invalid Arguments');
+            throw new InvalidArgumentException('Invalid Arguments');
         }
 
         if(!$block->isRemovable()){
-            throw new \Exception('Block not removable');
+            throw new Exception('Block not removable');
         }
 
         $this->entityManager->remove($block);
@@ -51,13 +54,13 @@ class Blocks extends BaseController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function clone()
     {
         /** @var \EnjoysCMS\Core\Entities\Blocks $block */
         if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
-            throw new \InvalidArgumentException('Invalid Arguments');
+            throw new InvalidArgumentException('Invalid Arguments');
         }
 
         $cloned = clone $block;
@@ -66,7 +69,7 @@ class Blocks extends BaseController
         $this->entityManager->persist($cloned);
         $this->entityManager->flush();
 
-        \App\Components\Helpers\ACL::registerAcl(
+        ACL::registerAcl(
             $cloned->getBlockActionAcl(),
             $cloned->getBlockCommentAcl()
         );
