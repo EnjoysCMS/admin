@@ -5,7 +5,7 @@
   "require": {
     "oomphinc/composer-installers-extender": "^2.0",
     "almasaeed2010/adminlte": "^3.0",
-    "enjoyscms/summernote": "dev-master"
+    "enjoyscms/summernote": "*"
   },
   "autoload": {
     "psr-4": {
