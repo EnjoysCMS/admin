@@ -142,25 +142,30 @@
                     </ul>
                     {% endif %}
                 </li>
-
+                {% set modules = getModules()  %}
                 <li class="nav-header text-uppercase">Модули</li>
+                {% for module in modules %}
                 <li class="nav-item n">
                     <a href="#" class="nav-link ">
                         <i class="nav-icon fas fa-copy"></i>
                         <p>
-                            Pages [страницы]
+                            {{ module.moduleName }}
                             <i class="fas fa-angle-left right"></i>
                         </p>
                     </a>
+
                     <ul class="nav nav-treeview">
+                        {% for link, name in module.adminLinks %}
                         <li class="nav-item">
-                            <a href="pages/layout/top-nav.html" class="nav-link">
+                            <a href="{{ url(link) }}" class="nav-link">
                                 <i class="fas fa-angle-right nav-icon"></i>
-                                <p>Настройки</p>
+                                <p>{{ name }}</p>
                             </a>
                         </li>
+                        {% endfor %}
                     </ul>
                 </li>
+                {% endfor %}
 
             </ul>
         </nav>

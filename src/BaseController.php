@@ -12,6 +12,7 @@ use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
+use Twig\Loader\LoaderInterface;
 
 abstract class BaseController
 {
@@ -36,6 +37,7 @@ abstract class BaseController
      * @var RendererInterface
      */
     protected RendererInterface $renderer;
+    protected LoaderInterface $twigLoader;
 
     public function __construct(
         Environment $twig,
@@ -51,8 +53,8 @@ abstract class BaseController
         $AssetsExtension->getAssetsCollector()->getEnvironment()->setStrategy(
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
         );
-        $loader = $twig->getLoader();
-        $loader->addPath(__DIR__ . '/../template', 'a');
+        $this->twigLoader = $twig->getLoader();
+        $this->twigLoader->addPath(__DIR__ . '/../template', 'a');
         $this->twig = $twig;
 
         Assets::css(
