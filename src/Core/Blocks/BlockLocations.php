@@ -74,6 +74,7 @@ class BlockLocations implements ModelInterface
 
 
         $form->select('locations')->setMultiple()->fill(
+            [0 => '--отключить показ--'] +
             $this->entityManager->getRepository(Locations::class)->getListLocationsForSelectForm()
         );
         $form->submit('send');
