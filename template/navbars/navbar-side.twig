@@ -142,29 +142,33 @@
                     </ul>
                     {% endif %}
                 </li>
-                {% set modules = getModules()  %}
+                {% set modules = getModules() %}
                 <li class="nav-header text-uppercase">Модули</li>
                 {% for module in modules %}
-                <li class="nav-item n">
-                    <a href="#" class="nav-link ">
-                        <i class="nav-icon fas fa-copy"></i>
-                        <p>
-                            {{ module.moduleName }}
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-
-                    <ul class="nav nav-treeview">
-                        {% for link, name in module.adminLinks %}
-                        <li class="nav-item">
-                            <a href="{{ url(link) }}" class="nav-link">
-                                <i class="fas fa-angle-right nav-icon"></i>
-                                <p>{{ name }}</p>
+                    {% if accessInRoutes(module.adminLinks|keys) %}
+                        <li class="nav-item n">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    {{ module.moduleName }}
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
                             </a>
+
+                            <ul class="nav nav-treeview">
+                                {% for link, name in module.adminLinks %}
+                                    {% if access2route(link) %}
+                                        <li class="nav-item">
+                                            <a href="{{ url(link) }}" class="nav-link">
+                                                <i class="fas fa-angle-right nav-icon"></i>
+                                                <p>{{ name }}</p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
                         </li>
-                        {% endfor %}
-                    </ul>
-                </li>
+                    {% endif %}
                 {% endfor %}
 
             </ul>
