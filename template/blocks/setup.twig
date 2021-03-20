@@ -14,10 +14,10 @@
             <div class="card-body">
                 <h4>Не активированные блоки</h4>
                 <ul class="list-group pb-5">
-                    {% for path, title in notActiveBlocks %}
+                    {% for path, item in notActiveBlocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
-                                <b>{{ title }}</b>
+                                <b>{{ item.name }}</b>
                                 <br>
                                 <small>{{ path }}</small>
                             </div>
@@ -29,10 +29,10 @@
                 </ul>
                 <h4>Активированные блоки</h4>
                 <ul class="list-group text-muted">
-                    {% for path, title in activeBlocks %}
+                    {% for path, item in activeBlocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
-                                <b>{{ title }}</b>
+                                <b>{{ item.name }}</b>
                                 <br>
                                 <small>{{ path }}</small>
                             </div>

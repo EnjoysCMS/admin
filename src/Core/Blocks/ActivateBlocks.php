@@ -10,6 +10,7 @@ use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Entities\Blocks;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -47,10 +48,12 @@ class ActivateBlocks
         $this->entityManager->flush();
 
 
-        \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
+        ACL::registerAcl(
             $block->getBlockActionAcl(),
             $block->getBlockCommentAcl()
         );
+
+        return $block->getId();
     }
 
 

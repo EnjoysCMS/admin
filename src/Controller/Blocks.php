@@ -133,8 +133,8 @@ class Blocks extends BaseController
     public function activate()
     {
         $block = new ActivateBlocks($this->serverRequest->get('class'), $this->entityManager);
-        $block->activate();
-        Redirect::http($this->urlGenerator->generate('admin/setupblocks'));
+        $id = $block->activate();
+        Redirect::http($this->urlGenerator->generate('admin/editblock', ['id' => $id]));
     }
 
 }
