@@ -1,0 +1,50 @@
+{% extends "@a/layout.twig" %}
+
+{% block content %}
+
+    <section class="content">
+
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Блоки (Активация)</h2>
+
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <h4>Не активированные блоки</h4>
+                <ul class="list-group pb-5">
+                    {% for path, title in notActiveBlocks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <b>{{ title }}</b>
+                                <br>
+                                <small>{{ path }}</small>
+                            </div>
+                            <div>
+                                <a class="btn btn-sm btn-primary" href="{{ url('admin/acivateblocks', {"class": path}) }}">Установить</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <h4>Активированные блоки</h4>
+                <ul class="list-group text-muted">
+                    {% for path, title in activeBlocks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <b>{{ title }}</b>
+                                <br>
+                                <small>{{ path }}</small>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+
+    </section>
+
+
+{% endblock %}

@@ -134,4 +134,10 @@ admin/setupblocks:
   path: /admin/blocks/setup
   controller: ['App\Module\Admin\Controller\Blocks', 'setUp']
   options:
-    aclComment: Активация, регистрация, отключение и тд. блоков
+    aclComment: Просмотре не активированных блоков
+
+admin/acivateblocks:
+  path: /admin/blocks/activate
+  controller: ['App\Module\Admin\Controller\Blocks', 'activate']
+  options:
+    aclComment: Установка (активация) блоков

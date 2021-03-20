@@ -82,7 +82,7 @@ class AddBlocks implements ModelInterface
             $block->setName($this->serverRequest->post('name'));
             $block->setBody($this->serverRequest->post('body'));
             $block->setRemovable(true);
-            $block->setOptions(Custom::stockOptions());
+            $block->setOptions(Custom::getMeta()['options']);
 
             $this->entityManager->beginTransaction();
             $this->entityManager->persist($block);

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Module\Admin\Controller;
 
 
+use App\Module\Admin\Core\Blocks\ActivateBlocks;
+use App\Module\Admin\Core\Blocks\SetupBlocks;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
@@ -119,6 +121,20 @@ class Blocks extends BaseController
 
     public function setUp()
     {
+        return $this->view(
+            '@a/blocks/setup.twig',
+            $this->getContext(
+                new SetupBlocks($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
+            )
+        );
+    }
+
+
+    public function activate()
+    {
+        $block = new ActivateBlocks($this->serverRequest->get('class'), $this->entityManager);
+        $block->activate();
+        Redirect::http($this->urlGenerator->generate('admin/setupblocks'));
     }
 
 }
