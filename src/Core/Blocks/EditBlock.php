@@ -100,9 +100,6 @@ class EditBlock implements ModelInterface
     {
         $form = new Form(['method' => 'post']);
 
-
-
-
         $form->setDefaults(
             [
                 'name' => $this->block->getName(),

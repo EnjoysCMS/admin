@@ -42,8 +42,15 @@ class ActivateBlocks
         $block->setRemovable(true);
         $block->setOptions($data['options']);
 
+
         $this->entityManager->persist($block);
         $this->entityManager->flush();
+
+
+        \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
+            $block->getBlockActionAcl(),
+            $block->getBlockCommentAcl()
+        );
     }
 
 
