@@ -25,6 +25,8 @@
                                 <a class="btn btn-sm btn-primary" href="{{ url('admin/acivateblocks', {"class": path}) }}">Установить</a>
                             </div>
                         </li>
+                    {% else %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
                     {% endfor %}
                 </ul>
                 <h4>Активированные блоки</h4>
@@ -37,6 +39,8 @@
                                 <small>{{ path }}</small>
                             </div>
                         </li>
+                    {% else %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
                     {% endfor %}
                 </ul>
             </div>

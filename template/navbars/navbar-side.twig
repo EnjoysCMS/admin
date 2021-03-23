@@ -143,7 +143,7 @@
                     {% endif %}
                 </li>
                 {% set modules = getModules() %}
-                <li class="nav-header text-uppercase">Модули</li>
+
                 {% for module in modules %}
                     {% if accessInRoutes(module.adminLinks|keys) %}
                         <li class="nav-item n">
