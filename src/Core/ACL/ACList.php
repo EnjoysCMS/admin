@@ -12,6 +12,7 @@ class ACList
 
     /**
      * ACList constructor.
+     *
      * @param ObjectRepository|ACL $repositoryAcl
      */
     public function __construct(ObjectRepository $repositoryAcl)
@@ -29,7 +30,11 @@ class ACList
         $ret = [];
         $groupedAcl = $this->getGroupedAcl();
         foreach ($groupedAcl as $group => $acls) {
-            /** @var \EnjoysCMS\Core\Entities\ACL $acl */
+            /**
+* 
+             *
+ * @var \EnjoysCMS\Core\Entities\ACL $acl 
+*/
             foreach ($acls as $acl) {
                 $ret[$group][' ' . $acl->getId()]  = [
                     $acl->getComment() . '<br><small>' . $acl->getAction() . '</small>',

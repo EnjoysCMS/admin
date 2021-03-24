@@ -88,7 +88,11 @@ class AddBlocks implements ModelInterface
             $this->entityManager->persist($block);
             $this->entityManager->flush();
 
-            /** @var ACL $acl */
+            /**
+* 
+             *
+ * @var ACL $acl 
+*/
             $acl = \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
                 $block->getBlockActionAcl(),
                 $block->getBlockCommentAcl()

@@ -97,8 +97,9 @@ class Edit implements ModelInterface
                 'Такой логин уже занят',
                 function () {
                     if (null === $user = $this->em->getRepository(Users::class)->findOneBy(
-                            ['login' => $this->serverRequest->post('login')]
-                        )) {
+                        ['login' => $this->serverRequest->post('login')]
+                    )
+                    ) {
                         return true;
                     }
 
@@ -121,7 +122,8 @@ class Edit implements ModelInterface
                     if (in_array(
                         Users::ADMIN_GROUP_ID,
                         $this->serverRequest->post('groups', [])
-                    )) {
+                    )
+                    ) {
                         return true;
                     }
 

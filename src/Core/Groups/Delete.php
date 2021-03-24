@@ -41,7 +41,6 @@ class Delete implements ModelInterface
         EntityManager $entityManager,
         ServerRequestInterface $serverRequest,
         UrlGeneratorInterface $urlGenerator,
-
         RendererInterface $renderer
     ) {
         $this->entityManager = $entityManager;

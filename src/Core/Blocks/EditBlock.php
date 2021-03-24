@@ -71,7 +71,7 @@ class EditBlock implements ModelInterface
         if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
-        if(!($block instanceof Blocks)){
+        if(!($block instanceof Blocks)) {
             throw new \InvalidArgumentException('Invalid block');
         }
         $this->block = $block;
@@ -125,12 +125,12 @@ class EditBlock implements ModelInterface
             foreach ($this->block->getOptions() as $key => $option) {
                 if (isset($option['form']['type'])) {
                     switch ($option['form']['type']) {
-                        case 'radio':
-                            $form->radio(
-                                "options[{$key}]",
-                                (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription($option['description'])->fill($option['form']['data']);
-                            break;
+                    case 'radio':
+                        $form->radio(
+                            "options[{$key}]",
+                            (isset($option['name'])) ? $option['name'] : $key
+                        )->setDescription($option['description'])->fill($option['form']['data']);
+                        break;
                     }
 
                     continue;
@@ -142,7 +142,7 @@ class EditBlock implements ModelInterface
         }
 
         $form->checkbox('groups', 'Права доступа')->fill(
-           $this->groupsRepository->getGroupsArray()
+            $this->groupsRepository->getGroupsArray()
         )->addRule(Rules::REQUIRED);
 
         $form->submit('send');
@@ -174,9 +174,13 @@ class EditBlock implements ModelInterface
         $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
 
 
-        /** @var Groups $group */
+        /**
+* 
+         *
+ * @var Groups $group 
+*/
         foreach ($this->groupsRepository->findAll() as $group) {
-            if(in_array($group->getId(), $this->serverRequest->post('groups', []))){
+            if(in_array($group->getId(), $this->serverRequest->post('groups', []))) {
                 $this->acl->setGroups($group);
                 continue;
             }
@@ -187,6 +191,6 @@ class EditBlock implements ModelInterface
         $this->entityManager->flush();
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
-//        Redirect::http();
+        //        Redirect::http();
     }
 }

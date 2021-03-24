@@ -49,11 +49,11 @@ class Add implements ModelInterface
 
     /**
      * @Inject({"modules" = "Modules"})
-     * @param ObjectRepository $groupsRepository
-     * @param EntityManager $entityManager
-     * @param ServerRequestInterface $serverRequest
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param RendererInterface $renderer
+     * @param             ObjectRepository       $groupsRepository
+     * @param             EntityManager          $entityManager
+     * @param             ServerRequestInterface $serverRequest
+     * @param             UrlGeneratorInterface  $urlGenerator
+     * @param             RendererInterface      $renderer
      */
     public function __construct(
         ObjectRepository $groupsRepository,
@@ -132,8 +132,9 @@ class Add implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->groupsRepository->findOneBy(
-                            ['name' => $this->serverRequest->post('name')]
-                        )) {
+                        ['name' => $this->serverRequest->post('name')]
+                    )
+                    ) {
                         return true;
                     }
 

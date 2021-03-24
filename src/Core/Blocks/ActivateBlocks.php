@@ -26,7 +26,7 @@ class ActivateBlocks
 
     public function __construct(string $class, EntityManager $entityManager)
     {
-        if(!class_exists($class)){
+        if(!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
         $this->class = $class;

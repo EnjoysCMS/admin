@@ -62,8 +62,8 @@ class Add implements ModelInterface
                 'Добавить нового пользователя'
             ],
             'title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
-                    'sitename'
-                )
+                'sitename'
+            )
         ];
     }
 
@@ -102,8 +102,9 @@ class Add implements ModelInterface
                 'Такой логин уже занят',
                 function () {
                     if (null === $this->entityManager->getRepository(Users::class)->findOneBy(
-                            ['login' => $this->serverRequest->post('login')]
-                        )) {
+                        ['login' => $this->serverRequest->post('login')]
+                    )
+                    ) {
                         return true;
                     }
                     return false;

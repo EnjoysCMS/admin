@@ -34,12 +34,16 @@ class Blocks extends BaseController
      */
     public function delete()
     {
-        /** @var \EnjoysCMS\Core\Entities\Blocks $block */
-        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
+        /**
+* 
+         *
+ * @var \EnjoysCMS\Core\Entities\Blocks $block 
+*/
+        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))) {
             throw new InvalidArgumentException('Invalid Arguments');
         }
 
-        if(!$block->isRemovable()){
+        if(!$block->isRemovable()) {
             throw new Exception('Block not removable');
         }
 
@@ -47,12 +51,12 @@ class Blocks extends BaseController
         $this->entityManager->flush();
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
-//        return $this->view(
-//            '@a/blocks/manage.twig',
-//            $this->getContext(
-//                new ManageBlocks($this->entityManager)
-//            )
-//        );
+        //        return $this->view(
+        //            '@a/blocks/manage.twig',
+        //            $this->getContext(
+        //                new ManageBlocks($this->entityManager)
+        //            )
+        //        );
     }
 
     /**
@@ -60,8 +64,12 @@ class Blocks extends BaseController
      */
     public function clone()
     {
-        /** @var \EnjoysCMS\Core\Entities\Blocks $block */
-        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))){
+        /**
+* 
+         *
+ * @var \EnjoysCMS\Core\Entities\Blocks $block 
+*/
+        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))) {
             throw new InvalidArgumentException('Invalid Arguments');
         }
 
@@ -79,12 +87,12 @@ class Blocks extends BaseController
 
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
-//        return $this->view(
-//            '@a/blocks/manage.twig',
-//            $this->getContext(
-//                new ManageBlocks($this->entityManager)
-//            )
-//        );
+        //        return $this->view(
+        //            '@a/blocks/manage.twig',
+        //            $this->getContext(
+        //                new ManageBlocks($this->entityManager)
+        //            )
+        //        );
     }
 
 

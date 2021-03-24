@@ -32,14 +32,16 @@ class Setting extends BaseController
 
     public function setting()
     {
-        return $this->view('@a/setting/setting.twig', $this->getContext(
-            new \App\Module\Admin\Core\Setting(
-                $this->settingRepository,
-                $this->entityManager,
-                $this->serverRequest,
-                $this->urlGenerator,
-                $this->renderer
+        return $this->view(
+            '@a/setting/setting.twig', $this->getContext(
+                new \App\Module\Admin\Core\Setting(
+                    $this->settingRepository,
+                    $this->entityManager,
+                    $this->serverRequest,
+                    $this->urlGenerator,
+                    $this->renderer
+                )
             )
-        ));
+        );
     }
 }

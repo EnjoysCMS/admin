@@ -98,9 +98,11 @@ class Edit implements ModelInterface
             [
                 'name' => $this->group->getName(),
                 'description' => $this->group->getDescription(),
-                'acl' => array_map(function($o){
-                    return $o->getId();
-                }, $this->group->getAcl()->toArray())
+                'acl' => array_map(
+                    function ($o) {
+                        return $o->getId();
+                    }, $this->group->getAcl()->toArray()
+                )
             ]
         );
 
@@ -110,8 +112,9 @@ class Edit implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->entityManager->getRepository(Groups::class)->findOneBy(
-                            ['name' => $this->serverRequest->post('name')]
-                        )) {
+                        ['name' => $this->serverRequest->post('name')]
+                    )
+                    ) {
                         return true;
                     }
 
@@ -125,7 +128,7 @@ class Edit implements ModelInterface
         $form->textarea('description', 'Описание группы');
 
 
-        if($this->group->getId() === Users::ADMIN_GROUP_ID){
+        if($this->group->getId() === Users::ADMIN_GROUP_ID) {
             $form->header('Группа имеет все привилегии (доступ ко всему)');
         }else{
             $form->header('Права доступа');
@@ -161,6 +164,6 @@ class Edit implements ModelInterface
 
         $this->entityManager->flush();
         Redirect::http($this->urlGenerator->generate('admin/groups'));
-//        Redirect::http();
+        //        Redirect::http();
     }
 }
