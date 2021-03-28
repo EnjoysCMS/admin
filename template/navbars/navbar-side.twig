@@ -102,6 +102,30 @@
                     </li>
                 {% endif %}
 
+
+                {% if accessInRoutes(['admin/managewidgets', 'admin/editwidget']) %}
+                <li class="nav-item">
+                    <a href="/admin/widgets" class="nav-link">
+                        <i class="nav-icon fas fa-tree"></i>
+                        <p>
+                            Виджеты
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {% if access2route('admin/managewidgets') %}
+                            <li class="nav-item">
+                                <a href="{{ url('admin/managewidgets') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Менеджер виджетов</p>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                    {% endif %}
+                </li>
+
                 {% if accessInRoutes(['admin/blocks', 'admin/addblock', 'admin/setupblocks']) %}
                 <li class="nav-item">
                     <a href="/admin/blocks" class="nav-link">

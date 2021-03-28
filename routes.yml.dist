@@ -1,34 +1,34 @@
 admin/index:
   path: /admin
-  controller: ['App\Module\Admin\Controller\Index', 'dashboard']
+  controller: [ 'App\Module\Admin\Controller\Index', 'dashboard' ]
   options:
     aclComment: Доступ к главной странице в админке (dashboard)
 
 # Setting
 admin/setting:
   path: /admin/setting
-  controller: ['App\Module\Admin\Controller\Setting', 'setting']
+  controller: [ 'App\Module\Admin\Controller\Setting', 'setting' ]
   options:
     aclComment: Настройки сайта
 
 #  USERS
 admin/users:
   path: /admin/users/list
-  controller: ['App\Module\Admin\Controller\Users', 'list']
+  controller: [ 'App\Module\Admin\Controller\Users', 'list' ]
   options:
     aclComment: Доступ к просмотру списка пользователей
 
 
 admin/adduser:
   path: /admin/users/add
-  controller: ['App\Module\Admin\Controller\Users', 'add']
+  controller: [ 'App\Module\Admin\Controller\Users', 'add' ]
   options:
     aclComment: Добавление пользователей
 
 
 admin/edituser:
   path: /admin/users/edit/@{id}
-  controller: ['App\Module\Admin\Controller\Users', 'edit']
+  controller: [ 'App\Module\Admin\Controller\Users', 'edit' ]
   requirements:
     id: '\d+'
   options:
@@ -37,7 +37,7 @@ admin/edituser:
 
 admin/deleteuser:
   path: /admin/users/delete/{id}
-  controller: ['App\Module\Admin\Controller\Users', 'delete']
+  controller: [ 'App\Module\Admin\Controller\Users', 'delete' ]
   requirements:
     id: '\d+'
   options:
@@ -46,7 +46,7 @@ admin/deleteuser:
 
 admin/user/changepassword:
   path: /admin/users/changepassword@{id}
-  controller: ['App\Module\Admin\Controller\Users', 'changePassword']
+  controller: [ 'App\Module\Admin\Controller\Users', 'changePassword' ]
   requirements:
     id: '\d+'
   options:
@@ -56,19 +56,19 @@ admin/user/changepassword:
 
 admin/groups:
   path: /admin/groups
-  controller: ['App\Module\Admin\Controller\Groups', 'list']
+  controller: [ 'App\Module\Admin\Controller\Groups', 'list' ]
   options:
     aclComment: Доступ к просмотру списка групп
 
 admin/addgroup:
   path: /admin/groups/add
-  controller: ['App\Module\Admin\Controller\Groups', 'add']
+  controller: [ 'App\Module\Admin\Controller\Groups', 'add' ]
   options:
     aclComment: Добаление групп пользователей
 
 admin/editgroup:
   path: /admin/groups/edit/{id}
-  controller: ['App\Module\Admin\Controller\Groups', 'edit']
+  controller: [ 'App\Module\Admin\Controller\Groups', 'edit' ]
   requirements:
     id: '\d+'
   options:
@@ -76,7 +76,7 @@ admin/editgroup:
 
 admin/deletegroup:
   path: /admin/deletegroups@{id}
-  controller: ['App\Module\Admin\Controller\Groups', 'delete']
+  controller: [ 'App\Module\Admin\Controller\Groups', 'delete' ]
   requirements:
     id: '\d+'
   options:
@@ -86,13 +86,13 @@ admin/deletegroup:
 
 admin/blocks:
   path: /admin/blocks/setting
-  controller: ['App\Module\Admin\Controller\Blocks', 'manage']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'manage' ]
   options:
     aclComment: Просмотр активных блоков
 
 admin/editblock:
   path: /admin/blocks/edit/{id}
-  controller: ['App\Module\Admin\Controller\Blocks', 'edit']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'edit' ]
   requirements:
     id: '\d+'
   options:
@@ -101,7 +101,7 @@ admin/editblock:
 
 admin/cloneblocks:
   path: /admin/blocks/clone/{id}
-  controller: ['App\Module\Admin\Controller\Blocks', 'clone']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'clone' ]
   requirements:
     id: '\d+'
   options:
@@ -109,7 +109,7 @@ admin/cloneblocks:
 
 admin/deleteblocks:
   path: /admin/blocks/delete/{id}
-  controller: ['App\Module\Admin\Controller\Blocks', 'delete']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'delete' ]
   requirements:
     id: '\d+'
   options:
@@ -118,7 +118,7 @@ admin/deleteblocks:
 
 admin/blocklocation:
   path: /admin/blocks/locations/{id}
-  controller: ['App\Module\Admin\Controller\Blocks', 'location']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'location' ]
   requirements:
     id: '\d+'
   options:
@@ -126,18 +126,60 @@ admin/blocklocation:
 
 admin/addblock:
   path: /admin/blocks/add
-  controller: ['App\Module\Admin\Controller\Blocks', 'add']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'add' ]
   options:
     aclComment: Добавление пользовательского блока (простой текстовый блок)
 
 admin/setupblocks:
   path: /admin/blocks/setup
-  controller: ['App\Module\Admin\Controller\Blocks', 'setUp']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'setUp' ]
   options:
     aclComment: Просмотре не активированных блоков
 
 admin/acivateblocks:
   path: /admin/blocks/activate
-  controller: ['App\Module\Admin\Controller\Blocks', 'activate']
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'activate' ]
   options:
     aclComment: Установка (активация) блоков
+
+
+# Widgets
+
+admin/editwidget:
+  path: /admin/widgets/edit/{id}
+  controller: [ 'App\Module\Admin\Controller\Widgets', 'edit' ]
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Редактирование виджетов
+
+
+admin/clonewidget:
+  path: /admin/widgets/clone/{id}
+  controller: [ 'App\Module\Admin\Controller\Widgets', 'clone' ]
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Клонирование виджетов
+
+admin/deletewidget:
+  path: /admin/widgets/delete/{id}
+  controller: [ 'App\Module\Admin\Controller\Widgets', 'delete' ]
+  requirements:
+    id: '\d+'
+  options:
+    aclComment: Удаление виджетов
+
+
+
+admin/managewidgets:
+  path: /admin/widgets/manage
+  controller: [ 'App\Module\Admin\Controller\Widgets', 'manage' ]
+  options:
+    aclComment: Просмотр не активированных виджетов
+
+admin/acivatewidget:
+  path: /admin/widgets/activate
+  controller: [ 'App\Module\Admin\Controller\Blocks', 'activate' ]
+  options:
+    aclComment: Установка (активация) виджетов

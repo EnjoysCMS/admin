@@ -49,10 +49,10 @@ abstract class BaseController
         $this->initAssets();
 
         /**
-* 
          *
- * @var AssetsExtension $AssetsExtension 
-*/
+         *
+         * @var AssetsExtension $AssetsExtension
+         */
         $AssetsExtension = $twig->getExtension(AssetsExtension::class);
         $AssetsExtension->getAssetsCollector()->getEnvironment()->setStrategy(
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
