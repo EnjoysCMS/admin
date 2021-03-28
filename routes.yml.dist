@@ -180,6 +180,6 @@ admin/managewidgets:
 
 admin/acivatewidget:
   path: /admin/widgets/activate
-  controller: [ 'App\Module\Admin\Controller\Blocks', 'activate' ]
+  controller: [ 'App\Module\Admin\Controller\Widgets', 'activate' ]
   options:
     aclComment: Установка (активация) виджетов
