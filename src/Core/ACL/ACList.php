@@ -74,13 +74,13 @@ class ACList
          */
         $systemNamespaces = Utils::parseComposerJson($_ENV['PROJECT_DIR'] . '/composer.json')->namespaces;
         foreach ($systemNamespaces as $ns) {
-            $groupedAcl['System Core'] = array_filter(
+            $groupedAcl['@Application'] = array_filter(
                 $activeAcl,
                 function ($v) use ($ns) {
                     return str_starts_with($v->getAction(), $ns);
                 }
             );
-            rsort($groupedAcl['System Core']);
+            rsort($groupedAcl['@Application']);
         }
 
 

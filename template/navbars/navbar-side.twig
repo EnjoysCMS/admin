@@ -166,6 +166,34 @@
                     </ul>
                     {% endif %}
                 </li>
+                {% set appLinks = getApplicationAdminLinks() %}
+
+
+
+                        <li class="nav-item n">
+                            <a href="#" class="nav-link ">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    @Application
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+
+                            <ul class="nav nav-treeview">
+                                {% for name, appLink in appLinks %}
+                                    {% if access2route(name) %}
+                                        <li class="nav-item">
+                                            <a href="{{ url(name) }}" class="nav-link">
+                                                <i class="fas fa-angle-right nav-icon"></i>
+                                                <p>{{ appLink.getOption('adminTitle') }}</p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+
+
                 {% set modules = getModules() %}
 
                 {% for module in modules %}
