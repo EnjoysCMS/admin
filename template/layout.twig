@@ -7,7 +7,10 @@
     {% do asset('js', [
         {0: 'modules/admin/template/assets/custom.js', 'minify': false}
     ]) %}
+    {% block __css__ deferred %}
     {{ eCSS() }}
+    {{ getStyles() }}
+    {% endblock %}
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -16,45 +19,49 @@
 
     {% include "@a/navbars/navbar-side.twig" %}
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        {% block breadcrumb %}
-            {% include "@a/breadcrumb.twig" %}
-        {% endblock %}
+    {% apply stylesCatcher | scriptsCatcher %}
+        <div class="content-wrapper">
+            {% block breadcrumb %}
+                {% include "@a/breadcrumb.twig" %}
+            {% endblock %}
 
-        {% block content %}
+            {% block content %}
 
 
-            <section class="content">
+                <section class="content">
 
-                <!-- Default box -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Title</h3>
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Title</h3>
 
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
-                                    title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip"
-                                    title="Remove">
-                                <i class="fas fa-times"></i></button>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                        data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fas fa-minus"></i></button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove"
+                                        data-toggle="tooltip"
+                                        title="Remove">
+                                    <i class="fas fa-times"></i></button>
+                            </div>
                         </div>
+                        <div class="card-body">
+                            Start creating your amazing application!
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            Footer
+                        </div>
+                        <!-- /.card-footer-->
                     </div>
-                    <div class="card-body">
-                        Start creating your amazing application!
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer">
-                        Footer
-                    </div>
-                    <!-- /.card-footer-->
-                </div>
-                <!-- /.card -->
+                    <!-- /.card -->
 
-            </section>
-        {% endblock %}
-        <!-- /.content -->
-    </div>
+                </section>
+            {% endblock %}
+            <!-- /.content -->
+        </div>
+    {% endapply %}
     <!-- /.content-wrapper -->
     <footer class="main-footer">
         <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
@@ -68,7 +75,10 @@
 </div>
 <!-- ./wrapper -->
 
+{% block __js__ deferred %}
 {{ eJS() }}
+{{ getScripts() }}
+{% endblock %}
 
 {% block scripts %}
 {% endblock %}
