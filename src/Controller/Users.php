@@ -41,16 +41,16 @@ class Users extends BaseController
     {
         Assets::css(
             [
-                $_ENV['ADMINLTE'] . '/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
-                $_ENV['ADMINLTE'] . '/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
             ]
         );
         Assets::js(
             [
-                $_ENV['ADMINLTE'] . '/plugins/datatables/jquery.dataTables.min.js',
-                $_ENV['ADMINLTE'] . '/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
-                $_ENV['ADMINLTE'] . '/plugins/datatables-responsive/js/dataTables.responsive.min.js',
-                $_ENV['ADMINLTE'] . '/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
+                __DIR__. '/../../node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
             ]
         );
 

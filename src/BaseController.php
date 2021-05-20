@@ -64,17 +64,17 @@ abstract class BaseController
         Assets::css(
             [
                 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback',
-                $_ENV['ADMINLTE'] . '/plugins/fontawesome-free/css/all.min.css',
-                $_ENV['ADMINLTE'] . '/dist/css/adminlte.min.css',
+                __DIR__. '/../node_modules/admin-lte/plugins/fontawesome-free/css/all.min.css',
+                __DIR__. '/../node_modules/admin-lte/dist/css/adminlte.min.css',
             ]
         );
 
         Assets::js(
             [
-                $_ENV['ADMINLTE'] . '/plugins/jquery/jquery.min.js',
-                $_ENV['ADMINLTE'] . '/plugins/jquery-ui/jquery-ui.min.js',
-                $_ENV['ADMINLTE'] . '/plugins/bootstrap/js/bootstrap.bundle.min.js',
-                $_ENV['ADMINLTE'] . '/dist/js/adminlte.js',
+                __DIR__. '/../node_modules/admin-lte/plugins/jquery/jquery.min.js',
+                __DIR__. '/../node_modules/admin-lte/plugins/jquery-ui/jquery-ui.min.js',
+                __DIR__. '/../node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js',
+                __DIR__. '/../node_modules/admin-lte/dist/js/adminlte.js',
             ]
         );
         $this->serverRequest = $serverRequest;
@@ -87,15 +87,15 @@ abstract class BaseController
     {
         Assets::createSymlink(
             $_ENV['PUBLIC_DIR'] . '/dist',
-            $_ENV['ADMINLTE'] . '/dist'
+            __DIR__. '/../node_modules/admin-lte/dist'
         );
         Assets::createSymlink(
             $_ENV['PUBLIC_DIR'] . '/assets/webfonts',
-            $_ENV['ADMINLTE'] . '/plugins/fontawesome-free/webfonts'
+            __DIR__. '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
         Assets::createSymlink(
-            $_ENV['PUBLIC_DIR'] . '/assets/vendor/almasaeed2010/adminlte/plugins/fontawesome-free/webfonts',
-            $_ENV['ADMINLTE'] . '/plugins/fontawesome-free/webfonts'
+            $_ENV['PUBLIC_DIR'] . '/assets/modules/admin/node_modules/admin-lte/plugins/fontawesome-free/webfonts',
+            __DIR__. '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
     }
 
