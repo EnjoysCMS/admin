@@ -14,7 +14,9 @@
   },
   "extra": {
     "module-name": "Admin panel",
-    "use-migrations": false,
+    "use-migrations": false
+  },
+  "scripts": {
     "post-install-cmd": "cd ./modules/admin && yarn install",
     "post-update-cmd": "@post-install-cmd"
   }
