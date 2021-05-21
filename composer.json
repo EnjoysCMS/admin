@@ -17,7 +17,6 @@
     "use-migrations": false
   },
   "scripts": {
-    "post-install-cmd": "cd ./modules/admin && yarn install",
-    "post-update-cmd": "@post-install-cmd"
+    "post-install-cmd": "cd ./modules/admin && yarn install"
   }
 }
