@@ -17,6 +17,7 @@ use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Blocks;
 use EnjoysCMS\Core\Entities\Groups;
 use EnjoysCMS\WYSIWYG\Summernote\Summernote;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
@@ -55,13 +56,15 @@ class EditBlock implements ModelInterface
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
      */
     private $groupsRepository;
+    private ContainerInterface $container;
 
     public function __construct(
         Environment $twig,
         EntityManager $entityManager,
         ServerRequestInterface $serverRequest,
         UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        RendererInterface $renderer,
+        ContainerInterface $container
     ) {
         $this->twig = $twig;
         $this->entityManager = $entityManager;
@@ -77,6 +80,7 @@ class EditBlock implements ModelInterface
         $this->block = $block;
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
         $this->groupsRepository = $this->entityManager->getRepository(Groups::class);
+        $this->container = $container;
     }
 
     public function getContext(): array
@@ -86,8 +90,7 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = new WYSIWYG(new Summernote());
-        $wysiwyg->setTwig($this->twig);
+        $wysiwyg = WYSIWYG::getInstance('summernote', $this->container);
 
         return [
             'form' => $this->renderer,

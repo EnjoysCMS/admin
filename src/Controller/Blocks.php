@@ -7,6 +7,7 @@ namespace App\Module\Admin\Controller;
 
 use App\Module\Admin\Core\Blocks\ActivateBlocks;
 use App\Module\Admin\Core\Blocks\SetupBlocks;
+use DI\FactoryInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
@@ -16,6 +17,7 @@ use App\Module\Admin\Core\Blocks\EditBlock;
 use App\Module\Admin\Core\Blocks\ManageBlocks;
 use Exception;
 use InvalidArgumentException;
+use Psr\Container\ContainerInterface;
 
 class Blocks extends BaseController
 {
@@ -96,13 +98,11 @@ class Blocks extends BaseController
     }
 
 
-    public function edit()
+    public function edit(ContainerInterface $container)
     {
         return $this->view(
             '@a/blocks/edit.twig',
-            $this->getContext(
-                new EditBlock($this->twig, $this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
-            )
+            $this->getContext($container->get(FactoryInterface::class)->make(EditBlock::class))
         );
     }
 
@@ -127,13 +127,11 @@ class Blocks extends BaseController
         );
     }
 
-    public function setUp()
+    public function setUp(ContainerInterface $container)
     {
         return $this->view(
             '@a/blocks/setup.twig',
-            $this->getContext(
-                new SetupBlocks($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
-            )
+            $this->getContext($container->get(FactoryInterface::class)->make(SetupBlocks::class))
         );
     }
 

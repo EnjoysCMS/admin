@@ -11,6 +11,7 @@ use Enjoys\Config\Parse\YAML;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Entities\Blocks;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SetupBlocks implements ModelInterface
@@ -32,18 +33,25 @@ class SetupBlocks implements ModelInterface
      * @var RendererInterface
      */
     private RendererInterface $renderer;
+    private LoggerInterface $logger;
+    /**
+     * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
+     */
+    private $blocksRepository;
 
     public function __construct(
         EntityManager $entityManager,
         ServerRequestInterface $serverRequest,
         UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        RendererInterface $renderer,
+        LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
         $this->renderer = $renderer;
         $this->blocksRepository = $entityManager->getRepository(Blocks::class);
+        $this->logger = $logger->withName('Blocks Config');
     }
 
     public function getContext(): array
@@ -55,11 +63,16 @@ class SetupBlocks implements ModelInterface
             $this->blocksRepository->findAll()
         );
 
-        $allBlocks = new Config();
-        $configs = glob($_ENV['PROJECT_DIR'] . '/modules/*/blocks.yml');
+        $allBlocks = new Config($this->logger);
+        $configs = array_merge(
+            [$_ENV['PROJECT_DIR'] . '/app/blocks.yml'],
+            glob($_ENV['PROJECT_DIR'] . '/modules/*/blocks.yml'),
+        );
+
         foreach ($configs as $config) {
             $allBlocks->addConfig($config, [], YAML::class);
         }
+
         $activeBlocks = (array_filter(
             $allBlocks->getConfig(),
             function ($k) use ($installedBlocks) {
