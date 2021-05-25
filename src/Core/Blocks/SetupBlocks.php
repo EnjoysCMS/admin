@@ -73,18 +73,18 @@ class SetupBlocks implements ModelInterface
             $allBlocks->addConfig($config, [], YAML::class);
         }
 
-        $activeBlocks = (array_filter(
-            $allBlocks->getConfig(),
-            function ($k) use ($installedBlocks) {
-                if (in_array($k, $installedBlocks)) {
-                    return true;
-                }
-                return false;
-            },
-            ARRAY_FILTER_USE_KEY
-        ));
-        $notActiveBlocks = array_diff_key($allBlocks->getConfig(), $activeBlocks);
+//        $activeBlocks = (array_filter(
+//            $allBlocks->getConfig(),
+//            function ($k) use ($installedBlocks) {
+//                if (in_array($k, $installedBlocks)) {
+//                    return true;
+//                }
+//                return false;
+//            },
+//            ARRAY_FILTER_USE_KEY
+//        ));
+//        $notActiveBlocks = array_diff_key($allBlocks->getConfig(), $activeBlocks);
 
-        return ['activeBlocks' => $activeBlocks, 'notActiveBlocks' => $notActiveBlocks];
+        return ['blocks' => $allBlocks->getConfig()];
     }
 }

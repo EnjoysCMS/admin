@@ -12,9 +12,9 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <h4>Не активированные блоки</h4>
+                <h4>Зарегистрированные блоки</h4>
                 <ul class="list-group pb-5">
-                    {% for path, item in notActiveBlocks %}
+                    {% for path, item in blocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
                                 <b>{{ item.name }}</b>
@@ -22,27 +22,14 @@
                                 <small>{{ path }}</small>
                             </div>
                             <div>
-                                <a class="btn btn-sm btn-primary" href="{{ url('admin/acivateblocks', {"class": path}) }}">Установить</a>
+                                <a class="btn btn-sm btn-primary" href="{{ url('admin/acivateblocks', {"class": path}) }}">Добавить</a>
                             </div>
                         </li>
                     {% else %}
                         <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
                     {% endfor %}
                 </ul>
-                <h4>Активированные блоки</h4>
-                <ul class="list-group text-muted">
-                    {% for path, item in activeBlocks %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div class="flex-grow-1">
-                                <b>{{ item.name }}</b>
-                                <br>
-                                <small>{{ path }}</small>
-                            </div>
-                        </li>
-                    {% else %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
-                    {% endfor %}
-                </ul>
+
             </div>
             <!-- /.card-body -->
         </div>
