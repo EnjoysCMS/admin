@@ -2,6 +2,7 @@
 
 namespace App\Module\Admin\Core\Blocks;
 
+use Doctrine\ORM\Id\UuidGenerator;
 use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -16,6 +17,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddBlocks implements ModelInterface
@@ -78,8 +80,10 @@ class AddBlocks implements ModelInterface
     private function doAction()
     {
         try {
+
             $block = new Blocks();
             $block->setName($this->serverRequest->post('name'));
+            $block->setAlias(Uuid::uuid4());
             $block->setBody($this->serverRequest->post('body'));
             $block->setRemovable(true);
             $block->setOptions(Custom::getMeta()['options']);

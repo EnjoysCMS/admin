@@ -74,7 +74,7 @@ class EditBlock implements ModelInterface
         if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
-        if(!($block instanceof Blocks)) {
+        if (!($block instanceof Blocks)) {
             throw new \InvalidArgumentException('Invalid block');
         }
         $this->block = $block;
@@ -106,6 +106,7 @@ class EditBlock implements ModelInterface
         $form->setDefaults(
             [
                 'name' => $this->block->getName(),
+                'alias' => $this->block->getAlias(),
                 'body' => $this->block->getBody(),
                 'options' => $this->block->getOptionsKeyValue(),
                 'groups' => array_map(
@@ -116,6 +117,31 @@ class EditBlock implements ModelInterface
                 ),
             ]
         );
+
+        $form->text('alias', 'Alias')->setDescription('Псевдоним идентификатора')->addRule(
+            Rules::CALLBACK,
+            'Такой идентификатор уже существует',
+            function () {
+                $qb = $this->entityManager->createQueryBuilder();
+                $qb->select('b')
+                    ->from(Blocks::class, 'b')
+                    ->where('b.alias = :alias')
+                    ->setParameter('alias', $this->serverRequest->post('alias'))
+                ;
+                $block = $qb->getQuery()->getOneOrNullResult();
+
+                if ($block === null) {
+                    return true;
+                }
+
+                if ($block->getId() === $this->block->getId()) {
+                    return true;
+                }
+                return false;
+            }
+        )
+        ;
+
         $form->text('name', 'Название');
 
 
@@ -128,25 +154,28 @@ class EditBlock implements ModelInterface
             foreach ($this->block->getOptions() as $key => $option) {
                 if (isset($option['form']['type'])) {
                     switch ($option['form']['type']) {
-                    case 'radio':
-                        $form->radio(
-                            "options[{$key}]",
-                            (isset($option['name'])) ? $option['name'] : $key
-                        )->setDescription($option['description'])->fill($option['form']['data']);
-                        break;
+                        case 'radio':
+                            $form->radio(
+                                "options[{$key}]",
+                                (isset($option['name'])) ? $option['name'] : $key
+                            )->setDescription($option['description'])->fill($option['form']['data'])
+                            ;
+                            break;
                     }
 
                     continue;
                 }
                 $form->text("options[{$key}]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
                     $option['description']
-                );
+                )
+                ;
             }
         }
 
         $form->checkbox('groups', 'Права доступа')->fill(
             $this->groupsRepository->getGroupsArray()
-        )->addRule(Rules::REQUIRED);
+        )->addRule(Rules::REQUIRED)
+        ;
 
         $form->submit('send');
 
@@ -173,22 +202,24 @@ class EditBlock implements ModelInterface
     private function doAction()
     {
         $this->block->setName($this->serverRequest->post('name'));
+        $this->block->setAlias(
+            empty($this->serverRequest->post('alias')) ? null : $this->serverRequest->post('alias')
+        );
         $this->block->setBody($this->serverRequest->post('body'));
         $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
 
 
         /**
-* 
          *
- * @var Groups $group 
-*/
+         *
+         * @var Groups $group
+         */
         foreach ($this->groupsRepository->findAll() as $group) {
-            if(in_array($group->getId(), $this->serverRequest->post('groups', []))) {
+            if (in_array($group->getId(), $this->serverRequest->post('groups', []))) {
                 $this->acl->setGroups($group);
                 continue;
             }
             $this->acl->removeGroups($group);
-
         }
 
         $this->entityManager->flush();

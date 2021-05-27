@@ -17,52 +17,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SetupBlocks implements ModelInterface
 {
 
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
+
     private LoggerInterface $logger;
-    /**
-     * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
-     */
-    private $blocksRepository;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer,
         LoggerInterface $logger
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-        $this->blocksRepository = $entityManager->getRepository(Blocks::class);
         $this->logger = $logger->withName('Blocks Config');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getContext(): array
     {
-        $installedBlocks = array_map(
-            function ($block) {
-                return $block->getClass();
-            },
-            $this->blocksRepository->findAll()
-        );
-
         $allBlocks = new Config($this->logger);
         $configs = array_merge(
             [$_ENV['PROJECT_DIR'] . '/app/blocks.yml'],
@@ -72,18 +40,6 @@ class SetupBlocks implements ModelInterface
         foreach ($configs as $config) {
             $allBlocks->addConfig($config, [], YAML::class);
         }
-
-//        $activeBlocks = (array_filter(
-//            $allBlocks->getConfig(),
-//            function ($k) use ($installedBlocks) {
-//                if (in_array($k, $installedBlocks)) {
-//                    return true;
-//                }
-//                return false;
-//            },
-//            ARRAY_FILTER_USE_KEY
-//        ));
-//        $notActiveBlocks = array_diff_key($allBlocks->getConfig(), $activeBlocks);
 
         return ['blocks' => $allBlocks->getConfig()];
     }

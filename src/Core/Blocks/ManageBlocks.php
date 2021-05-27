@@ -10,12 +10,6 @@ class ManageBlocks implements ModelInterface
 {
 
     /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-
-
-    /**
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
      */
     private $blocksRepository;
@@ -23,7 +17,6 @@ class ManageBlocks implements ModelInterface
     public function __construct(
         EntityManager $entityManager
     ) {
-        $this->entityManager = $entityManager;
         $this->blocksRepository = $entityManager->getRepository(Blocks::class);
     }
 

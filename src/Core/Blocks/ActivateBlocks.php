@@ -12,6 +12,7 @@ use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Entities\Blocks;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivateBlocks
@@ -38,6 +39,7 @@ class ActivateBlocks
         $data = $this->class::getMeta();
         $block = new Blocks();
         $block->setName($data['name']);
+        $block->setAlias(Uuid::uuid4());
         $block->setClass($this->class);
         $block->setCloned(false);
         $block->setRemovable(true);
