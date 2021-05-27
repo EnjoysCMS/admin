@@ -74,7 +74,7 @@ class ChangePassword implements ModelInterface
         $this->renderer->setForm($form);
 
         return [
-            'title' => 'Смена пароля пользователя | Пользователи | Admin | ' . Setting::get('sitename'),
+            '_title' => 'Смена пароля пользователя | Пользователи | Admin | ' . Setting::get('sitename'),
             'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user

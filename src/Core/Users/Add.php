@@ -61,7 +61,7 @@ class Add implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Добавить нового пользователя'
             ],
-            'title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
+            '_title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
                 'sitename'
             )
         ];

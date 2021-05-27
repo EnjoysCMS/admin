@@ -40,7 +40,7 @@ class Groups extends BaseController
             '@a/groups/list.twig',
             [
                 'groups' => $this->groupsRepository->findAll(),
-                'title' => 'Группы | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
+                '_title' => 'Группы | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
             ]
         );
     }

@@ -23,7 +23,7 @@ class Index extends BaseController
         return $this->twig->render(
             '@a/dashboard/dashboard.twig',
             [
-                'title' => 'Dashboard | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename'),
+                '_title' => 'Dashboard | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename'),
                 'widgets' => $this->entityManager->getRepository(Widgets::class)->getSortWidgets()
             ]
         );

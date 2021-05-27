@@ -58,7 +58,7 @@ class Users extends BaseController
             '@a/users/users-list.twig',
             [
                 'users' => $this->usersRepository->findAll(),
-                'title' => 'Пользователи | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
+                '_title' => 'Пользователи | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
             ]
         );
     }

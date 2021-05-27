@@ -79,7 +79,7 @@ class Delete implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Удаление пользователя',
             ],
-            'title' => 'Удаление пользователя | Пользователи | Admin | ' . Setting::get('sitename')
+            '_title' => 'Удаление пользователя | Пользователи | Admin | ' . Setting::get('sitename')
         ];
     }
 

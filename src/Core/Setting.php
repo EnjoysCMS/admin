@@ -60,7 +60,7 @@ class Setting implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            'title' => 'Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
+            '_title' => 'Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename')
         ];
     }
 
