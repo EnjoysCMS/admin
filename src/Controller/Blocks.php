@@ -18,6 +18,7 @@ use App\Module\Admin\Core\Blocks\ManageBlocks;
 use Exception;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Ramsey\Uuid\Uuid;
 
 class Blocks extends BaseController
 {
@@ -37,15 +38,17 @@ class Blocks extends BaseController
     public function delete()
     {
         /**
-* 
          *
- * @var \EnjoysCMS\Core\Entities\Blocks $block 
-*/
-        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))) {
+         *
+         * @var \EnjoysCMS\Core\Entities\Blocks $block
+         */
+        if (null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find(
+                $this->serverRequest->get('id')
+            )) {
             throw new InvalidArgumentException('Invalid Arguments');
         }
 
-        if(!$block->isRemovable()) {
+        if (!$block->isRemovable()) {
             throw new Exception('Block not removable');
         }
 
@@ -67,15 +70,18 @@ class Blocks extends BaseController
     public function clone()
     {
         /**
-* 
          *
- * @var \EnjoysCMS\Core\Entities\Blocks $block 
-*/
-        if(null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find($this->serverRequest->get('id'))) {
+         *
+         * @var \EnjoysCMS\Core\Entities\Blocks $block
+         */
+        if (null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find(
+                $this->serverRequest->get('id')
+            )) {
             throw new InvalidArgumentException('Invalid Arguments');
         }
 
         $cloned = clone $block;
+        $cloned->setAlias((string)Uuid::uuid4());
         $cloned->setRemovable(true);
         $cloned->setCloned(true);
         $this->entityManager->persist($cloned);
@@ -85,7 +91,6 @@ class Blocks extends BaseController
             $cloned->getBlockActionAcl(),
             $cloned->getBlockCommentAcl()
         );
-
 
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));

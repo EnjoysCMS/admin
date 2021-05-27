@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Module\Admin\Core\Blocks;
 
 use Doctrine\ORM\Id\UuidGenerator;
@@ -71,7 +73,8 @@ class AddBlocks implements ModelInterface
 
         $form->checkbox('groups', 'Группа')->fill(
             $this->entityManager->getRepository(Groups::class)->getGroupsArray()
-        )->addRule(Rules::REQUIRED);
+        )->addRule(Rules::REQUIRED)
+        ;
 
         $form->submit('addblock', 'Добавить блок');
         return $form;
@@ -80,10 +83,9 @@ class AddBlocks implements ModelInterface
     private function doAction()
     {
         try {
-
             $block = new Blocks();
             $block->setName($this->serverRequest->post('name'));
-            $block->setAlias(Uuid::uuid4());
+            $block->setAlias((string)Uuid::uuid4());
             $block->setBody($this->serverRequest->post('body'));
             $block->setRemovable(true);
             $block->setOptions(Custom::getMeta()['options']);
@@ -93,10 +95,10 @@ class AddBlocks implements ModelInterface
             $this->entityManager->flush();
 
             /**
-* 
              *
- * @var ACL $acl 
-*/
+             *
+             * @var ACL $acl
+             */
             $acl = \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
                 $block->getBlockActionAcl(),
                 $block->getBlockCommentAcl()
@@ -105,7 +107,8 @@ class AddBlocks implements ModelInterface
 
             $groups = $this->entityManager->getRepository(Groups::class)->findBy(
                 ['id' => $this->serverRequest->post('groups', [])]
-            );
+            )
+            ;
             foreach ($groups as $group) {
                 $acl->setGroups($group);
             }

@@ -1,19 +1,14 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Module\Admin\Core\Blocks;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
-use Enjoys\Config\Config;
-use Enjoys\Config\Parse\YAML;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Entities\Blocks;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivateBlocks
 {
@@ -27,7 +22,7 @@ class ActivateBlocks
 
     public function __construct(string $class, EntityManager $entityManager)
     {
-        if(!class_exists($class)) {
+        if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
         $this->class = $class;
@@ -39,7 +34,7 @@ class ActivateBlocks
         $data = $this->class::getMeta();
         $block = new Blocks();
         $block->setName($data['name']);
-        $block->setAlias(Uuid::uuid4());
+        $block->setAlias((string)Uuid::uuid4());
         $block->setClass($this->class);
         $block->setCloned(false);
         $block->setRemovable(true);

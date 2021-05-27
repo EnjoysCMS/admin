@@ -20,10 +20,19 @@
                                 {% if block.isCloned %}
                                     <span class="badge badge-primary badge-pill">cloned</span>
                                 {% endif %}
-                                <br>
-                                <small>{{ block.getClass }}</small>
-                                <div class="collapse" id="collapseExample{{ block.getId }}">
+
+                                <small class="d-block">{{ block.getClass }}</small>
+                                <small class="d-block text-monospace">id: <b>{{ block.getId }}</b></small>
+                                <small class="d-block text-monospace">alias: <b>{{ block.getAlias }}</b></small>
+
+                                <div class="collapse mt-3" id="collapseExample{{ block.getId }}">
                                     <div class="card card-body">
+                                        <code class="text-monospace">
+                                            &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
+                                            {{ block.getTwigTemplateString(true) }}<br>
+                                            &lt;!-- /Блок: "{{ block.getName }}" --&gt;
+                                        </code>
+                                        или<br>
                                         <code>
                                             &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
                                             {{ block.getTwigTemplateString }}<br>
@@ -31,46 +40,52 @@
                                         </code>
                                     </div>
                                 </div>
+
                             </div>
-                            {% if access2route('admin/blocklocation') %}
-                                <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
-                                   href="{{ url('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-th"></i>
-                                    Расположение </a>
-                            {% endif %}
-
-                            {% if access2route('admin/editblock') %}
-                                <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
-                                   href="{{ url('admin/editblock', {"id": block.getId}) }}"><i class="fa fa-edit"></i>
-                                    Редактировать </a>
-                            {% endif %}
-
-                            {% if access2route('admin/cloneblocks') %}
-                                <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
-                                   href="{{ url('admin/cloneblocks', {"id": block.getId}) }}"><i
-                                            class="fa fa-clone"></i>
-                                    Клонировать </a>
-                            {% endif %}
-
-                            {% if block.isRemovable %}
-                                {% if access2route('admin/deleteblocks') %}
-                                    <a class="mx-1 btn btn-sm  btn-sm btn-danger "
-                                       href="{{ url('admin/deleteblocks', {"id": block.getId}) }}"><i
-                                                class="fa fa-trash"></i> Удалить</a>
+                            <div class="align-self-start">
+                                {% if access2route('admin/blocklocation') %}
+                                    <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
+                                       href="{{ url('admin/blocklocation', {"id": block.getId}) }}"><i
+                                                class="fa fa-th"></i>
+                                        Расположение </a>
                                 {% endif %}
-                            {% endif %}
-                            <a class="mx-1 btn btn-sm  btn-sm btn-secondary " data-toggle="collapse"
-                               aria-expanded="false"
-                               aria-controls="collapseExample{{ block.getId }}"
-                               href="#collapseExample{{ block.getId }}">
-                                <i class="fa fa-code"></i> Код для вставки в шаблон
-                            </a>
 
+                                {% if access2route('admin/editblock') %}
+                                    <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
+                                       href="{{ url('admin/editblock', {"id": block.getId}) }}"><i
+                                                class="fa fa-edit"></i>
+                                        Редактировать </a>
+                                {% endif %}
+
+                                {% if access2route('admin/cloneblocks') %}
+                                    <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
+                                       href="{{ url('admin/cloneblocks', {"id": block.getId}) }}"><i
+                                                class="fa fa-clone"></i>
+                                        Клонировать </a>
+                                {% endif %}
+
+                                {% if block.isRemovable %}
+                                    {% if access2route('admin/deleteblocks') %}
+                                        <a class="mx-1 btn btn-sm  btn-sm btn-danger "
+                                           href="{{ url('admin/deleteblocks', {"id": block.getId}) }}"><i
+                                                    class="fa fa-trash"></i> Удалить</a>
+                                    {% endif %}
+                                {% endif %}
+                                <a class="mx-1 btn btn-sm  btn-sm btn-secondary " data-toggle="collapse"
+                                   aria-expanded="false"
+                                   aria-controls="collapseExample{{ block.getId }}"
+                                   href="#collapseExample{{ block.getId }}">
+                                    <i class="fa fa-code"></i> Код для вставки в шаблон
+                                </a>
+
+                            </div>
                         </li>
 
 
 
                     {% else %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <em>отсутствуют</em></li>
                     {% endfor %}
                 </ul>
             </div>
