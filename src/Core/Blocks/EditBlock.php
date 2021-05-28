@@ -16,57 +16,32 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Blocks;
 use EnjoysCMS\Core\Entities\Groups;
-use EnjoysCMS\WYSIWYG\Summernote\Summernote;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Environment;
 
 class EditBlock implements ModelInterface
 {
 
-    /**
-     * @var EntityManager
-     */
     private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
     private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
     private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
     private RendererInterface $renderer;
-
-
     private Blocks $block;
-    /**
-     * @var mixed
-     */
-    private ?object $blockOptions = null;
-    /**
-     * @var Environment
-     */
-    private Environment $twig;
+    private ContainerInterface $container;
     private ?\EnjoysCMS\Core\Entities\ACL $acl;
     /**
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
      */
     private $groupsRepository;
-    private ContainerInterface $container;
+
 
     public function __construct(
-        Environment $twig,
         EntityManager $entityManager,
         ServerRequestInterface $serverRequest,
         UrlGeneratorInterface $urlGenerator,
         RendererInterface $renderer,
         ContainerInterface $container
     ) {
-        $this->twig = $twig;
         $this->entityManager = $entityManager;
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
@@ -118,28 +93,46 @@ class EditBlock implements ModelInterface
             ]
         );
 
-        $form->text('alias', 'Alias')->setDescription('Псевдоним идентификатора')->addRule(
-            Rules::CALLBACK,
-            'Такой идентификатор уже существует',
-            function () {
-                $qb = $this->entityManager->createQueryBuilder();
-                $qb->select('b')
-                    ->from(Blocks::class, 'b')
-                    ->where('b.alias = :alias')
-                    ->setParameter('alias', $this->serverRequest->post('alias'))
-                ;
-                $block = $qb->getQuery()->getOneOrNullResult();
-
-                if ($block === null) {
-                    return true;
+        $form->text('alias', 'Alias')
+            ->setDescription('Псевдоним идентификатора')
+            ->addRule(
+                Rules::CALLBACK,
+                'Числа нельзя использовать в качестве псевдонима',
+                function () {
+                    $alias = $this->serverRequest->post('alias');
+                    if ($alias === null) {
+                        return true;
+                    }
+                    return  !is_numeric($alias);
                 }
+            )
+            ->addRule(
+                Rules::CALLBACK,
+                'Такой идентификатор уже существует',
+                function () {
+                    $alias = $this->serverRequest->post('alias');
+                    if ($alias === null) {
+                        return true;
+                    }
 
-                if ($block->getId() === $this->block->getId()) {
-                    return true;
+                    $qb = $this->entityManager->createQueryBuilder();
+                    $qb->select('b')
+                        ->from(Blocks::class, 'b')
+                        ->where('b.alias = :alias')
+                        ->setParameter('alias', $alias)
+                    ;
+                    $block = $qb->getQuery()->getOneOrNullResult();
+
+                    if ($block === null) {
+                        return true;
+                    }
+
+                    if ($block->getId() === $this->block->getId()) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        )
+            )
         ;
 
         $form->text('name', 'Название');
