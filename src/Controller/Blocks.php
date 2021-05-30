@@ -117,6 +117,8 @@ class Blocks extends BaseController
         );
 
 
+        $this->container->make($block->getClass(), ['block' => $block])->clone($cloned);
+
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        return $this->view(
         //            '@a/blocks/manage.twig',
