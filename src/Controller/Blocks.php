@@ -8,6 +8,9 @@ namespace App\Module\Admin\Controller;
 use App\Module\Admin\Core\Blocks\ActivateBlocks;
 use App\Module\Admin\Core\Blocks\SetupBlocks;
 use DI\FactoryInterface;
+use Doctrine\ORM\EntityManager;
+use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\BaseController;
@@ -19,9 +22,26 @@ use Exception;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
 
 class Blocks extends BaseController
 {
+
+    private ContainerInterface $container;
+
+    public function __construct(
+        Environment $twig,
+        ServerRequestInterface $serverRequest,
+        EntityManager $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        RendererInterface $renderer,
+        ContainerInterface $container
+    ) {
+        parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
+        $this->container = $container;
+    }
+
     public function manage()
     {
         return $this->view(
@@ -52,8 +72,12 @@ class Blocks extends BaseController
             throw new Exception('Block not removable');
         }
 
+        $this->container->make($block->getClass(), ['block' => $block])->remove();
+
         $this->entityManager->remove($block);
         $this->entityManager->flush();
+
+
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        return $this->view(
