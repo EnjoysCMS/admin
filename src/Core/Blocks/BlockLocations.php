@@ -73,20 +73,21 @@ class BlockLocations implements ModelInterface
         $form->setDefaults(['locations' => $this->block->getLocationsIds()]);
 
 
-        $form->select('locations')->setMultiple()->fill(
-            [0 => '--отключить показ--'] +
-            $this->entityManager->getRepository(Locations::class)->getListLocationsForSelectForm()
-        );
+        $form->select('locations')
+            ->addClass('select2bs4')
+            ->setMultiple()
+            ->fill($this->entityManager->getRepository(Locations::class)->getListLocationsForSelectForm())
+        ;
         $form->submit('send');
         return $form;
     }
 
     private function doAction()
     {
-
         $locations = $this->entityManager->getRepository(Locations::class)->findBy(
             ['id' => $this->serverRequest->post('locations', [])]
-        );
+        )
+        ;
 
         $this->block->removeLocations();
         foreach ($locations as $location) {
