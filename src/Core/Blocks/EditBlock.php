@@ -5,6 +5,7 @@ namespace App\Module\Admin\Core\Blocks;
 
 
 use App\Module\Admin\Core\ModelInterface;
+use DI\FactoryInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
@@ -103,7 +104,7 @@ class EditBlock implements ModelInterface
                     if ($alias === null) {
                         return true;
                     }
-                    return  !is_numeric($alias);
+                    return !is_numeric($alias);
                 }
             )
             ->addRule(
@@ -194,6 +195,7 @@ class EditBlock implements ModelInterface
 
     private function doAction()
     {
+        $oldBlock = clone $this->block;
         $this->block->setName($this->serverRequest->post('name'));
         $this->block->setAlias(
             empty($this->serverRequest->post('alias')) ? null : $this->serverRequest->post('alias')
@@ -216,6 +218,12 @@ class EditBlock implements ModelInterface
         }
 
         $this->entityManager->flush();
+
+        $this->container
+            ->get(FactoryInterface::class)
+            ->make($this->block->getClass(), ['block' => $this->block])
+            ->postEdit($oldBlock)
+        ;
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        Redirect::http();
