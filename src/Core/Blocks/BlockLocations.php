@@ -10,7 +10,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Locations;
 use InvalidArgumentException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,7 +33,7 @@ class BlockLocations implements ModelInterface
      * @var RendererInterface
      */
     private RendererInterface $renderer;
-    private Blocks $block;
+    private Block $block;
 
     public function __construct(
         EntityManager $entityManager,
@@ -45,11 +45,11 @@ class BlockLocations implements ModelInterface
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
         $this->renderer = $renderer;
-        if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->serverRequest->get('id'))) {
             throw new InvalidArgumentException('Invalid block ID');
         }
 
-        if (!($block instanceof Blocks)) {
+        if (!($block instanceof Block)) {
             throw new InvalidArgumentException('Invalid block');
         }
 

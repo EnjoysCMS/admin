@@ -5,14 +5,9 @@ namespace App\Module\Admin\Core\Blocks;
 
 
 use App\Module\Admin\Core\ModelInterface;
-use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\Core\Entities\Blocks;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SetupBlocks implements ModelInterface
 {

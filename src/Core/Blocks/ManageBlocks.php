@@ -4,7 +4,7 @@ namespace App\Module\Admin\Core\Blocks;
 
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
-use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Block;
 
 class ManageBlocks implements ModelInterface
 {
@@ -17,7 +17,7 @@ class ManageBlocks implements ModelInterface
     public function __construct(
         EntityManager $entityManager
     ) {
-        $this->blocksRepository = $entityManager->getRepository(Blocks::class);
+        $this->blocksRepository = $entityManager->getRepository(Block::class);
     }
 
     public function getContext(): array

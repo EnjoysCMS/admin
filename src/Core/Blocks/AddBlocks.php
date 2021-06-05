@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace App\Module\Admin\Core\Blocks;
 
-use Doctrine\ORM\Id\UuidGenerator;
-use EnjoysCMS\Core\Components\Blocks\Custom;
-use EnjoysCMS\Core\Components\Helpers\Error;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Blocks;
-use EnjoysCMS\Core\Entities\Group;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
@@ -19,6 +12,12 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Components\Helpers\Error;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\Entities\Block;
+use EnjoysCMS\Core\Entities\Group;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -83,7 +82,7 @@ class AddBlocks implements ModelInterface
     private function doAction()
     {
         try {
-            $block = new Blocks();
+            $block = new Block();
             $block->setName($this->serverRequest->post('name'));
             $block->setAlias((string)Uuid::uuid4());
             $block->setBody($this->serverRequest->post('body'));

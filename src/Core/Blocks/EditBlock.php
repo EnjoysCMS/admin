@@ -15,7 +15,7 @@ use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
-use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,7 +27,7 @@ class EditBlock implements ModelInterface
     private ServerRequestInterface $serverRequest;
     private UrlGeneratorInterface $urlGenerator;
     private RendererInterface $renderer;
-    private Blocks $block;
+    private Block $block;
     private ContainerInterface $container;
     private ?\EnjoysCMS\Core\Entities\ACL $acl;
     /**
@@ -47,10 +47,10 @@ class EditBlock implements ModelInterface
         $this->serverRequest = $serverRequest;
         $this->urlGenerator = $urlGenerator;
         $this->renderer = $renderer;
-        if (null === $block = $entityManager->getRepository(Blocks::class)->find($this->serverRequest->get('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->serverRequest->get('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
-        if (!($block instanceof Blocks)) {
+        if (!($block instanceof Block)) {
             throw new \InvalidArgumentException('Invalid block');
         }
         $this->block = $block;
@@ -118,7 +118,7 @@ class EditBlock implements ModelInterface
 
                     $qb = $this->entityManager->createQueryBuilder();
                     $qb->select('b')
-                        ->from(Blocks::class, 'b')
+                        ->from(Block::class, 'b')
                         ->where('b.alias = :alias')
                         ->setParameter('alias', $alias)
                     ;

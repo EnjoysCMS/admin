@@ -15,6 +15,7 @@ use App\Module\Admin\Core\Blocks\SetupBlocks;
 use DI\FactoryInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Entities\Block;
 use Exception;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -40,9 +41,9 @@ class Blocks extends BaseController
         /**
          *
          *
-         * @var \EnjoysCMS\Core\Entities\Blocks $block
+         * @var Block $block
          */
-        if (null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find(
+        if (null === $block = $this->entityManager->getRepository(Block::class)->find(
                 $this->serverRequest->get('id')
             )) {
             throw new InvalidArgumentException('Invalid Arguments');
@@ -75,9 +76,9 @@ class Blocks extends BaseController
         /**
          *
          *
-         * @var \EnjoysCMS\Core\Entities\Blocks $block
+         * @var Block $block
          */
-        if (null === $block = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Blocks::class)->find(
+        if (null === $block = $this->entityManager->getRepository(Block::class)->find(
                 $this->serverRequest->get('id')
             )) {
             throw new InvalidArgumentException('Invalid Arguments');

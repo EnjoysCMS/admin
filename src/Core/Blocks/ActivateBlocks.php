@@ -7,7 +7,7 @@ namespace App\Module\Admin\Core\Blocks;
 
 use Doctrine\ORM\EntityManager;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Entities\Blocks;
+use EnjoysCMS\Core\Entities\Block;
 use Ramsey\Uuid\Uuid;
 
 class ActivateBlocks
@@ -32,7 +32,7 @@ class ActivateBlocks
     public function activate()
     {
         $data = $this->class::getMeta();
-        $block = new Blocks();
+        $block = new Block();
         $block->setName($data['name']);
         $block->setAlias((string)Uuid::uuid4());
         $block->setClass($this->class);

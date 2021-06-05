@@ -4,17 +4,10 @@
 namespace App\Module\Admin\Core\Widgets;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
-use Enjoys\Config\Config;
-use Enjoys\Config\Parse\YAML;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Entities\Blocks;
 use EnjoysCMS\Core\Entities\Widgets;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivateWidgets
 {
