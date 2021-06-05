@@ -6,7 +6,7 @@ namespace App\Module\Admin\Core\Widgets;
 
 use Doctrine\ORM\EntityManager;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Entities\Widgets;
+use EnjoysCMS\Core\Entities\Widget;
 use Psr\Container\ContainerInterface;
 
 class ActivateWidgets
@@ -31,7 +31,7 @@ class ActivateWidgets
     public function activate()
     {
         $data = $this->class::getMeta();
-        $widget = new Widgets();
+        $widget = new Widget();
         $widget->setName($data['name']);
         $widget->setClass($this->class);
         $widget->setOptions($data['options']);

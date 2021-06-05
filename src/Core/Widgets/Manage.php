@@ -8,7 +8,7 @@ use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
-use EnjoysCMS\Core\Entities\Widgets;
+use EnjoysCMS\Core\Entities\Widget;
 use Psr\Container\ContainerInterface;
 
 class Manage implements ModelInterface
@@ -29,7 +29,7 @@ class Manage implements ModelInterface
             function ($widget) {
                 return $widget->getClass();
             },
-            $this->container->get(EntityManager::class)->getRepository(Widgets::class)->findAll()
+            $this->container->get(EntityManager::class)->getRepository(Widget::class)->findAll()
         );
 
         $allWidgets = new Config();
