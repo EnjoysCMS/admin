@@ -11,7 +11,7 @@ use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
-use EnjoysCMS\Core\Entities\Locations;
+use EnjoysCMS\Core\Entities\Location;
 use InvalidArgumentException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -76,7 +76,7 @@ class BlockLocations implements ModelInterface
         $form->select('locations')
             ->addClass('select2bs4')
             ->setMultiple()
-            ->fill($this->entityManager->getRepository(Locations::class)->getListLocationsForSelectForm())
+            ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm())
         ;
         $form->submit('send');
         return $form;
@@ -84,7 +84,7 @@ class BlockLocations implements ModelInterface
 
     private function doAction()
     {
-        $locations = $this->entityManager->getRepository(Locations::class)->findBy(
+        $locations = $this->entityManager->getRepository(Location::class)->findBy(
             ['id' => $this->serverRequest->post('locations', [])]
         )
         ;
