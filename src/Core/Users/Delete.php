@@ -14,7 +14,7 @@ use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
-use EnjoysCMS\Core\Entities\Users;
+use EnjoysCMS\Core\Entities\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
@@ -36,7 +36,7 @@ class Delete implements ModelInterface
      */
     private RendererInterface $renderer;
     private ObjectRepository $usersRepository;
-    private ?Users $user;
+    private ?User $user;
 
     public function __construct(
         EntityManager $em,
@@ -102,7 +102,7 @@ class Delete implements ModelInterface
                     ->select('COUNT(u) as cnt')
                     ->join('u.groups', 'g')
                     ->where('g.id = :id')
-                    ->setParameter('id', Users::ADMIN_GROUP_ID)
+                    ->setParameter('id', User::ADMIN_GROUP_ID)
                     ->getQuery()
                     ->getSingleResult()['cnt'];
 

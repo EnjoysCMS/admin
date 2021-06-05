@@ -20,7 +20,7 @@ use EnjoysCMS\Core\Components\Helpers\Http;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Group;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
@@ -162,7 +162,7 @@ class Add implements ModelInterface
             ['id' => $this->serverRequest->post('acl', [])]
         );
 
-        $group = new Groups();
+        $group = new Group();
         $group->setName($this->serverRequest->post('name'));
         $group->setDescription($this->serverRequest->post('description'));
         $group->setStatus(1);

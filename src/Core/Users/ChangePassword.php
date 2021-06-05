@@ -8,7 +8,7 @@ use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Core\Components\Helpers\Setting;
-use EnjoysCMS\Core\Entities\Users;
+use EnjoysCMS\Core\Entities\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
@@ -39,7 +39,7 @@ class ChangePassword implements ModelInterface
      * @var RendererInterface
      */
     private RendererInterface $renderer;
-    private ?Users $user;
+    private ?User $user;
 
     public function __construct(
         EntityManager $em,

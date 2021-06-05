@@ -16,14 +16,14 @@ use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Groups;
-use EnjoysCMS\Core\Entities\Users;
+use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Entities\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
 {
 
-    private ?Groups $group;
+    private ?Group $group;
     /**
      * @var ObjectRepository
      */
@@ -111,7 +111,7 @@ class Edit implements ModelInterface
                 Rules::CALLBACK,
                 'Название группы должно быть уникальным',
                 function () {
-                    if (null === $group = $this->entityManager->getRepository(Groups::class)->findOneBy(
+                    if (null === $group = $this->entityManager->getRepository(Group::class)->findOneBy(
                         ['name' => $this->serverRequest->post('name')]
                     )
                     ) {
@@ -128,7 +128,7 @@ class Edit implements ModelInterface
         $form->textarea('description', 'Описание группы');
 
 
-        if($this->group->getId() === Users::ADMIN_GROUP_ID) {
+        if($this->group->getId() === User::ADMIN_GROUP_ID) {
             $form->header('Группа имеет все привилегии (доступ ко всему)');
         }else{
             $form->header('Права доступа');

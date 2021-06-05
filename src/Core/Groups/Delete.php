@@ -7,7 +7,7 @@ namespace App\Module\Admin\Core\Groups;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
-use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Group;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
@@ -35,7 +35,7 @@ class Delete implements ModelInterface
      */
     private RendererInterface $renderer;
     private ObjectRepository $groupRepository;
-    private ?Groups $group;
+    private ?Group $group;
 
     public function __construct(     ObjectRepository $groupRepository,
         EntityManager $entityManager,

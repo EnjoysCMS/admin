@@ -31,7 +31,7 @@ class Groups extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->groupsRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\Groups::class);
+        $this->groupsRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\Group::class);
     }
 
     public function list(): string

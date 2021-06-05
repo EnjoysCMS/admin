@@ -16,7 +16,7 @@ use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Blocks;
-use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Group;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -55,7 +55,7 @@ class EditBlock implements ModelInterface
         }
         $this->block = $block;
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
-        $this->groupsRepository = $this->entityManager->getRepository(Groups::class);
+        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
         $this->container = $container;
     }
 
@@ -207,7 +207,7 @@ class EditBlock implements ModelInterface
         /**
          *
          *
-         * @var Groups $group
+         * @var Group $group
          */
         foreach ($this->groupsRepository->findAll() as $group) {
             if (in_array($group->getId(), $this->serverRequest->post('groups', []))) {

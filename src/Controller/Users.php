@@ -33,7 +33,7 @@ class Users extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->usersRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\Users::class);
+        $this->usersRepository = $entityManager->getRepository(\EnjoysCMS\Core\Entities\User::class);
     }
 
 

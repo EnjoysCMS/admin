@@ -14,8 +14,8 @@ use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
-use EnjoysCMS\Core\Entities\Groups;
-use EnjoysCMS\Core\Entities\Users;
+use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Entities\User;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
@@ -33,7 +33,7 @@ class Edit implements ModelInterface
      * @var UrlGeneratorInterface
      */
     private UrlGeneratorInterface $urlGenerator;
-    private ?Users $user;
+    private ?User $user;
     private ObjectRepository $usersRepository;
 
     public function __construct(
@@ -96,7 +96,7 @@ class Edit implements ModelInterface
                 Rules::CALLBACK,
                 'Такой логин уже занят',
                 function () {
-                    if (null === $user = $this->em->getRepository(Users::class)->findOneBy(
+                    if (null === $user = $this->em->getRepository(User::class)->findOneBy(
                         ['login' => $this->serverRequest->post('login')]
                     )
                     ) {
@@ -120,7 +120,7 @@ class Edit implements ModelInterface
                     }
 
                     if (in_array(
-                        Users::ADMIN_GROUP_ID,
+                        User::ADMIN_GROUP_ID,
                         $this->serverRequest->post('groups', [])
                     )
                     ) {
@@ -131,7 +131,7 @@ class Edit implements ModelInterface
                         ->select('COUNT(u) as cnt')
                         ->join('u.groups', 'g')
                         ->where('g.id = :id')
-                        ->setParameter('id', Users::ADMIN_GROUP_ID)
+                        ->setParameter('id', User::ADMIN_GROUP_ID)
                         ->getQuery()
                         ->getSingleResult()['cnt'];
 
@@ -152,7 +152,7 @@ class Edit implements ModelInterface
     private function getGroupsArray(): array
     {
         $groupsArray = [];
-        $groups = $this->em->getRepository(Groups::class)->findAll();
+        $groups = $this->em->getRepository(Group::class)->findAll();
         foreach ($groups as $group) {
             $groupsArray[$group->getId() . ' '] = $group->getName();
         }
@@ -165,7 +165,7 @@ class Edit implements ModelInterface
         $this->user->setLogin($this->serverRequest->post('login'));
 
 
-        $groups = $this->em->getRepository(Groups::class)->findBy(
+        $groups = $this->em->getRepository(Group::class)->findBy(
             ['id' => $this->serverRequest->post('groups', [])]
         );
 

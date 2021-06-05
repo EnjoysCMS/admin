@@ -7,8 +7,8 @@ namespace App\Module\Admin\Core\Users;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use App\Module\Admin\Core\ModelInterface;
-use EnjoysCMS\Core\Entities\Groups;
-use EnjoysCMS\Core\Entities\Users;
+use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Entities\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
@@ -69,12 +69,12 @@ class Add implements ModelInterface
 
     private function addUser()
     {
-        $newUser = new Users();
+        $newUser = new User();
         $newUser->setName($this->serverRequest->post('name'));
         $newUser->setLogin($this->serverRequest->post('login'));
         $newUser->genAdnSetPasswordHash($this->serverRequest->post('password'));
 
-        $groups = $this->entityManager->getRepository(Groups::class)->findBy(
+        $groups = $this->entityManager->getRepository(Group::class)->findBy(
             ['id' => $this->serverRequest->post('groups', [])]
         );
         foreach ($groups as $group) {
@@ -101,7 +101,7 @@ class Add implements ModelInterface
                 Rules::CALLBACK,
                 'Такой логин уже занят',
                 function () {
-                    if (null === $this->entityManager->getRepository(Users::class)->findOneBy(
+                    if (null === $this->entityManager->getRepository(User::class)->findOneBy(
                         ['login' => $this->serverRequest->post('login')]
                     )
                     ) {
@@ -114,7 +114,7 @@ class Add implements ModelInterface
 
 
         $form->checkbox('groups', 'Группа')->fill(
-            $this->entityManager->getRepository(Groups::class)->getGroupsArray()
+            $this->entityManager->getRepository(Group::class)->getGroupsArray()
         )->addRule(Rules::REQUIRED);
 
         $form->submit('sbmt1', 'Добавить');

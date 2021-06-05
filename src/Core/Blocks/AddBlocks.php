@@ -10,7 +10,7 @@ use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Blocks;
-use EnjoysCMS\Core\Entities\Groups;
+use EnjoysCMS\Core\Entities\Group;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
@@ -72,7 +72,7 @@ class AddBlocks implements ModelInterface
         $form->textarea('body', 'Контент')->addRule(Rules::REQUIRED);
 
         $form->checkbox('groups', 'Группа')->fill(
-            $this->entityManager->getRepository(Groups::class)->getGroupsArray()
+            $this->entityManager->getRepository(Group::class)->getGroupsArray()
         )->addRule(Rules::REQUIRED)
         ;
 
@@ -105,7 +105,7 @@ class AddBlocks implements ModelInterface
             );
             //$acl->setGroups();
 
-            $groups = $this->entityManager->getRepository(Groups::class)->findBy(
+            $groups = $this->entityManager->getRepository(Group::class)->findBy(
                 ['id' => $this->serverRequest->post('groups', [])]
             )
             ;
