@@ -155,6 +155,13 @@ class EditBlock implements ModelInterface
                             )->setDescription($option['description'])->fill($option['form']['data'])
                             ;
                             break;
+                        case 'checkbox':
+                            $form->checkbox(
+                                "options[{$key}]",
+                                (isset($option['name'])) ? $option['name'] : $key
+                            )->setDescription($option['description'])->fill($option['form']['data'])
+                            ;
+                            break;
                     }
 
                     continue;
@@ -184,9 +191,11 @@ class EditBlock implements ModelInterface
 
         $blockOptions = $this->block->getOptions();
 
-        foreach ($options as $key => $value) {
-            if (array_key_exists($key, $blockOptions)) {
-                $blockOptions[$key]['value'] = $value;
+        foreach ($blockOptions as $key => $value) {
+            if (array_key_exists($key, $options)) {
+                $blockOptions[$key]['value'] = $options[$key];
+            }else{
+                $blockOptions[$key]['value'] = null;
             }
         }
 
