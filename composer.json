@@ -13,8 +13,7 @@
     }
   },
   "extra": {
-    "module-name": "Admin panel",
-    "use-migrations": false
+    "module-name": "Admin panel"
   },
   "scripts": {
     "assets-install": "cd ./modules/admin && yarn install"
