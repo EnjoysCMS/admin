@@ -89,16 +89,15 @@ class Setting implements ModelInterface
         foreach ($settings as $setting) {
             $name = $setting->getName();
             $name .= " <small>[{$setting->getVar()}]</small>";
-            $name .= '<span class="float-right px-1"><a href="' . $this->urlGenerator->generate(
+            $name .= '<span class="float-right px-1"><a  class="small text-danger" href="' . $this->urlGenerator->generate(
                     'admin/setting/delete',
                     ['id' => $setting->getVar()]
                 ) . '">удалить</a></span>';
 
-            $name .= '<span class="float-right px-1"><a href="' . $this->urlGenerator->generate(
+            $name .= '<span class="float-right px-1"><a class="small text-secondary" href="' . $this->urlGenerator->generate(
                     'admin/setting/edit',
                     ['id' => $setting->getVar()]
                 ) . '">редактировать</a></span>';
-
 
 
             switch ($setting->getType()) {
