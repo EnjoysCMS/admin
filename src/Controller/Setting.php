@@ -5,12 +5,12 @@ namespace App\Module\Admin\Controller;
 
 
 use App\Module\Admin\BaseController;
+use App\Module\Admin\Core\Settings\AddSetting;
+use App\Module\Admin\Core\Settings\EditSetting;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
-use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,10 +18,6 @@ use Twig\Environment;
 
 class Setting extends BaseController
 {
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $settingRepository;
 
     public function __construct(
         Environment $twig,
@@ -31,7 +27,6 @@ class Setting extends BaseController
         RendererInterface $renderer
     ) {
         parent::__construct($twig, $serverRequest, $entityManager, $urlGenerator, $renderer);
-        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
 
     public function setting()
@@ -39,8 +34,7 @@ class Setting extends BaseController
         return $this->view(
             '@a/setting/setting.twig',
             $this->getContext(
-                new \App\Module\Admin\Core\Setting(
-                    $this->settingRepository,
+                new \App\Module\Admin\Core\Settings\Setting(
                     $this->entityManager,
                     $this->serverRequest,
                     $this->urlGenerator,
@@ -61,60 +55,69 @@ class Setting extends BaseController
      */
     public function addSetting()
     {
-        $form = new Form(['method' => 'post']);
-        $form->text('var', 'var')->addRule(Rules::REQUIRED)->addRule(
-            Rules::CALLBACK,
-            'Настройка с таким id уже существует',
-            function () {
-                $check = $this->settingRepository->findOneBy(['var' => $this->serverRequest->post('var')]);
-                if ($check === null) {
-                    return true;
-                }
-                return false;
-            }
-        )
-        ;
-        $form->text('value', 'value');
-        $form->select('type', 'type')->fill(
-            [
-                'text',
-                'select',
-                'radio',
-                'textarea'
-            ],
-            true
-        )->addRule(Rules::REQUIRED)
-        ;;
-        $form->text('params', 'params')->setDescription('json');
-        $form->text('name', 'name')->addRule(Rules::REQUIRED);;
-        $form->text('description', 'description');
-        $form->submit('add');
-
-        if ($form->isSubmitted()) {
-            $setting = new \EnjoysCMS\Core\Entities\Setting();
-            $setting->setVar($this->serverRequest->post('var'));
-            $setting->setValue($this->serverRequest->post('value'));
-            $setting->setType($this->serverRequest->post('type'));
-            $setting->setParams($this->serverRequest->post('params'));
-            $setting->setName($this->serverRequest->post('name'));
-            $setting->setDescription($this->serverRequest->post('description'));
-
-            $this->entityManager->persist($setting);
-            $this->entityManager->flush();
-
-            Redirect::http($this->urlGenerator->generate('admin/setting'));
-        }
-
-
-        $this->renderer->setForm($form);
         return $this->view(
             '@a/setting/add.twig',
-            [
-                'form' => $this->renderer,
-                '_title' => 'Добавление настройки | Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get(
-                        'sitename'
-                    )
-            ]
+            $this->getContext(
+                new AddSetting(
+                    $this->entityManager,
+                    $this->serverRequest,
+                    $this->urlGenerator,
+                    $this->renderer
+                )
+            )
         );
+    }
+
+    /**
+     * @Route(
+     *     path="/admin/setting/edit",
+     *     name="admin/setting/edit",
+     *     options={
+     *          "aclComment": "Изменение глобальной настройки"
+     *     }
+     * )
+     */
+    public function editSetting()
+    {
+        return $this->view(
+            '@a/setting/add.twig',
+            $this->getContext(
+                new EditSetting(
+                    $this->entityManager,
+                    $this->serverRequest,
+                    $this->urlGenerator,
+                    $this->renderer
+                )
+            )
+        );
+    }
+
+    /**
+     * @Route(
+     *     path="/admin/setting/delete",
+     *     name="admin/setting/delete",
+     *     options={
+     *          "aclComment": "Удаление глобальной настройки"
+     *     }
+     * )
+     */
+    public function deleteSetting()
+    {
+        if (null === $setting = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class)->find(
+                $this->serverRequest->get('id')
+            )) {
+            Error::code(404);
+        }
+
+//        if (!$setting->isRemovable()) {
+//            throw new Exception('Block not removable');
+//        }
+
+
+        $this->entityManager->remove($setting);
+        $this->entityManager->flush();
+
+
+        Redirect::http($this->urlGenerator->generate('admin/setting'));
     }
 }
