@@ -95,6 +95,7 @@ final class AddSetting implements ModelInterface
         $setting->setParams($this->serverRequest->post('params'));
         $setting->setName($this->serverRequest->post('name'));
         $setting->setDescription($this->serverRequest->post('description'));
+        $setting->setRemovable(true);
 
         $this->entityManager->persist($setting);
         $this->entityManager->flush();

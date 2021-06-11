@@ -109,9 +109,9 @@ class Setting extends BaseController
             Error::code(404);
         }
 
-//        if (!$setting->isRemovable()) {
-//            throw new Exception('Block not removable');
-//        }
+        if (!$setting->isRemovable()) {
+            throw new \InvalidArgumentException('This the setting not removable');
+        }
 
 
         $this->entityManager->remove($setting);
