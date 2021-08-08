@@ -86,7 +86,7 @@ abstract class BaseController
     protected function initAssets()
     {
         Assets::createSymlink(
-            $_ENV['PUBLIC_DIR'] . '/dist',
+            $_ENV['PUBLIC_DIR'] . '/assets/adminLTE/dist',
             __DIR__. '/../node_modules/admin-lte/dist'
         );
         Assets::createSymlink(
