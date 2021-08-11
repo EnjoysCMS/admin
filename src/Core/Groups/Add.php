@@ -8,6 +8,7 @@ use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use DI\Annotation\Inject;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
@@ -26,47 +27,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Add implements ModelInterface
 {
 
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $groupsRepository;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
+    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
-    /**
-     * @Inject({"modules" = "Modules"})
-     * @param             ObjectRepository       $groupsRepository
-     * @param             EntityManager          $entityManager
-     * @param             ServerRequestInterface $serverRequest
-     * @param             UrlGeneratorInterface  $urlGenerator
-     * @param             RendererInterface      $renderer
-     */
     public function __construct(
-        ObjectRepository $groupsRepository,
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->groupsRepository = $groupsRepository;
-        $this->renderer = $renderer;
+        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
     }
 
     public function getContext(): array
@@ -132,8 +101,8 @@ class Add implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->groupsRepository->findOneBy(
-                        ['name' => $this->serverRequest->post('name')]
-                    )
+                            ['name' => $this->serverRequest->post('name')]
+                        )
                     ) {
                         return true;
                     }

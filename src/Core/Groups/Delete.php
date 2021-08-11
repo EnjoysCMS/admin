@@ -4,6 +4,9 @@
 namespace App\Module\Admin\Core\Groups;
 
 
+use App\Module\Admin\Exception\CannotDeleteSystemGroup;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
@@ -18,44 +21,41 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
 {
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
-    private ObjectRepository $groupRepository;
-    private ?Group $group;
+    private Group $group;
+    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
-    public function __construct(     ObjectRepository $groupRepository,
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+    /**
+     * @throws NoResultException
+     */
+    public function __construct(
+        private EntityManager $entityManager,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-        $this->groupRepository = $groupRepository;
+        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
-        $this->group = $this->groupRepository->find(
+        $this->group = $this->getGroup();
+    }
+
+    /**
+     * @throws NoResultException
+     * @throws CannotDeleteSystemGroup
+     */
+    private function getGroup(): Group
+    {
+        $group = $this->groupsRepository->find(
             $this->serverRequest->get('id')
         );
 
-        if ($this->group === null || $this->group->isSystem()) {
-            Error::code(404);
+        if ($group === null) {
+            throw new NoResultException();
         }
+
+        if ($group->isSystem()) {
+            throw new CannotDeleteSystemGroup('You cannot delete a system group');
+        }
+        return $group;
     }
 
     public function getContext(): array

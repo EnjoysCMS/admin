@@ -7,12 +7,13 @@ namespace App\Module\Admin\Core\Groups;
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
@@ -22,51 +23,36 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
 {
+    private Group $group;
+    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
-    private ?Group $group;
     /**
-     * @var ObjectRepository
+     * @throws NoResultException
      */
-    private ObjectRepository $groupsRepository;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
-
     public function __construct(
-        EntityManager $entityManager,
-        ObjectRepository $groupsRepository,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->serverRequest = $serverRequest;
-        $this->groupsRepository = $groupsRepository;
-        $this->entityManager = $entityManager;
+        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
-        $this->group = $this->groupsRepository->find(
+        $this->group = $this->getGroup();
+    }
+
+    /**
+     * @throws NoResultException
+     */
+    private function getGroup(): Group
+    {
+        $group = $this->groupsRepository->find(
             $this->serverRequest->get('id')
         );
 
-        if ($this->group === null) {
-            Error::code(404);
+        if ($group === null) {
+            throw new NoResultException();
         }
-
-
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
+        return $group;
     }
 
     public function getContext(): array
@@ -101,7 +87,8 @@ class Edit implements ModelInterface
                 'acl' => array_map(
                     function ($o) {
                         return $o->getId();
-                    }, $this->group->getAcl()->toArray()
+                    },
+                    $this->group->getAcl()->toArray()
                 )
             ]
         );
@@ -112,8 +99,8 @@ class Edit implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->entityManager->getRepository(Group::class)->findOneBy(
-                        ['name' => $this->serverRequest->post('name')]
-                    )
+                            ['name' => $this->serverRequest->post('name')]
+                        )
                     ) {
                         return true;
                     }
@@ -128,9 +115,9 @@ class Edit implements ModelInterface
         $form->textarea('description', 'Описание группы');
 
 
-        if($this->group->getId() === User::ADMIN_GROUP_ID) {
+        if ($this->group->getId() === User::ADMIN_GROUP_ID) {
             $form->header('Группа имеет все привилегии (доступ ко всему)');
-        }else{
+        } else {
             $form->header('Права доступа');
 
             $i = 0;
@@ -138,7 +125,6 @@ class Edit implements ModelInterface
             foreach ($aclsForCheckbox as $label => $item) {
                 $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
             }
-
         }
 
         $form->submit('sbmt1', 'Изменить');
@@ -166,4 +152,6 @@ class Edit implements ModelInterface
         Redirect::http($this->urlGenerator->generate('admin/groups'));
         //        Redirect::http();
     }
+
+
 }
