@@ -6,7 +6,7 @@ namespace App\Module\Admin\Controller;
 
 
 use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Widgets\ActivateWidgets;
+use App\Module\Admin\Core\Widgets\ActivateWidget;
 use App\Module\Admin\Core\Widgets\Manage;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Renderer\RendererInterface;
@@ -19,24 +19,6 @@ use Twig\Environment;
 
 class Widgets extends BaseController
 {
-
-    /**
-     * @var ContainerInterface
-     */
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct(
-            $container->get(Environment::class),
-            $container->get(ServerRequestInterface::class),
-            $container->get(EntityManager::class),
-            $container->get(UrlGeneratorInterface::class),
-            $container->get(RendererInterface::class)
-        );
-        $this->container = $container;
-    }
-
 
     /**
      * @throws Exception
@@ -62,16 +44,14 @@ class Widgets extends BaseController
     {
         return $this->view(
             '@a/widgets/manage.twig',
-            $this->getContext(new Manage($this->container))
+            $this->getContext($this->getContainer()->get(Manage::class))
         );
     }
 
 
     public function activate()
     {
-        $widget = new ActivateWidgets($this->serverRequest->get('class'), $this->container);
-        $id = $widget->activate();
-        Redirect::http($this->urlGenerator->generate('admin/editwidget', ['id' => $id]));
+        $this->getContainer()->get(ActivateWidget::class)();
     }
 
 }

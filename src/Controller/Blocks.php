@@ -6,9 +6,11 @@ namespace App\Module\Admin\Controller;
 
 
 use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Blocks\ActivateBlocks;
+use App\Module\Admin\Core\Blocks\ActivateBlock;
 use App\Module\Admin\Core\Blocks\AddBlocks;
 use App\Module\Admin\Core\Blocks\BlockLocations;
+use App\Module\Admin\Core\Blocks\CloneBlock;
+use App\Module\Admin\Core\Blocks\DeleteBlock;
 use App\Module\Admin\Core\Blocks\EditBlock;
 use App\Module\Admin\Core\Blocks\ManageBlocks;
 use App\Module\Admin\Core\Blocks\SetupBlocks;
@@ -23,93 +25,31 @@ use Ramsey\Uuid\Uuid;
 
 class Blocks extends BaseController
 {
-    public function manage()
+
+    public function manage(): string
     {
         return $this->view(
             '@a/blocks/manage.twig',
-            $this->getContext(
-                new ManageBlocks($this->entityManager)
-            )
+            $this->getContext($this->getContainer()->get(ManageBlocks::class))
         );
     }
 
-    /**
-     * @throws Exception
-     */
-    public function delete(ContainerInterface $container)
+    public function activate()
     {
-        /**
-         *
-         *
-         * @var Block $block
-         */
-        if (null === $block = $this->entityManager->getRepository(Block::class)->find(
-                $this->serverRequest->get('id')
-            )) {
-            throw new InvalidArgumentException('Invalid Arguments');
-        }
-
-        if (!$block->isRemovable()) {
-            throw new Exception('Block not removable');
-        }
-
-        $container->get(FactoryInterface::class)->make($block->getClass(), ['block' => $block])->preRemove();
-
-        $this->entityManager->remove($block);
-        $this->entityManager->flush();
-
-
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
-        //        return $this->view(
-        //            '@a/blocks/manage.twig',
-        //            $this->getContext(
-        //                new ManageBlocks($this->entityManager)
-        //            )
-        //        );
+        $this->getContainer()->get(ActivateBlock::class)();
     }
 
-    /**
-     * @throws Exception
-     */
-    public function clone(ContainerInterface $container)
+    public function delete()
     {
-        /**
-         *
-         *
-         * @var Block $block
-         */
-        if (null === $block = $this->entityManager->getRepository(Block::class)->find(
-                $this->serverRequest->get('id')
-            )) {
-            throw new InvalidArgumentException('Invalid Arguments');
-        }
-
-        $cloned = clone $block;
-        $cloned->setAlias((string)Uuid::uuid4());
-        $cloned->setRemovable(true);
-        $cloned->setCloned(true);
-        $this->entityManager->persist($cloned);
-        $this->entityManager->flush();
-
-        ACL::registerAcl(
-            $cloned->getBlockActionAcl(),
-            $cloned->getBlockCommentAcl()
-        );
-
-
-        $container->get(FactoryInterface::class)->make($block->getClass(), ['block' => $block])->postClone($cloned);
-
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
-        //        return $this->view(
-        //            '@a/blocks/manage.twig',
-        //            $this->getContext(
-        //                new ManageBlocks($this->entityManager)
-        //            )
-        //        );
+        $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
     }
 
+    public function clone(): void
+    {
+        $this->getContainer()->get(CloneBlock::class)($this->getContainer());
+    }
 
-    public function edit(ContainerInterface $container)
+    public function edit(ContainerInterface $container): string
     {
         return $this->view(
             '@a/blocks/edit.twig',
@@ -117,41 +57,30 @@ class Blocks extends BaseController
         );
     }
 
-    public function add()
+    public function add(): string
     {
         return $this->view(
             '@a/blocks/add.twig',
-            $this->getContext(
-                new AddBlocks($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
-            )
+            $this->getContext($this->getContainer()->get(AddBlocks::class))
         );
     }
 
 
-    public function location()
+    public function location(): string
     {
         return $this->view(
             '@a/blocks/locations.twig',
-            $this->getContext(
-                new BlockLocations($this->entityManager, $this->serverRequest, $this->urlGenerator, $this->renderer)
-            )
+            $this->getContext($this->getContainer()->get(BlockLocations::class))
         );
     }
 
-    public function setUp(ContainerInterface $container)
+    public function setUp(): string
     {
         return $this->view(
             '@a/blocks/setup.twig',
-            $this->getContext($container->get(FactoryInterface::class)->make(SetupBlocks::class))
+            $this->getContext($this->getContainer()->get(SetupBlocks::class))
         );
     }
 
-
-    public function activate()
-    {
-        $block = new ActivateBlocks($this->serverRequest->get('class'), $this->entityManager);
-        $id = $block->activate();
-        Redirect::http($this->urlGenerator->generate('admin/editblock', ['id' => $id]));
-    }
 
 }

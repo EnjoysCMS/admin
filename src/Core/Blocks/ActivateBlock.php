@@ -6,30 +6,32 @@ namespace App\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
+use Enjoys\Http\ServerRequestInterface;
 use EnjoysCMS\Core\Components\Helpers\ACL;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ActivateBlocks
+class ActivateBlock
 {
-
-
     private string $class;
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
 
-    public function __construct(string $class, EntityManager $entityManager)
-    {
+
+    public function __construct(
+        private EntityManager $em,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator
+    ) {
+        $class = $this->serverRequest->get('class');
+
         if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
         $this->class = $class;
-        $this->entityManager = $entityManager;
     }
 
-    public function activate()
+    public function __invoke()
     {
         $data = $this->class::getMeta();
         $block = new Block();
@@ -41,8 +43,8 @@ class ActivateBlocks
         $block->setOptions($data['options']);
 
 
-        $this->entityManager->persist($block);
-        $this->entityManager->flush();
+        $this->em->persist($block);
+        $this->em->flush();
 
 
         ACL::registerAcl(
@@ -50,7 +52,7 @@ class ActivateBlocks
             $block->getBlockCommentAcl()
         );
 
-        return $block->getId();
+        Redirect::http($this->urlGenerator->generate('admin/editblock', ['id' => $block->getId()]));
     }
 
 
