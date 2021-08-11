@@ -16,12 +16,20 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Http\ServerRequestInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class Users extends BaseController
 {
 
+    #[Route(
+        path: '/admin/users/list',
+        name: 'admin/users',
+        options: [
+            'aclComment' => 'Доступ к просмотру списка пользователей'
+        ]
+    )]
     public function list(): string
     {
         return $this->view(
@@ -30,6 +38,16 @@ class Users extends BaseController
         );
     }
 
+    #[Route(
+        path: '/admin/users/edit/@{id}',
+        name: 'admin/edituser',
+        requirements: [
+            'id' => '\d+'
+        ],
+        options: [
+            'aclComment' => 'Редактирование пользователей'
+        ]
+    )]
     public function edit(): string
     {
         return $this->view(
@@ -38,6 +56,13 @@ class Users extends BaseController
         );
     }
 
+    #[Route(
+        path: '/admin/users/add',
+        name: 'admin/adduser',
+        options: [
+            'aclComment' => 'Добавление пользователей'
+        ]
+    )]
     public function add(): string
     {
         return $this->view(
@@ -47,6 +72,16 @@ class Users extends BaseController
     }
 
 
+    #[Route(
+        path: '/admin/users/delete/{id}',
+        name: 'admin/deleteuser',
+        requirements: [
+            'id' => '\d+'
+        ],
+        options: [
+            'aclComment' => 'Удаление пользователей'
+        ]
+    )]
     public function delete(): string
     {
         return $this->view(
@@ -55,6 +90,16 @@ class Users extends BaseController
         );
     }
 
+    #[Route(
+        path: '/admin/users/changepassword@{id}',
+        name: 'admin/user/changepassword',
+        requirements: [
+            'id' => '\d+'
+        ],
+        options: [
+            'aclComment' => 'Изменение паролей у пользователей'
+        ]
+    )]
     public function changePassword(): string
     {
         return $this->view(
