@@ -5,7 +5,10 @@ namespace App\Module\Admin\Core\Users;
 
 
 use App\Module\Admin\Core\ModelInterface;
+use App\Module\Admin\Exception\NotEditableUser;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
@@ -21,38 +24,42 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Edit implements ModelInterface
 {
 
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $em;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    private ?User $user;
-    private ObjectRepository $usersRepository;
+    private User $user;
+    private ObjectRepository|EntityRepository $usersRepository;
 
+
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
     public function __construct(
-        EntityManager $em,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        ObjectRepository $usersRepository
+        private EntityManager $em,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->em = $em;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->usersRepository = $usersRepository;
-        $this->user = $this->usersRepository->find(
+        $this->usersRepository = $this->em->getRepository(User::class);
+        $this->user = $this->getUser();
+    }
+
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
+    public function getUser(): User
+    {
+        $user = $this->usersRepository->find(
             $this->serverRequest->get('id')
         );
 
-        if ($this->user === null || !$this->user->isEditable()) {
-            Error::code(404);
+        if ($user === null) {
+            throw new NoResultException();
         }
+
+        if (!$user->isEditable()){
+            throw new NotEditableUser('User is not editable');
+        }
+
+        return $user;
     }
 
     public function getContext(): array
@@ -179,4 +186,7 @@ class Edit implements ModelInterface
 
         Redirect::http($this->urlGenerator->generate('admin/users'));
     }
+
+
+
 }

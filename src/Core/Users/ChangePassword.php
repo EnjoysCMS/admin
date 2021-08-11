@@ -4,6 +4,10 @@
 namespace App\Module\Admin\Core\Users;
 
 
+use App\Module\Admin\Exception\NotEditableUser;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
+use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
@@ -19,48 +23,44 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface
 {
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $em;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $usersRepository;
-    /**
-     * @var RendererInterface
-     */
+    private User $user;
+    private ObjectRepository|EntityRepository $usersRepository;
     private RendererInterface $renderer;
-    private ?User $user;
 
+
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
     public function __construct(
-        EntityManager $em,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        ObjectRepository $usersRepository,
-        RendererInterface $renderer
+        private EntityManager $em,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->em = $em;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->usersRepository = $usersRepository;
-        $this->renderer = $renderer;
+        $this->usersRepository = $this->em->getRepository(User::class);
+        $this->user = $this->getUser();
+        $this->renderer = new Bootstrap4();
+    }
 
-        $this->user = $this->usersRepository->find(
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
+    public function getUser(): User
+    {
+        $user = $this->usersRepository->find(
             $this->serverRequest->get('id')
         );
 
-        if ($this->user === null) {
-            Error::code(404);
+        if ($user === null) {
+            throw new NoResultException();
         }
+
+        if (!$user->isEditable()){
+            throw new NotEditableUser('User is not editable');
+        }
+
+        return $user;
     }
 
     public function getContext(): array

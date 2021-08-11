@@ -5,13 +5,15 @@ namespace App\Module\Admin\Core\Users;
 
 
 use App\Module\Admin\Core\ModelInterface;
+use App\Module\Admin\Exception\NotEditableUser;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
@@ -19,45 +21,42 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
 {
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $em;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
-    private ObjectRepository $usersRepository;
-    private ?User $user;
+    private User $user;
+    private ObjectRepository|EntityRepository $usersRepository;
 
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
     public function __construct(
-        EntityManager $em,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        ObjectRepository $usersRepository,
-        RendererInterface $renderer
+        private EntityManager $em,
+        private ServerRequestInterface $serverRequest,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->em = $em;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-        $this->usersRepository = $usersRepository;
+        $this->usersRepository = $this->em->getRepository(User::class);
+        $this->user = $this->getUser();
+    }
 
-        $this->user = $this->usersRepository->find(
+    /**
+     * @throws NotEditableUser
+     * @throws NoResultException
+     */
+    public function getUser(): User
+    {
+        $user = $this->usersRepository->find(
             $this->serverRequest->get('id')
         );
 
-        if ($this->user === null || !$this->user->isEditable()) {
-            Error::code(404);
+        if ($user === null) {
+            throw new NoResultException();
         }
+
+        if (!$user->isEditable()) {
+            throw new NotEditableUser('User is not editable');
+        }
+
+        return $user;
     }
 
     public function getContext(): array
