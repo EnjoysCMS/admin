@@ -18,9 +18,6 @@ class Groups extends BaseController
     #[Route(
         path: '/admin/groups',
         name: 'admin/groups',
-        requirements: [
-            'id' => ''
-        ],
         options: [
             'aclComment' => 'Доступ к просмотру списка групп'
         ]
