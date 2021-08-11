@@ -39,8 +39,6 @@ class Blocks extends BaseController
     public function delete(ContainerInterface $container)
     {
         /**
-         *
-         *
          * @var Block $block
          */
         if (null === $block = $this->entityManager->getRepository(Block::class)->find(
