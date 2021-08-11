@@ -80,6 +80,14 @@ abstract class BaseController
         return $this->container;
     }
 
+    /**
+     * @return mixed|Environment
+     */
+    public function getTwig(): mixed
+    {
+        return $this->twig;
+    }
+
 
     protected function getContext(ModelInterface $model)
     {
