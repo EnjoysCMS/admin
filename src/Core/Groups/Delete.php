@@ -4,7 +4,7 @@
 namespace App\Module\Admin\Core\Groups;
 
 
-use App\Module\Admin\Exception\CannotDeleteSystemGroup;
+use App\Module\Admin\Exception\CannotRemoveEntity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use EnjoysCMS\Core\Components\Helpers\Error;
@@ -40,7 +40,7 @@ class Delete implements ModelInterface
 
     /**
      * @throws NoResultException
-     * @throws CannotDeleteSystemGroup
+     * @throws CannotRemoveEntity
      */
     private function getGroup(): Group
     {
@@ -53,7 +53,7 @@ class Delete implements ModelInterface
         }
 
         if ($group->isSystem()) {
-            throw new CannotDeleteSystemGroup('You cannot delete a system group');
+            throw new CannotRemoveEntity('You cannot delete a system group');
         }
         return $group;
     }
