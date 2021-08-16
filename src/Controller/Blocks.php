@@ -136,8 +136,8 @@ class Blocks extends BaseController
     }
 
     #[Route(
-        path: 'admin/setupblocks',
-        name: '/admin/blocks/setup',
+        path: '/admin/blocks/setup',
+        name: 'admin/setupblocks',
         options: [
             'aclComment' => 'Просмотре не активированных блоков'
         ]

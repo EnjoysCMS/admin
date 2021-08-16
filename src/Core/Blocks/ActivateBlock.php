@@ -25,7 +25,7 @@ class ActivateBlock
     ) {
         $class = $this->serverRequest->get('class');
 
-        if (!class_exists($class)) {
+        if (!class_exists((string)$class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
         $this->class = $class;
