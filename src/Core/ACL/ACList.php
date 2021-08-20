@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Module\Admin\Core\ACL;
 
 use EnjoysCMS\Core\Components\Composer\Utils;
@@ -8,12 +9,13 @@ use Doctrine\Persistence\ObjectRepository;
 
 class ACList
 {
+    private ObjectRepository $repositoryAcl;
 
 
     /**
      * ACList constructor.
      *
-     * @param ObjectRepository|ACL $repositoryAcl
+     * @param ObjectRepository $repositoryAcl
      */
     public function __construct(ObjectRepository $repositoryAcl)
     {
@@ -31,12 +33,10 @@ class ACList
         $groupedAcl = $this->getGroupedAcl();
         foreach ($groupedAcl as $group => $acls) {
             /**
-* 
-             *
- * @var \EnjoysCMS\Core\Entities\ACL $acl 
-*/
+             * @var \EnjoysCMS\Core\Entities\ACL $acl
+             */
             foreach ($acls as $acl) {
-                $ret[$group][' ' . $acl->getId()]  = [
+                $ret[$group][' ' . $acl->getId()] = [
                     $acl->getComment() . '<br><small>' . $acl->getAction() . '</small>',
                     ['id' => $acl->getId()]
                 ];
@@ -44,7 +44,6 @@ class ACList
         }
 
         return $ret;
-
     }
 
     public function getGroupedAcl(): array
@@ -59,7 +58,7 @@ class ACList
                 $groupedAcl[$module->moduleName] = array_filter(
                     $activeAcl,
                     function ($v) use ($ns) {
-                        return str_starts_with($v->getAction(), $ns);
+                        return str_starts_with(ltrim($v->getAction(), '\\'), $ns);
                     }
                 );
             }
@@ -77,13 +76,11 @@ class ACList
             $groupedAcl['@Application'] = array_filter(
                 $activeAcl,
                 function ($v) use ($ns) {
-                    return str_starts_with($v->getAction(), $ns);
+                    return str_starts_with(ltrim($v->getAction(), '\\'), $ns);
                 }
             );
             rsort($groupedAcl['@Application']);
         }
-
-
 
         return $groupedAcl;
     }
