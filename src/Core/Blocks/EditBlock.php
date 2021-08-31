@@ -152,31 +152,45 @@ class EditBlock implements ModelInterface
                             $form->radio(
                                 "options[{$key}]",
                                 (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription($option['description'])->fill($option['form']['data'])
-                            ;
+                            )->setDescription(
+                                $option['description'] ?? ''
+                            )->fill($option['form']['data']);
                             break;
                         case 'checkbox':
                             $form->checkbox(
                                 "options[{$key}]",
                                 (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription($option['description'])->fill($option['form']['data'])
-                            ;
+                            )->setDescription(
+                                $option['description'] ?? ''
+                            )->fill($option['form']['data']);
+                            break;
+                        case 'select':
+                            $form->select(
+                                "options[{$key}]",
+                                (isset($option['name'])) ? $option['name'] : $key
+                            )->setDescription(
+                                $option['description'] ?? ''
+                            )->fill($option['form']['data']);
+                            break;
+                        case 'textarea':
+                            $form->textarea(
+                                "options[{$key}]",
+                                (isset($option['name'])) ? $option['name'] : $key
+                            )->setDescription($option['description'] ?? '');
                             break;
                     }
 
                     continue;
                 }
                 $form->text("options[{$key}]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
-                    $option['description']
-                )
-                ;
+                    $option['description'] ?? ''
+                );
             }
         }
 
         $form->checkbox('groups', 'Права доступа')->fill(
             $this->groupsRepository->getGroupsArray()
-        )->addRule(Rules::REQUIRED)
-        ;
+        )->addRule(Rules::REQUIRED);
 
         $form->submit('send');
 
@@ -194,7 +208,7 @@ class EditBlock implements ModelInterface
         foreach ($blockOptions as $key => $value) {
             if (array_key_exists($key, $options)) {
                 $blockOptions[$key]['value'] = $options[$key];
-            }else{
+            } else {
                 $blockOptions[$key]['value'] = null;
             }
         }
