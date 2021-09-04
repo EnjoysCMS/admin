@@ -16,26 +16,19 @@
                     {% for block in blocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
-                                <b>{{ block.getName }}</b>
+                                <b>{{ block.getName }}</b>&nbsp;[id: <b>{{ block.getId }}</b>]
                                 {% if block.isCloned %}
                                     <span class="badge badge-primary badge-pill">cloned</span>
                                 {% endif %}
 
                                 <small class="d-block">{{ block.getClass }}</small>
-                                <small class="d-block text-monospace">id: <b>{{ block.getId }}</b></small>
-                                <small class="d-block text-monospace">alias: <b>{{ block.getAlias }}</b></small>
+                                <small class="d-block text-monospace">alias: <b class="user-select-all">{{ block.getAlias }}</b></small>
 
                                 <div class="collapse mt-3" id="collapseExample{{ block.getId }}">
-                                    <div class="card card-body">
+                                    <div class="user-select-all">
                                         <code class="text-monospace">
                                             &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
                                             {{ block.getTwigTemplateString(true) }}<br>
-                                            &lt;!-- /Блок: "{{ block.getName }}" --&gt;
-                                        </code>
-                                        или<br>
-                                        <code>
-                                            &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
-                                            {{ block.getTwigTemplateString }}<br>
                                             &lt;!-- /Блок: "{{ block.getName }}" --&gt;
                                         </code>
                                     </div>

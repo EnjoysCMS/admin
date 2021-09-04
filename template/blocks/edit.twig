@@ -23,9 +23,9 @@
                     <p>
                         Для отображения блока в шаблоне, вставьте туда код
                     </p>
-                    <code>
+                    <code class="user-select-all">
                         &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
-                            {{ block.getTwigTemplateString }}<br>
+                            {{ block.getTwigTemplateString(true) }}<br>
                         &lt;!-- /Блок: "{{ block.getName }}" --&gt;
                     </code>
 
