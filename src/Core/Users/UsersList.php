@@ -13,7 +13,6 @@ use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
-use JetBrains\PhpStorm\ArrayShape;
 
 final class UsersList implements ModelInterface
 {
@@ -24,26 +23,22 @@ final class UsersList implements ModelInterface
     {
         Assets::css(
             [
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
             ]
         );
         Assets::js(
             [
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
-                __DIR__ . '/../../node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
             ]
         );
 
         $this->usersRepository = $this->entityManager->getRepository(User::class);
     }
 
-    #[ArrayShape([
-        'users' => "array|object[]",
-        '_title' => "string"
-    ])]
     public function getContext(): array
     {
         return [

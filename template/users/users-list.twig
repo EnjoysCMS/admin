@@ -26,8 +26,6 @@
                     <tr>
                         <th>Name</th>
                         <th>Login</th>
-                        {# <th>Email</th> #}
-                        <th>Password</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -43,8 +41,6 @@
                                 </small>
                             </td>
                             <td>{{ user.getLogin }}</td>
-                            {# <td>{{ user.getEmail }}</td> #}
-                            <td>{{ user.getPasswordHash }}</td>
                             <td>
                                 {% if user.isEditable %}
                                     <a href="{{ url('admin/edituser', {'id': user.getId}) }}">Редактировать</a>
@@ -53,7 +49,6 @@
                             </td>
                         </tr>
                     {% endfor %}
-                    </tfoot>
                 </table>
             </div>
             <!-- /.card-body -->
