@@ -236,7 +236,7 @@ $builder->addDefinitions(
                 function (ContainerInterface $c) {
                     $environment = new AssetsCollector\Environment('build/web/assets', __DIR__ . '/..');
                     $environment->setBaseUrl('/assets');
-
+                    $environment->setCacheTime(3600);
                     $environment->setStrategy(Assets::STRATEGY_MANY_FILES);
                     $environment->setLogger($c->get(LoggerInterface::class)->withName('AssetsCollector'));
                     $environment->setMinifyCSS(new CssMinify([]));
