@@ -8,7 +8,8 @@
   },
   "autoload": {
     "psr-4": {
-      "App\\Module\\Admin\\": "src/"
+      "App\\Module\\Admin\\": "src/",
+      "Build\\": "build/"
     }
   },
   "extra": {
@@ -16,5 +17,16 @@
   },
   "scripts": {
     "assets-install": "cd ./modules/admin && yarn install"
+  },
+  "require-dev": {
+    "enjoys/dotenv": "^2.0",
+    "enjoyscms/core": "^3.0",
+    "symfony/cache": "^6.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "oomphinc/composer-installers-extender": true
+    }
   }
 }
