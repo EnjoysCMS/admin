@@ -28,6 +28,7 @@ use EnjoysCMS\Core\Components\Doctrine\Hydrators\KeyPair;
 use EnjoysCMS\Core\Components\Doctrine\Logger as DoctrineLogger;
 use EnjoysCMS\Core\Components\Modules\Module;
 use EnjoysCMS\Core\Components\TwigExtension\ExtendedFunctions;
+use EnjoysCMS\Core\Components\TwigExtension\Modules;
 use EnjoysCMS\Core\Components\TwigExtension\PickingCssJs;
 use EnjoysCMS\Core\Components\TwigExtension\Setting;
 use EnjoysCMS\Core\Components\TwigExtension\TwigLoader;
@@ -79,10 +80,10 @@ $builder->addDefinitions(
         ServerRequestInterface::class => create(ServerRequest::class),
         'Modules' => factory(
             function () {
-                $catalog = new Module(Utils::parseComposerJson(__DIR__ . '/../composer.json'));
-                $catalog->path = __DIR__ . '/..';
+                $src = new Module(Utils::parseComposerJson(__DIR__ . '/../composer.json'));
+                $src->path = __DIR__ . '/..';
                 return [
-                    $catalog,
+                    $src,
 //                    new Module(
 //                        Utils::parseComposerJson($_ENV['PROJECT_DIR'] . '/vendor/enjoyscms/elfinder/composer.json')
 //                    )
@@ -286,15 +287,7 @@ $builder->addDefinitions(
                                 }, ['is_safe' => ['html']]),
                                 new TwigFunction('accessInRoutes', function () {
                                     return true;
-                                }, ['is_safe' => ['html']]),
-                                new TwigFunction(
-                                    'getApplicationAdminLinks', function () {
-                                    return [];
-                                }, ['is_safe' => ['html']]
-                                ),
-                                new TwigFunction('getModules', function () {
-                                    return $this->c->get('Modules');
-                                }, ['is_safe' => ['html']]),
+                                }, ['is_safe' => ['html']])
                             ];
                         }
 
@@ -309,6 +302,7 @@ $builder->addDefinitions(
                 $twig->addExtension(new PickingCssJs());
                 $twig->addExtension(new DeferredExtension());
                 $twig->addExtension(new ExtendedFunctions());
+                $twig->addExtension(new Modules($c->get('Router')->getRouteCollection()));
 
                 $twig->addGlobal('_ENV', $_ENV);
                 $twig->addGlobal('_config', $c->get('Config'));
