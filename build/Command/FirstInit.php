@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Build\Command;
 
 use Doctrine\ORM\EntityManager;
+use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Catalog\Entities\Currency\Currency;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -40,6 +42,31 @@ final class FirstInit extends Command
 
             passthru('php ../vendor/bin/doctrine-migrations migrate -n');
 
+            $group = new Group();
+            $group->setName('Admin');
+            $group->setStatus(1);
+            $group->setSystem(true);
+            $this->em->persist($group);
+            $group = new Group();
+            $group->setName('Users');
+            $group->setStatus(1);
+            $group->setSystem(true);
+            $this->em->persist($group);
+            $group = new Group();
+            $group->setName('Guest');
+            $group->setStatus(1);
+            $group->setSystem(true);
+            $this->em->persist($group);
+
+            $user = new User();
+            $user->setName('Guest');
+            $user->setLogin('');
+            $user->setPasswordHash('');
+            $user->setGroups($group);
+            $user->setEditable(false);
+            $this->em->persist($user);
+
+            $this->em->flush();
 
         } catch (\Exception $e) {
             $output->writeln($e->getMessage());
