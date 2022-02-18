@@ -4,16 +4,11 @@
 namespace App\Module\Admin;
 
 
-use EnjoysCMS\Core\Components\Helpers\Assets;
 use App\Module\Admin\Core\ModelInterface;
-use Doctrine\ORM\EntityManager;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
+use EnjoysCMS\Core\Components\Helpers\Assets;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
-use Twig\Loader\LoaderInterface;
 
 abstract class BaseController
 {
@@ -54,11 +49,15 @@ abstract class BaseController
                 __DIR__ . '/../node_modules/admin-lte/plugins/jquery-ui/jquery-ui.min.js',
                 __DIR__ . '/../node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js',
                 __DIR__ . '/../node_modules/admin-lte/dist/js/adminlte.js',
+//                __DIR__ . '/../node_modules/admin-lte/dist/js/demo.js',
+                __DIR__ . '/../template/assets/custom.js',
             ]
         );
-
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function initAssets()
     {
         Assets::createSymlink(
@@ -70,7 +69,7 @@ abstract class BaseController
             __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
         Assets::createSymlink(
-            $_ENV['PUBLIC_DIR'] . '/assets/modules/admin/node_modules/admin-lte/plugins/fontawesome-free/webfonts',
+            $_ENV['PUBLIC_DIR'] . '/assets/node_modules/admin-lte/plugins/fontawesome-free/webfonts',
             __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
     }

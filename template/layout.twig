@@ -4,9 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ _title ?? ('Admin - ' ~ setting('sitename')) }}</title>
-    {% do asset('js', [
-        {0: 'modules/admin/template/assets/custom.js', 'minify': false}
-    ]) %}
     {% block __css__ deferred %}
     {{ eCSS() }}
     {{ getStyles() }}

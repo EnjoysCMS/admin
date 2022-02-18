@@ -7,7 +7,7 @@ $(document).ready(
         let url = window.location;
         let element = $('.nav-link').filter(
             function () {
-                return this.href === url || url.href.indexOf(this.href) === 0;
+                return this.href === url.href || url.href.indexOf(this.href) === 0;
             }
         ).addClass('active').parents().addClass('menu-open');
 
