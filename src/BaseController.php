@@ -60,16 +60,18 @@ abstract class BaseController
      */
     protected function initAssets()
     {
+        $path = str_replace($_ENV['PROJECT_DIR'], '', realpath(__DIR__.'/../'));
+
         Assets::createSymlink(
             $_ENV['PUBLIC_DIR'] . '/assets/adminLTE/dist',
             __DIR__ . '/../node_modules/admin-lte/dist'
         );
         Assets::createSymlink(
-            $_ENV['PUBLIC_DIR'] . '/assets/webfonts',
+            sprintf('%s/assets%s/webfonts', $_ENV['PUBLIC_DIR'], $path),
             __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
         Assets::createSymlink(
-            $_ENV['PUBLIC_DIR'] . '/assets/node_modules/admin-lte/plugins/fontawesome-free/webfonts',
+            sprintf('%s/assets%s/node_modules/admin-lte/plugins/fontawesome-free/webfonts', $_ENV['PUBLIC_DIR'], $path),
             __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
         );
     }
