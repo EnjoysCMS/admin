@@ -13,16 +13,16 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <p>
-                    <a href="{{ url('admin/addgroup') }}" class="btn-sm btn btn-secondary">Добавить новую группу</a>
+                    <a href="{{ path('admin/addgroup') }}" class="btn-sm btn btn-secondary">Добавить новую группу</a>
                 </p>
                 <ul class="list-group">
                     {% for group in groups %}
                         <li class="list-group-item  align-items-center">
                             <div class="h3">{{ group.getName }}
                                 <small>
-                                    <a href="{{ url('admin/editgroup', {id: group.getId}) }}" class="mx-3">Редактировать</a>
+                                    <a href="{{ path('admin/editgroup', {id: group.getId}) }}" class="mx-3">Редактировать</a>
                                     {% if not group.isSystem %}
-                                    <a href="{{ url('admin/deletegroup', {id: group.getId}) }}" class="">Удалить</a>
+                                    <a href="{{ path('admin/deletegroup', {id: group.getId}) }}" class="">Удалить</a>
                                     {% endif %}
                                 </small>
                             </div>

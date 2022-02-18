@@ -15,7 +15,7 @@
                 {% if access2route('admin/blocklocation') %}
                 <div class="my-3">
                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark"
-                       href="{{ url('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-edit"></i>
+                       href="{{ path('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-edit"></i>
                         Управление местоположением блока </a>
                 </div>
                 {% endif %}

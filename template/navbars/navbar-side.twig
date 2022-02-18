@@ -40,7 +40,7 @@
                      with font-awesome or any other icon font library -->
                 {% if access2route('admin/index') %}
                     <li class="nav-item">
-                        <a href="{{ url('admin/index') }}" class="nav-link">
+                        <a href="{{ path('admin/index') }}" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Dashboard
@@ -51,7 +51,7 @@
 
                 {% if access2route('admin/setting') %}
                     <li class="nav-item">
-                        <a href="{{ url('admin/setting') }}" class="nav-link text-warning">
+                        <a href="{{ path('admin/setting') }}" class="nav-link text-warning">
                             <i class="nav-icon fa fa-cogs"></i>
                             <p>
                                 Настройки
@@ -73,7 +73,7 @@
 
                             {% if access2route('admin/users') %}
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/users') }}" class="nav-link">
+                                    <a href="{{ path('admin/users') }}" class="nav-link">
                                         <i class="fas fa-user-friends nav-icon"></i>
                                         <p>Все пользователи</p>
                                     </a>
@@ -82,7 +82,7 @@
 
                             {% if access2route('admin/adduser') %}
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/adduser') }}" class="nav-link">
+                                    <a href="{{ path('admin/adduser') }}" class="nav-link">
                                         <i class="fas fa-user-plus nav-icon"></i>
                                         <p>Добавить пользователя</p>
                                     </a>
@@ -91,7 +91,7 @@
 
                             {% if access2route('admin/groups') %}
                                 <li class="nav-item">
-                                    <a href="{{ url('admin/groups') }}" class="nav-link">
+                                    <a href="{{ path('admin/groups') }}" class="nav-link">
                                         <i class="fas fa-users nav-icon"></i>
                                         <p>Группы</p>
                                     </a>
@@ -115,7 +115,7 @@
                     <ul class="nav nav-treeview">
                         {% if access2route('admin/managewidgets') %}
                             <li class="nav-item">
-                                <a href="{{ url('admin/managewidgets') }}" class="nav-link">
+                                <a href="{{ path('admin/managewidgets') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Менеджер виджетов</p>
                                 </a>
@@ -128,7 +128,7 @@
 
                 {% if accessInRoutes(['admin/blocks', 'admin/addblock', 'admin/setupblocks']) %}
                 <li class="nav-item">
-                    <a href="/admin/blocks" class="nav-link">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-tree"></i>
                         <p>
                             Блоки
@@ -138,7 +138,7 @@
                     <ul class="nav nav-treeview">
                         {% if access2route('admin/blocks') %}
                             <li class="nav-item">
-                                <a href="{{ url('admin/blocks') }}" class="nav-link">
+                                <a href="{{ path('admin/blocks') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Настройка блоков</p>
                                 </a>
@@ -147,7 +147,7 @@
 
                         {% if access2route('admin/addblock') %}
                             <li class="nav-item">
-                                <a href="{{ url('admin/addblock') }}" class="nav-link">
+                                <a href="{{ path('admin/addblock') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Добавить новый блок</p>
                                 </a>
@@ -156,7 +156,7 @@
 
                         {% if access2route('admin/setupblocks') %}
                             <li class="nav-item">
-                                <a href="{{ url('admin/setupblocks') }}" class="nav-link">
+                                <a href="{{ path('admin/setupblocks') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Установка блоков</p>
                                 </a>
@@ -183,7 +183,7 @@
                                 {% for name, appLink in appLinks %}
                                     {% if access2route(name) %}
                                         <li class="nav-item">
-                                            <a href="{{ url(name) }}" class="nav-link">
+                                            <a href="{{ path(name) }}" class="nav-link">
                                                 <i class="fas fa-angle-right nav-icon"></i>
                                                 <p>{{ appLink.getOption('adminTitle') }}</p>
                                             </a>
@@ -211,7 +211,7 @@
                                 {% for link, name in module.adminLinks %}
                                     {% if access2route(link) %}
                                         <li class="nav-item">
-                                            <a href="{{ url(link) }}" class="nav-link">
+                                            <a href="{{ path(link) }}" class="nav-link">
                                                 <i class="fas fa-angle-right nav-icon"></i>
                                                 <p>{{ name }}</p>
                                             </a>
