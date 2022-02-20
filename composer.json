@@ -1,33 +1,36 @@
 {
-  "name": "enjoyscms/admin",
-  "description": "Module Admin for EnjoysCMS",
-  "type": "enjoyscms-module",
-  "require": {
-    "php": "^8.0",
-    "ramsey/uuid": "^4.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\Module\\Admin\\": "src/",
-      "Build\\": "build/"
+    "name": "enjoyscms/admin",
+    "description": "Module Admin for EnjoysCMS",
+    "type": "enjoyscms-module",
+    "require": {
+        "php": "^8.0",
+        "ramsey/uuid": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Module\\Admin\\": "src/",
+            "Build\\": "build/"
+        }
+    },
+    "extra": {
+        "module-name": "Admin panel"
+    },
+    "scripts": {
+        "assets-install": "cd ./modules/admin && yarn install"
+    },
+    "require-dev": {
+        "enjoys/dotenv": "^2.0",
+        "enjoyscms/core": "^3.0",
+        "symfony/cache": "^6.0",
+        "vimeo/psalm": "^4.21",
+        "codeception/codeception": "^4.1",
+        "codeception/module-phpbrowser": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
     }
-  },
-  "extra": {
-    "module-name": "Admin panel"
-  },
-  "scripts": {
-    "assets-install": "cd ./modules/admin && yarn install"
-  },
-  "require-dev": {
-    "enjoys/dotenv": "^2.0",
-    "enjoyscms/core": "^3.0",
-    "symfony/cache": "^6.0",
-    "vimeo/psalm": "^4.21"
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/installers": true,
-      "oomphinc/composer-installers-extender": true
-    }
-  }
 }
