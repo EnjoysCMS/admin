@@ -60,7 +60,7 @@ final class EditSetting implements ModelInterface
         ];
     }
 
-    private function getForm()
+    private function getForm(): Form
     {
         $form = new Form(['method' => 'post']);
         $form->setDefaults(
@@ -107,7 +107,7 @@ final class EditSetting implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $this->settingEntity->setVar($this->serverRequest->post('var'));
         $this->settingEntity->setValue($this->serverRequest->post('value'));

@@ -58,7 +58,7 @@ abstract class BaseController
     /**
      * @throws \Exception
      */
-    protected function initAssets()
+    protected function initAssets(): void
     {
         $path = str_replace($_ENV['PROJECT_DIR'], '', realpath(__DIR__.'/../'));
 
@@ -90,12 +90,12 @@ abstract class BaseController
     }
 
 
-    protected function getContext(ModelInterface $model)
+    protected function getContext(ModelInterface $model): array
     {
         return $model->getContext();
     }
 
-    protected function view(string $twigTemplatePath, array $context)
+    protected function view(string $twigTemplatePath, array $context): string
     {
         return $this->twig->render($twigTemplatePath, $context);
     }

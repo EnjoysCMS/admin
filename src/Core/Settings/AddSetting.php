@@ -53,7 +53,7 @@ final class AddSetting implements ModelInterface
         ];
     }
 
-    private function getForm()
+    private function getForm(): Form
     {
         $form = new Form(['method' => 'post']);
         $form->text('var', 'var')->addRule(Rules::REQUIRED)->addRule(
@@ -86,7 +86,7 @@ final class AddSetting implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $setting = new \EnjoysCMS\Core\Entities\Setting();
         $setting->setVar($this->serverRequest->post('var'));

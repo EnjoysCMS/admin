@@ -97,7 +97,7 @@ class ChangePassword implements ModelInterface
         return $form;
     }
 
-    private function updatePassword()
+    private function updatePassword(): void
     {
         $this->user->genAdnSetPasswordHash($this->serverRequest->post('password'));
         $this->em->flush();

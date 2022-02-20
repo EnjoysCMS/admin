@@ -216,7 +216,7 @@ class EditBlock implements ModelInterface
         return $blockOptions;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $oldBlock = clone $this->block;
         $this->block->setName($this->serverRequest->post('name'));

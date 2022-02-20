@@ -32,7 +32,7 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function delete()
+    public function delete(): void
     {
     }
 
@@ -47,7 +47,7 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function clone()
+    public function clone(): void
     {
     }
 
@@ -62,7 +62,7 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function edit()
+    public function edit(): void
     {
     }
 
@@ -74,7 +74,7 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function manage()
+    public function manage(): string
     {
         return $this->view(
             '@a/widgets/manage.twig',
@@ -90,7 +90,7 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function activate()
+    public function activate(): void
     {
         $this->getContainer()->get(ActivateWidget::class)();
     }

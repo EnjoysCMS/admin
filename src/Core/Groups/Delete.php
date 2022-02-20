@@ -79,7 +79,7 @@ class Delete implements ModelInterface
         ];
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $this->entityManager->remove($this->group);
         $this->entityManager->flush();

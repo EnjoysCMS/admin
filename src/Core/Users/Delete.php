@@ -82,7 +82,7 @@ class Delete implements ModelInterface
         ];
     }
 
-    private function deleteUser()
+    private function deleteUser(): void
     {
         $this->em->remove($this->user);
         $this->em->flush();

@@ -65,7 +65,7 @@ class Setting implements ModelInterface
         ];
     }
 
-    private function getForm()
+    private function getForm(): Form
     {
         $settings = (array)$this->settingRepository->findAll();
 
@@ -142,7 +142,7 @@ class Setting implements ModelInterface
         // die();
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         foreach ($this->serverRequest->post() as $k => $v) {
             /**

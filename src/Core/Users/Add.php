@@ -49,7 +49,7 @@ class Add implements ModelInterface
         ];
     }
 
-    private function addUser()
+    private function addUser(): void
     {
         $newUser = new User();
         $newUser->setName($this->serverRequest->post('name'));

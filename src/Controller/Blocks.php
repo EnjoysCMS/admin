@@ -49,7 +49,7 @@ class Blocks extends BaseController
             'aclComment' => 'Установка (активация) блоков'
         ]
     )]
-    public function activate()
+    public function activate(): void
     {
         $this->getContainer()->get(ActivateBlock::class)();
     }
@@ -64,7 +64,7 @@ class Blocks extends BaseController
             'aclComment' => 'Удаление блоков'
         ]
     )]
-    public function delete()
+    public function delete(): void
     {
         $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
     }

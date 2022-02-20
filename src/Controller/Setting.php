@@ -69,7 +69,7 @@ class Setting extends BaseController
             'aclComment' => 'Удаление глобальной настройки'
         ]
     )]
-    public function deleteSetting()
+    public function deleteSetting(): void
     {
         $this->getContainer()->get(DeleteSetting::class)();
     }

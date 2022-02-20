@@ -64,7 +64,7 @@ class AddBlocks implements ModelInterface
         ];
     }
 
-    private function getForm()
+    private function getForm(): Form
     {
         $form = new Form(['method' => 'post']);
         $form->text('name', 'Название')->addRule(Rules::REQUIRED);
@@ -79,7 +79,7 @@ class AddBlocks implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         try {
             $block = new Block();

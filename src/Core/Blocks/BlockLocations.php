@@ -82,7 +82,7 @@ class BlockLocations implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $locations = $this->entityManager->getRepository(Location::class)->findBy(
             ['id' => $this->serverRequest->post('locations', [])]

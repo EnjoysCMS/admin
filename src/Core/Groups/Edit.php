@@ -132,7 +132,7 @@ class Edit implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
             ['id' => $this->serverRequest->post('acl', [])]

@@ -166,7 +166,7 @@ class Edit implements ModelInterface
         return $groupsArray;
     }
 
-    private function editUser()
+    private function editUser(): void
     {
         $this->user->setName($this->serverRequest->post('name'));
         $this->user->setLogin($this->serverRequest->post('login'));

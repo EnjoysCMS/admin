@@ -27,7 +27,12 @@ class ACList
         return $this->repositoryAcl->getAllActiveACL();
     }
 
-    public function getArrayForCheckboxForm()
+    /**
+     * @return (int[]|string)[][][]
+     *
+     * @psalm-return array<array<string, array{0: string, 1: array{id: int}}>>
+     */
+    public function getArrayForCheckboxForm(): array
     {
         $ret = [];
         $groupedAcl = $this->getGroupedAcl();
