@@ -222,7 +222,9 @@ $builder->addDefinitions(
 //                            ))->getRouteCollection()
 //                        );
 
-                        $routeCollection->add('system/index', new Route('/'));
+                        $routeCollection->add('system/index', new Route('/', [
+                            '_controller' => [\App\Module\Admin\Controller\Dashboard::class, 'dashboard']
+                        ]));
 
                         return $routeCollection;
                     },
@@ -273,11 +275,9 @@ $builder->addDefinitions(
 
 
                 $twig->addExtension(
-                    new class($c) extends AbstractExtension {
+                    new class() extends AbstractExtension {
 
-                        public function __construct(private $c)
-                        {
-                        }
+
 
                         public function getFunctions(): array
                         {
@@ -294,10 +294,7 @@ $builder->addDefinitions(
                             ];
                         }
 
-                        public function stub($return)
-                        {
-                            return $return;
-                        }
+
                     }
                 );
 
