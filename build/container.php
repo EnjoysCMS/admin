@@ -32,8 +32,11 @@ use EnjoysCMS\Core\Components\TwigExtension\Modules;
 use EnjoysCMS\Core\Components\TwigExtension\PickingCssJs;
 use EnjoysCMS\Core\Components\TwigExtension\Setting;
 use EnjoysCMS\Core\Components\TwigExtension\TwigLoader;
+use EnjoysCMS\Core\Error\ErrorInterface;
 use Gedmo\Timestampable\TimestampableListener;
 use Gedmo\Tree\TreeListener;
+use HttpSoft\Emitter\SapiEmitter;
+use HttpSoft\Message\Response;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Logger;
@@ -323,6 +326,20 @@ $builder->addDefinitions(
         'summernote' => factory(
             function () {
                 return;
+            }
+        ),
+        ErrorInterface::class =>  factory(
+            function(){
+                return new class {
+                    public function http(int $code, string $message = null): void
+                    {
+                        $response = new Response($code);
+                        $response->getBody()->write(sprintf('%s. %s',$response->getReasonPhrase(), $message));
+
+                        (new SapiEmitter())->emit($response);
+                        exit;
+                    }
+                };
             }
         ),
 //        EventDispatcher::class => factory(
