@@ -17,15 +17,9 @@
     "module-name": "Admin panel"
   },
   "scripts": {
-    "assets-install": [
-      "App\\Module\\Admin\\Composer::assetsInstall"
-    ],
-    "post-install-cmd": [
-      "@assets-install"
-    ],
-    "post-update-cmd": [
-      "@assets-install"
-    ]
+    "assets-install": "App\\Module\\Admin\\Composer::assetsInstall",
+    "post-install-cmd": "@assets-install",
+    "post-update-cmd": "@assets-install"
   },
   "require-dev": {
     "enjoys/dotenv": "^2.0",
