@@ -34,7 +34,7 @@ final class FirstInit extends Command
             exec('mkdir /opt/project/build/migrations -p');
 
             chdir('/opt/project/build');
-            passthru('php console assets-install');
+
             passthru('php ../vendor/bin/doctrine-migrations diff');
 
             passthru('sleep 1');

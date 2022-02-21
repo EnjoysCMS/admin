@@ -4,12 +4,13 @@
 
 require __DIR__.'/bootstrap.php';
 
+use Build\Command\FirstInit;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 
-/** @var \Psr\Container\ContainerInterface $container */
-$application->add($container->get(\Build\Command\AssetsInstall::class));
-$application->add($container->get(\Build\Command\FirstInit::class));
+/** @var ContainerInterface $container */
+$application->add($container->get(FirstInit::class));
 
 $application->run();
