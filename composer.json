@@ -4,8 +4,7 @@
   "type": "enjoyscms-module",
   "require": {
     "php": ">=8.0",
-    "enjoyscms/core": "^3.0",
-    "ramsey/uuid": "^4.1"
+    "enjoyscms/core": "^4.0"
   },
   "autoload": {
     "psr-4": {
