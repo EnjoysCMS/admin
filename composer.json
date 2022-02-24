@@ -4,7 +4,7 @@
   "type": "enjoyscms-module",
   "require": {
     "php": ">=8.0",
-    "enjoyscms/core": "^4.0"
+    "enjoyscms/core": "^4.0 | @dev"
   },
   "autoload": {
     "psr-4": {
