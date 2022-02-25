@@ -5,6 +5,7 @@ namespace App\Module\Admin;
 
 
 use App\Module\Admin\Core\ModelInterface;
+use App\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use Psr\Container\ContainerInterface;
@@ -19,6 +20,7 @@ abstract class BaseController
     public function __construct(private ContainerInterface $container)
     {
         $this->twig = $this->container->get(Environment::class);
+        $this->twig->addExtension(new AdminHelpersExtension($this->container->get('Router')->getRouteCollection()));
 
         $this->initAssets();
 
@@ -31,8 +33,8 @@ abstract class BaseController
             \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
         );
 
-        $twigLoader = $this->twig->getLoader();
-        $twigLoader->addPath(__DIR__ . '/../template', 'a');
+
+        $this->twig->getLoader()->addPath(__DIR__ . '/../template', 'a');
 
 
         Assets::css(

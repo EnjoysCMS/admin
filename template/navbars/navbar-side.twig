@@ -163,7 +163,7 @@
                     </ul>
                     {% endif %}
                 </li>
-                {% set appLinks = getApplicationAdminLinks() %}
+
 
 
 
@@ -177,7 +177,7 @@
                             </a>
 
                             <ul class="nav nav-treeview">
-                                {% for name, appLink in appLinks %}
+                                {% for name, appLink in getApplicationAdminLinks() %}
                                     {% if access2route(name) %}
                                         <li class="nav-item">
                                             <a href="{{ path(name) }}" class="nav-link">
@@ -191,9 +191,9 @@
                         </li>
 
 
-                {% set modules = getModules() %}
 
-                {% for module in modules %}
+
+                {% for module in getModules() %}
                     {% if accessInRoutes(module.adminLinks|keys) %}
                         <li class="nav-item n">
                             <a href="#" class="nav-link ">
