@@ -2,7 +2,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
-        <img src="/assets/adminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+        <img src="/assets/adminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo"
+             class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">Enjoys CMS</span>
     </a>
@@ -103,7 +104,7 @@
                 {% if accessInRoutes(['admin/managewidgets', 'admin/editwidget']) %}
                 <li class="nav-item">
                     <a href="/admin/widgets" class="nav-link">
-                        <i class="nav-icon fas fa-tree"></i>
+                        <i class="nav-icon fas fa-window-maximize"></i>
                         <p>
                             Виджеты
                             <i class="fas fa-angle-left right"></i>
@@ -126,7 +127,7 @@
                 {% if accessInRoutes(['admin/blocks', 'admin/addblock', 'admin/setupblocks']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-tree"></i>
+                        <i class="nav-icon fas fa-th-large"></i>
                         <p>
                             Блоки
                             <i class="fas fa-angle-left right"></i>
@@ -159,45 +160,16 @@
                                 </a>
                             </li>
                         {% endif %}
-
                     </ul>
                     {% endif %}
                 </li>
 
-
-
-
-                        <li class="nav-item n">
-                            <a href="#" class="nav-link ">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    @Application
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-
-                            <ul class="nav nav-treeview">
-                                {% for name, appLink in getApplicationAdminLinks() %}
-                                    {% if access2route(name) %}
-                                        <li class="nav-item">
-                                            <a href="{{ path(name) }}" class="nav-link">
-                                                <i class="fas fa-angle-right nav-icon"></i>
-                                                <p>{{ appLink.getOption('adminTitle') }}</p>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </li>
-
-
-
-
+                <li class="nav-header">МОДУЛИ (PLUGINS)</li>
                 {% for module in getModules() %}
                     {% if accessInRoutes(module.adminLinks|keys) %}
                         <li class="nav-item n">
                             <a href="#" class="nav-link ">
-                                <i class="nav-icon fas fa-copy"></i>
+                                <i class="nav-icon fa fa-puzzle-piece"></i>
                                 <p>
                                     {{ module.moduleName }}
                                     <i class="fas fa-angle-left right"></i>
@@ -220,6 +192,22 @@
                     {% endif %}
                 {% endfor %}
 
+                {% set appLinks = getApplicationAdminLinks() %}
+                {% if appLinks %}
+                    <li class="nav-header">ПРИЛОЖЕНИЕ (APPLICATION)</li>
+                    <li class="nav-item">
+                    {% for name, route in  appLinks %}
+                        {% if access2route(name) %}
+                            <li class="nav-item">
+                                <a href="{{ path(name) }}" class="nav-link">
+                                    <i class="fas fa-dot-circle nav-icon"></i>
+                                    <p>{{ route.getOption('title') }}</p>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    </li>
+                {% endif %}
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
