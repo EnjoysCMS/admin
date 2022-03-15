@@ -1,0 +1,16 @@
+{% set appLinks = getApplicationAdminLinks() %}
+{% if appLinks %}
+    <li class="nav-header">ПРИЛОЖЕНИЕ (APPLICATION)</li>
+    <li class="nav-item">
+    {% for name, route in  appLinks %}
+        {% if access2route(name) %}
+            <li class="nav-item">
+                <a href="{{ path(name) }}" class="nav-link">
+                    <i class="fas fa-dot-circle nav-icon"></i>
+                    <p>{{ route.getOption('admin')[0] ?? route.getOption('admin').title ?? route.getOption('admin') }}</p>
+                </a>
+            </li>
+        {% endif %}
+    {% endfor %}
+    </li>
+{% endif %}
