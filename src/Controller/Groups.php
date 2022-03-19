@@ -9,6 +9,7 @@ use App\Module\Admin\Core\Groups\Add;
 use App\Module\Admin\Core\Groups\Delete;
 use App\Module\Admin\Core\Groups\Edit;
 use App\Module\Admin\Core\Groups\GroupsList;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -19,14 +20,16 @@ class Groups extends BaseController
         path: '/admin/groups',
         name: 'admin/groups',
         options: [
-            'aclComment' => 'Доступ к просмотру списка групп'
+            'comment' => 'Доступ к просмотру списка групп'
         ]
     )]
-    public function list(): string
+    public function list(): ResponseInterface
     {
-        return $this->view(
-            '@a/groups/list.twig',
-            $this->getContext($this->getContainer()->get(GroupsList::class))
+        return $this->responseText(
+            $this->view(
+                '@a/groups/list.twig',
+                $this->getContext($this->getContainer()->get(GroupsList::class))
+            )
         );
     }
 
@@ -38,14 +41,16 @@ class Groups extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Редактирование групп пользователей'
+            'comment' => 'Редактирование групп пользователей'
         ]
     )]
-    public function edit(): string
+    public function edit(): ResponseInterface
     {
-        return $this->view(
-            '@a/groups/edit.twig',
-            $this->getContext($this->getContainer()->get(Edit::class))
+        return $this->responseText(
+            $this->view(
+                '@a/groups/edit.twig',
+                $this->getContext($this->getContainer()->get(Edit::class))
+            )
         );
     }
 
@@ -53,14 +58,16 @@ class Groups extends BaseController
         path: '/admin/groups/add',
         name: 'admin/addgroup',
         options: [
-            'aclComment' => 'Добаление групп пользователей'
+            'comment' => 'Добаление групп пользователей'
         ]
     )]
-    public function add(): string
+    public function add(): ResponseInterface
     {
-        return $this->view(
-            '@a/groups/add.twig',
-            $this->getContext($this->getContainer()->get(Add::class))
+        return $this->responseText(
+            $this->view(
+                '@a/groups/add.twig',
+                $this->getContext($this->getContainer()->get(Add::class))
+            )
         );
     }
 
@@ -71,14 +78,16 @@ class Groups extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Удаление групп пользователей'
+            'comment' => 'Удаление групп пользователей'
         ]
     )]
-    public function delete(): string
+    public function delete(): ResponseInterface
     {
-        return $this->view(
-            '@a/groups/delete.twig',
-            $this->getContext($this->getContainer()->get(Delete::class))
+        return $this->responseText(
+            $this->view(
+                '@a/groups/delete.twig',
+                $this->getContext($this->getContainer()->get(Delete::class))
+            )
         );
     }
 

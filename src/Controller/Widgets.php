@@ -8,15 +8,10 @@ namespace App\Module\Admin\Controller;
 use App\Module\Admin\BaseController;
 use App\Module\Admin\Core\Widgets\ActivateWidget;
 use App\Module\Admin\Core\Widgets\Manage;
-use Doctrine\ORM\EntityManager;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use Exception;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Environment;
 
 class Widgets extends BaseController
 {
@@ -66,6 +61,10 @@ class Widgets extends BaseController
     {
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/widgets/manage',
         name: 'admin/managewidgets',
@@ -74,14 +73,18 @@ class Widgets extends BaseController
         ]
     )]
 
-    public function manage(): string
+    public function manage(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/widgets/manage.twig',
             $this->getContext($this->getContainer()->get(Manage::class))
-        );
+        ));
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/widgets/activate',
         name: 'admin/acivatewidget',

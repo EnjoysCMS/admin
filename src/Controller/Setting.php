@@ -18,15 +18,15 @@ class Setting extends BaseController
         path: '/admin/setting',
         name: 'admin/setting',
         options: [
-            'aclComment' => 'Настройки сайта'
+            'comment' => 'Настройки сайта'
         ]
     )]
-    public function setting(): string
+    public function setting(): \Psr\Http\Message\ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/setting/setting.twig',
             $this->getContext($this->getContainer()->get(\App\Module\Admin\Core\Settings\Setting::class))
-        );
+        ));
     }
 
 
@@ -34,15 +34,15 @@ class Setting extends BaseController
         path: '/admin/setting/add',
         name: 'admin/setting/add',
         options: [
-            'aclComment' => 'Добавление глобальной настройки'
+            'comment' => 'Добавление глобальной настройки'
         ]
     )]
-    public function addSetting(): string
+    public function addSetting(): \Psr\Http\Message\ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/setting/add.twig',
             $this->getContext($this->getContainer()->get(AddSetting::class))
-        );
+        ));
     }
 
 
@@ -50,15 +50,15 @@ class Setting extends BaseController
         path: '/admin/setting/edit',
         name: 'admin/setting/edit',
         options: [
-            'aclComment' => 'Изменение глобальной настройки'
+            'comment' => 'Изменение глобальной настройки'
         ]
     )]
-    public function editSetting(): string
+    public function editSetting(): \Psr\Http\Message\ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/setting/add.twig',
             $this->getContext($this->getContainer()->get(EditSetting::class))
-        );
+        ));
     }
 
 
@@ -66,7 +66,7 @@ class Setting extends BaseController
         path: '/admin/setting/delete',
         name: 'admin/setting/delete',
         options: [
-            'aclComment' => 'Удаление глобальной настройки'
+            'comment' => 'Удаление глобальной настройки'
         ]
     )]
     public function deleteSetting(): void

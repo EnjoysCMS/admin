@@ -15,13 +15,9 @@ use App\Module\Admin\Core\Blocks\EditBlock;
 use App\Module\Admin\Core\Blocks\ManageBlocks;
 use App\Module\Admin\Core\Blocks\SetupBlocks;
 use DI\FactoryInterface;
-use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Entities\Block;
-use Exception;
-use InvalidArgumentException;
-use Psr\Container\ContainerInterface;
-use Ramsey\Uuid\Uuid;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Blocks extends BaseController
@@ -31,22 +27,26 @@ class Blocks extends BaseController
         path: '/admin/blocks/setting',
         name: 'admin/blocks',
         options: [
-            'aclComment' => 'Просмотр активных блоков'
+            'comment' => 'Просмотр активных блоков'
         ]
     )]
-    public function manage(): string
+    public function manage(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/blocks/manage.twig',
             $this->getContext($this->getContainer()->get(ManageBlocks::class))
-        );
+        ));
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/activate',
         name: 'admin/acivateblocks',
         options: [
-            'aclComment' => 'Установка (активация) блоков'
+            'comment' => 'Установка (активация) блоков'
         ]
     )]
     public function activate(): void
@@ -54,6 +54,10 @@ class Blocks extends BaseController
         $this->getContainer()->get(ActivateBlock::class)();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/delete/{id}',
         name: 'admin/deleteblocks',
@@ -61,7 +65,7 @@ class Blocks extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Удаление блоков'
+            'comment' => 'Удаление блоков'
         ]
     )]
     public function delete(): void
@@ -69,6 +73,10 @@ class Blocks extends BaseController
         $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/clone/{id}',
         name: 'admin/cloneblocks',
@@ -76,7 +84,7 @@ class Blocks extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Клонирование блоков'
+            'comment' => 'Клонирование блоков'
         ]
     )]
     public function clone(): void
@@ -84,6 +92,10 @@ class Blocks extends BaseController
         $this->getContainer()->get(CloneBlock::class)($this->getContainer());
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/edit/{id}',
         name: 'admin/editblock',
@@ -91,30 +103,30 @@ class Blocks extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Редактирование блоков'
+            'comment' => 'Редактирование блоков'
         ]
     )]
-    public function edit(ContainerInterface $container): string
+    public function edit(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/blocks/edit.twig',
-            $this->getContext($container->get(FactoryInterface::class)->make(EditBlock::class))
-        );
+            $this->getContext($this->getContainer()->get(FactoryInterface::class)->make(EditBlock::class))
+        ));
     }
 
     #[Route(
         path: '/admin/blocks/add',
         name: 'admin/addblock',
         options: [
-            'aclComment' => 'Добавление пользовательского блока (простой текстовый блок)'
+            'comment' => 'Добавление пользовательского блока (простой текстовый блок)'
         ]
     )]
-    public function add(): string
+    public function add(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/blocks/add.twig',
             $this->getContext($this->getContainer()->get(AddBlocks::class))
-        );
+        ));
     }
 
     #[Route(
@@ -124,30 +136,30 @@ class Blocks extends BaseController
             'id' => '\d+'
         ],
         options: [
-            'aclComment' => 'Установка расположения блоков'
+            'comment' => 'Установка расположения блоков'
         ]
     )]
-    public function location(): string
+    public function location(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/blocks/locations.twig',
             $this->getContext($this->getContainer()->get(BlockLocations::class))
-        );
+        ));
     }
 
     #[Route(
         path: '/admin/blocks/setup',
         name: 'admin/setupblocks',
         options: [
-            'aclComment' => 'Просмотре не активированных блоков'
+            'comment' => 'Просмотре не активированных блоков'
         ]
     )]
-    public function setUp(): string
+    public function setUp(): ResponseInterface
     {
-        return $this->view(
+        return $this->responseText($this->view(
             '@a/blocks/setup.twig',
             $this->getContext($this->getContainer()->get(SetupBlocks::class))
-        );
+        ));
     }
 
 

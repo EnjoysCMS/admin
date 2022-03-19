@@ -9,9 +9,10 @@ use App\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
 
-abstract class BaseController
+abstract class BaseController extends \EnjoysCMS\Core\BaseController
 {
 
 
@@ -19,6 +20,7 @@ abstract class BaseController
 
     public function __construct(private ContainerInterface $container)
     {
+        parent::__construct($this->container->get(ResponseInterface::class));
         $this->twig = $this->container->get(Environment::class);
         $this->twig->addExtension(new AdminHelpersExtension($this->container->get('Router')->getRouteCollection()));
 
