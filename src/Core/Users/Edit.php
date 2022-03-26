@@ -9,12 +9,14 @@ use App\Module\Admin\Exception\NotEditableUser;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
-use EnjoysCMS\Core\Components\Helpers\Error;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
@@ -34,7 +36,7 @@ class Edit implements ModelInterface
      */
     public function __construct(
         private EntityManager $em,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
@@ -48,7 +50,7 @@ class Edit implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->serverRequest->get('id')
+            $this->requestWrapper->getQueryData('id')
         );
 
         if ($user === null) {
@@ -62,6 +64,11 @@ class Edit implements ModelInterface
         return $user;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -83,6 +90,9 @@ class Edit implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form(
@@ -104,7 +114,7 @@ class Edit implements ModelInterface
                 'Такой логин уже занят',
                 function () {
                     if (null === $user = $this->em->getRepository(User::class)->findOneBy(
-                        ['login' => $this->serverRequest->post('login')]
+                        ['login' => $this->requestWrapper->getPostData('login')]
                     )
                     ) {
                         return true;
@@ -128,7 +138,7 @@ class Edit implements ModelInterface
 
                     if (in_array(
                         User::ADMIN_GROUP_ID,
-                        $this->serverRequest->post('groups', [])
+                        $this->requestWrapper->getPostData('groups', [])
                     )
                     ) {
                         return true;
@@ -166,14 +176,18 @@ class Edit implements ModelInterface
         return $groupsArray;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function editUser(): void
     {
-        $this->user->setName($this->serverRequest->post('name'));
-        $this->user->setLogin($this->serverRequest->post('login'));
+        $this->user->setName($this->requestWrapper->getPostData('name'));
+        $this->user->setLogin($this->requestWrapper->getPostData('login'));
 
 
         $groups = $this->em->getRepository(Group::class)->findBy(
-            ['id' => $this->serverRequest->post('groups', [])]
+            ['id' => $this->requestWrapper->getPostData('groups', [])]
         );
 
         $this->user->removeGroups();

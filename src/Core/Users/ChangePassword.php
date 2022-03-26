@@ -7,7 +7,11 @@ namespace App\Module\Admin\Core\Users;
 use App\Module\Admin\Exception\NotEditableUser;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use App\Module\Admin\Core\ModelInterface;
@@ -18,7 +22,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface
@@ -34,7 +37,7 @@ class ChangePassword implements ModelInterface
      */
     public function __construct(
         private EntityManager $em,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
@@ -49,7 +52,7 @@ class ChangePassword implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->serverRequest->get('id')
+            $this->requestWrapper->getQueryData('id')
         );
 
         if ($user === null) {
@@ -63,6 +66,11 @@ class ChangePassword implements ModelInterface
         return $user;
     }
 
+    /**
+     * @throws ExceptionRule
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -81,6 +89,9 @@ class ChangePassword implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form(
@@ -97,9 +108,13 @@ class ChangePassword implements ModelInterface
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function updatePassword(): void
     {
-        $this->user->genAdnSetPasswordHash($this->serverRequest->post('password'));
+        $this->user->genAdnSetPasswordHash($this->requestWrapper->getPostData('password'));
         $this->em->flush();
         Redirect::http($this->urlGenerator->generate('admin/users'));
     }

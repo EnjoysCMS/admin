@@ -12,29 +12,20 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class AddSetting implements ModelInterface
 {
     private ObjectRepository $settingRepository;
-    private EntityManager $entityManager;
-    private ServerRequestInterface $serverRequest;
-    private UrlGeneratorInterface $urlGenerator;
-    private RendererInterface $renderer;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
 
@@ -60,7 +51,7 @@ final class AddSetting implements ModelInterface
             Rules::CALLBACK,
             'Настройка с таким id уже существует',
             function () {
-                $check = $this->settingRepository->findOneBy(['var' => $this->serverRequest->post('var')]);
+                $check = $this->settingRepository->findOneBy(['var' => $this->requestWrapper->getPostData('var')]);
                 if ($check === null) {
                     return true;
                 }
@@ -89,12 +80,12 @@ final class AddSetting implements ModelInterface
     private function doAction(): void
     {
         $setting = new \EnjoysCMS\Core\Entities\Setting();
-        $setting->setVar($this->serverRequest->post('var'));
-        $setting->setValue($this->serverRequest->post('value'));
-        $setting->setType($this->serverRequest->post('type'));
-        $setting->setParams($this->serverRequest->post('params'));
-        $setting->setName($this->serverRequest->post('name'));
-        $setting->setDescription($this->serverRequest->post('description'));
+        $setting->setVar($this->requestWrapper->getPostData('var'));
+        $setting->setValue($this->requestWrapper->getPostData('value'));
+        $setting->setType($this->requestWrapper->getPostData('type'));
+        $setting->setParams($this->requestWrapper->getPostData('params'));
+        $setting->setName($this->requestWrapper->getPostData('name'));
+        $setting->setDescription($this->requestWrapper->getPostData('description'));
         $setting->setRemovable(true);
 
         $this->entityManager->persist($setting);

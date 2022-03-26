@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,7 +20,7 @@ final class DeleteSetting
 
     public function __construct(
         private EntityManager $em,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator
     ) {
     }
@@ -34,7 +34,7 @@ final class DeleteSetting
     public function __invoke()
     {
         if (null === $setting = $this->em->getRepository(\EnjoysCMS\Core\Entities\Setting::class)->find(
-                $this->serverRequest->get('id')
+                $this->requestWrapper->getQueryData('id')
             )) {
             throw new NoResultException();
         }

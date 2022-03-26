@@ -11,7 +11,7 @@ use Doctrine\ORM\ORMException;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -23,33 +23,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddBlocks implements ModelInterface
 {
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->renderer = $renderer;
-        $this->urlGenerator = $urlGenerator;
-        $this->serverRequest = $serverRequest;
-        $this->entityManager = $entityManager;
     }
 
     public function getContext(): array
@@ -83,9 +63,9 @@ class AddBlocks implements ModelInterface
     {
         try {
             $block = new Block();
-            $block->setName($this->serverRequest->post('name'));
+            $block->setName($this->requestWrapper->getPostData('name'));
             $block->setAlias((string)Uuid::uuid4());
-            $block->setBody($this->serverRequest->post('body'));
+            $block->setBody($this->requestWrapper->getPostData('body'));
             $block->setRemovable(true);
             $block->setOptions(Custom::getMeta()['options']);
 
@@ -105,7 +85,7 @@ class AddBlocks implements ModelInterface
             //$acl->setGroups();
 
             $groups = $this->entityManager->getRepository(Group::class)->findBy(
-                ['id' => $this->serverRequest->post('groups', [])]
+                ['id' => $this->requestWrapper->getPostData('groups', [])]
             )
             ;
             foreach ($groups as $group) {

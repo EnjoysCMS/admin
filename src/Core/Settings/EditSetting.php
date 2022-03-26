@@ -8,11 +8,14 @@ namespace App\Module\Admin\Core\Settings;
 
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -20,31 +23,27 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final class EditSetting implements ModelInterface
 {
     private ObjectRepository $settingRepository;
-    private EntityManager $entityManager;
-    private ServerRequestInterface $serverRequest;
-    private UrlGeneratorInterface $urlGenerator;
-    private RendererInterface $renderer;
     private ?\EnjoysCMS\Core\Entities\Setting $settingEntity;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
-        $this->settingEntity = $this->settingRepository->find($serverRequest->get('id'));
+        $this->settingEntity = $this->settingRepository->find($requestWrapper->getQueryData('id'));
 
         if ($this->settingEntity === null) {
             Error::code(404);
         }
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws ExceptionRule
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -60,6 +59,9 @@ final class EditSetting implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form(['method' => 'post']);
@@ -77,7 +79,7 @@ final class EditSetting implements ModelInterface
             Rules::CALLBACK,
             'Настройка с таким id уже существует',
             function () {
-                $newVar = $this->serverRequest->post('var');
+                $newVar = $this->requestWrapper->getPostData('var');
                 if ($newVar === $this->settingEntity->getVar()) {
                     return true;
                 }
@@ -99,22 +101,26 @@ final class EditSetting implements ModelInterface
             ],
             true
         )->addRule(Rules::REQUIRED)
-        ;;
+        ;
         $form->text('params', 'params')->setDescription('json');
-        $form->text('name', 'name')->addRule(Rules::REQUIRED);;
+        $form->text('name', 'name')->addRule(Rules::REQUIRED);
         $form->text('description', 'description');
         $form->submit('add');
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
-        $this->settingEntity->setVar($this->serverRequest->post('var'));
-        $this->settingEntity->setValue($this->serverRequest->post('value'));
-        $this->settingEntity->setType($this->serverRequest->post('type'));
-        $this->settingEntity->setParams($this->serverRequest->post('params'));
-        $this->settingEntity->setName($this->serverRequest->post('name'));
-        $this->settingEntity->setDescription($this->serverRequest->post('description'));
+        $this->settingEntity->setVar($this->requestWrapper->getPostData('var'));
+        $this->settingEntity->setValue($this->requestWrapper->getPostData('value'));
+        $this->settingEntity->setType($this->requestWrapper->getPostData('type'));
+        $this->settingEntity->setParams($this->requestWrapper->getPostData('params'));
+        $this->settingEntity->setName($this->requestWrapper->getPostData('name'));
+        $this->settingEntity->setDescription($this->requestWrapper->getPostData('description'));
 
         $this->entityManager->flush();
 

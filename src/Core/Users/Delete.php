@@ -13,7 +13,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
@@ -30,7 +30,7 @@ class Delete implements ModelInterface
      */
     public function __construct(
         private EntityManager $em,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -45,7 +45,7 @@ class Delete implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->serverRequest->get('id')
+            $this->requestWrapper->getQueryData('id')
         );
 
         if ($user === null) {

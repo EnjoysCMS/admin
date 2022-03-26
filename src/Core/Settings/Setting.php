@@ -6,52 +6,36 @@ namespace App\Module\Admin\Core\Settings;
 
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Setting implements ModelInterface
 {
 
-
     /**
      * @var ObjectRepository
      */
     private ObjectRepository $settingRepository;
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -139,12 +123,15 @@ class Setting implements ModelInterface
         }
         $form->submit('save', 'Сохранить');
         return $form;
-        // die();
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
-        foreach ($this->serverRequest->post() as $k => $v) {
+        foreach ($this->requestWrapper->getPostData()->getAll() as $k => $v) {
             /**
              *
              *

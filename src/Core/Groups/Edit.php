@@ -13,7 +13,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
@@ -31,7 +31,7 @@ class Edit implements ModelInterface
      */
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -46,7 +46,7 @@ class Edit implements ModelInterface
     private function getGroup(): Group
     {
         $group = $this->groupsRepository->find(
-            $this->serverRequest->get('id')
+            $this->requestWrapper->getQueryData('id')
         );
 
         if ($group === null) {
@@ -99,7 +99,7 @@ class Edit implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->entityManager->getRepository(Group::class)->findOneBy(
-                            ['name' => $this->serverRequest->post('name')]
+                            ['name' => $this->requestWrapper->getPostData('name')]
                         )
                     ) {
                         return true;
@@ -135,12 +135,12 @@ class Edit implements ModelInterface
     private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
-            ['id' => $this->serverRequest->post('acl', [])]
+            ['id' => $this->requestWrapper->getPostData('acl', [])]
         );
 
 
-        $this->group->setName($this->serverRequest->post('name'));
-        $this->group->setDescription($this->serverRequest->post('description'));
+        $this->group->setName($this->requestWrapper->getPostData('name'));
+        $this->group->setDescription($this->requestWrapper->getPostData('description'));
 
         $this->group->removeAcl();
 

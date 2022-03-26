@@ -8,7 +8,7 @@ use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Location;
@@ -17,35 +17,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BlockLocations implements ModelInterface
 {
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-    /**
-     * @var ServerRequestInterface
-     */
-    private ServerRequestInterface $serverRequest;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private UrlGeneratorInterface $urlGenerator;
-    /**
-     * @var RendererInterface
-     */
-    private RendererInterface $renderer;
     private Block $block;
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->serverRequest->get('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getQueryData('id'))) {
             throw new InvalidArgumentException('Invalid block ID');
         }
 
@@ -85,7 +65,7 @@ class BlockLocations implements ModelInterface
     private function doAction(): void
     {
         $locations = $this->entityManager->getRepository(Location::class)->findBy(
-            ['id' => $this->serverRequest->post('locations', [])]
+            ['id' => $this->requestWrapper->getPostData('locations', [])]
         )
         ;
 

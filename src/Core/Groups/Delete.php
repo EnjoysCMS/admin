@@ -7,6 +7,7 @@ namespace App\Module\Admin\Core\Groups;
 use App\Module\Admin\Exception\CannotRemoveEntity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
@@ -16,7 +17,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Http\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
@@ -29,7 +29,7 @@ class Delete implements ModelInterface
      */
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestInterface $serverRequest,
+        private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -45,7 +45,7 @@ class Delete implements ModelInterface
     private function getGroup(): Group
     {
         $group = $this->groupsRepository->find(
-            $this->serverRequest->get('id')
+            $this->requestWrapper->getQueryData('id')
         );
 
         if ($group === null) {

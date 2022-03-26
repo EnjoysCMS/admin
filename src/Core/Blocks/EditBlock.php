@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Renderer\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\Http\ServerRequestInterface;
+use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -23,12 +23,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class EditBlock implements ModelInterface
 {
 
-    private EntityManager $entityManager;
-    private ServerRequestInterface $serverRequest;
-    private UrlGeneratorInterface $urlGenerator;
-    private RendererInterface $renderer;
     private Block $block;
-    private ContainerInterface $container;
+
     private ?\EnjoysCMS\Core\Entities\ACL $acl;
     /**
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
@@ -37,17 +33,13 @@ class EditBlock implements ModelInterface
 
 
     public function __construct(
-        EntityManager $entityManager,
-        ServerRequestInterface $serverRequest,
-        UrlGeneratorInterface $urlGenerator,
-        RendererInterface $renderer,
-        ContainerInterface $container
+        private EntityManager $entityManager,
+        private ServerRequestWrapper $requestWrapper,
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer,
+        private ContainerInterface $container
     ) {
-        $this->entityManager = $entityManager;
-        $this->serverRequest = $serverRequest;
-        $this->urlGenerator = $urlGenerator;
-        $this->renderer = $renderer;
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->serverRequest->get('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getQueryData('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
         if (!($block instanceof Block)) {
@@ -56,7 +48,6 @@ class EditBlock implements ModelInterface
         $this->block = $block;
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
-        $this->container = $container;
     }
 
     public function getContext(): array
@@ -100,7 +91,7 @@ class EditBlock implements ModelInterface
                 Rules::CALLBACK,
                 'Числа нельзя использовать в качестве псевдонима',
                 function () {
-                    $alias = $this->serverRequest->post('alias');
+                    $alias = $this->requestWrapper->getPostData('alias');
                     if ($alias === null) {
                         return true;
                     }
@@ -111,7 +102,7 @@ class EditBlock implements ModelInterface
                 Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
-                    $alias = $this->serverRequest->post('alias');
+                    $alias = $this->requestWrapper->getPostData('alias');
                     if ($alias === null) {
                         return true;
                     }
@@ -219,12 +210,12 @@ class EditBlock implements ModelInterface
     private function doAction(): void
     {
         $oldBlock = clone $this->block;
-        $this->block->setName($this->serverRequest->post('name'));
+        $this->block->setName($this->requestWrapper->getPostData('name'));
         $this->block->setAlias(
-            empty($this->serverRequest->post('alias')) ? null : $this->serverRequest->post('alias')
+            empty($this->requestWrapper->getPostData('alias')) ? null : $this->requestWrapper->getPostData('alias')
         );
-        $this->block->setBody($this->serverRequest->post('body'));
-        $this->block->setOptions($this->getBlockOptions($this->serverRequest->post('options', [])));
+        $this->block->setBody($this->requestWrapper->getPostData('body'));
+        $this->block->setOptions($this->getBlockOptions($this->requestWrapper->getPostData('options', [])));
 
 
         /**
@@ -233,7 +224,7 @@ class EditBlock implements ModelInterface
          * @var Group $group
          */
         foreach ($this->groupsRepository->findAll() as $group) {
-            if (in_array($group->getId(), $this->serverRequest->post('groups', []))) {
+            if (in_array($group->getId(), $this->requestWrapper->getPostData('groups', []))) {
                 $this->acl->setGroups($group);
                 continue;
             }
