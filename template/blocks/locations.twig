@@ -2,33 +2,6 @@
 
 {% block content %}
 
-    {% do asset('css', [
-        {0: '../modules/admin/node_modules/admin-lte/plugins/select2/css/select2.min.css','minify': false},
-        {0: '../modules/admin/node_modules/admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css','minify': false},
-    ]) %}
-
-    {% do asset('js', [
-        {0: '../modules/admin/node_modules/admin-lte/plugins/select2/js/select2.full.min.js','minify': false }
-    ]) %}
-
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-
-            $(".select2bs4 option").each(function() {
-                $(this).removeAttr('id');
-            });
-
-            //Initialize Select2 Elements
-            $('.select2bs4').select2({
-                allowClear: true,
-                placeholder :'select..',
-                debug: true,
-                theme: 'bootstrap4'
-            })
-        });
-    </script>
     <section class="content">
 
 
