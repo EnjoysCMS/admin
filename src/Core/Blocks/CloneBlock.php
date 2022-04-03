@@ -39,7 +39,7 @@ final class CloneBlock
     public function __invoke(FactoryInterface $container)
     {
         $block = $this->em->getRepository(Block::class)->find(
-            $this->requestWrapper->getQueryData('id')
+            $this->requestWrapper->getRequest()->getAttribute('id')
         );
 
         if ($block === null) {

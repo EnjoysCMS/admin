@@ -50,7 +50,7 @@ class Edit implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->requestWrapper->getQueryData('id')
+            $this->requestWrapper->getRequest()->getAttribute('id')
         );
 
         if ($user === null) {

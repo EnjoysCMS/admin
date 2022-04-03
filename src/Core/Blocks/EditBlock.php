@@ -39,7 +39,7 @@ class EditBlock implements ModelInterface
         private RendererInterface $renderer,
         private ContainerInterface $container
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getQueryData('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getRequest()->getAttribute('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
         if (!($block instanceof Block)) {

@@ -25,7 +25,7 @@ class BlockLocations implements ModelInterface
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getQueryData('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getRequest()->getAttribute('id'))) {
             throw new InvalidArgumentException('Invalid block ID');
         }
 

@@ -46,7 +46,7 @@ class Edit implements ModelInterface
     private function getGroup(): Group
     {
         $group = $this->groupsRepository->find(
-            $this->requestWrapper->getQueryData('id')
+            $this->requestWrapper->getRequest()->getAttribute('id')
         );
 
         if ($group === null) {
