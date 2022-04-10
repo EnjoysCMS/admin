@@ -66,6 +66,7 @@ class ACList
                         return str_starts_with(ltrim($v->getAction(), '\\'), $ns);
                     }
                 );
+                break;
             }
 
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
