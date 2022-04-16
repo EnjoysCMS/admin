@@ -10,7 +10,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -25,6 +25,7 @@ class Add implements ModelInterface
         private EntityManager $em,
         private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
 
     }
@@ -43,8 +44,10 @@ class Add implements ModelInterface
             $this->addUser();
         }
 
+        $this->renderer->setForm($form);
+
         return [
-            'form' => new Bootstrap4([], $form),
+            'form' => $this->renderer,
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
@@ -85,11 +88,7 @@ class Add implements ModelInterface
      */
     private function getForm(): Form
     {
-        $form = new Form(
-            [
-                'method' => 'POST'
-            ]
-        );
+        $form = new Form();
         $form->setDefaults(['groups' => [2]]);
         $form->text('name', 'Имя')->addRule(Rules::REQUIRED);
         $form->text('login', 'Логин')

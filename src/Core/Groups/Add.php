@@ -6,14 +6,14 @@ namespace App\Module\Admin\Core\Groups;
 
 use App\Module\Admin\Core\ACL\ACList;
 use App\Module\Admin\Core\ModelInterface;
-use DI\Annotation\Inject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
@@ -55,11 +55,7 @@ class Add implements ModelInterface
 
     private function getForm(): Form
     {
-        $form = new Form(
-            [
-                'method' => 'POST'
-            ]
-        );
+        $form = new Form();
 
 
         $aclGroupByIds = [];
@@ -91,7 +87,7 @@ class Add implements ModelInterface
             ->setDescription('')
             ->fill(
                 [''] + $this->groupsRepository->getListGroupsForSelectForm()
-            )->setAttribute('onchange', "location.href='{$urlModify}&by=' + this.value;");
+            )->setAttr(AttributeFactory::create('onchange', "location.href='{$urlModify}&by=' + this.value;"));
 
         $form->header('Информация о группе');
 

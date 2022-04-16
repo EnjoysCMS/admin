@@ -10,8 +10,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ObjectRepository;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -92,8 +93,7 @@ class Delete implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form();
-        $form->setMethod('post');
-        $form->text('check-delete')->addClass('d-none')->setAttribute('disabled')->addRule(
+        $form->text('check-delete')->addClass('d-none')->setAttr(AttributeFactory::create('disabled'))->addRule(
             Rules::CALLBACK,
             'Этого пользователя нельзя удалить',
             function () {

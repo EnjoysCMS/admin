@@ -10,7 +10,7 @@ use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -46,7 +46,7 @@ final class AddSetting implements ModelInterface
 
     private function getForm(): Form
     {
-        $form = new Form(['method' => 'post']);
+        $form = new Form();
         $form->text('var', 'var')->addRule(Rules::REQUIRED)->addRule(
             Rules::CALLBACK,
             'Настройка с таким id уже существует',

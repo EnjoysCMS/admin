@@ -4,19 +4,18 @@
 namespace App\Module\Admin\Core\Groups;
 
 
+use App\Module\Admin\Core\ModelInterface;
 use App\Module\Admin\Exception\CannotRemoveEntity;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
+use Doctrine\Persistence\ObjectRepository;
+use Enjoys\Forms\Form;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\ServerRequestWrapper;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
-use App\Module\Admin\Core\ModelInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
-use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
@@ -89,8 +88,6 @@ class Delete implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form();
-        $form->setMethod('post');
-
         $form->submit('confirm-delete', 'Удалить')->addClass('btn-danger');
         return $form;
     }

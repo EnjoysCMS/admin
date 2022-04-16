@@ -6,8 +6,9 @@ namespace App\Module\Admin\Core\Blocks;
 
 use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
@@ -49,13 +50,13 @@ class BlockLocations implements ModelInterface
 
     private function getForm(): Form
     {
-        $form = new Form(['method' => 'post']);
+        $form = new Form();
         $form->setDefaults(['locations' => $this->block->getLocationsIds()]);
 
 
         $form->select('locations')
             ->setMultiple()
-            ->setAttribute('size', 20)
+            ->setAttr(AttributeFactory::create('size', 20))
             ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm())
         ;
         $form->submit('send');

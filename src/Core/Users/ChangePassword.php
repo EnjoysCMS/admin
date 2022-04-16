@@ -4,31 +4,28 @@
 namespace App\Module\Admin\Core\Users;
 
 
+use App\Module\Admin\Core\ModelInterface;
 use App\Module\Admin\Exception\NotEditableUser;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
-use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
+use Enjoys\Forms\Form;
+use Enjoys\Forms\Interfaces\RendererInterface;
+use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
-use App\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ObjectRepository;
-use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
-use Enjoys\Forms\Rules;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface
 {
     private User $user;
     private ObjectRepository|EntityRepository $usersRepository;
-    private RendererInterface $renderer;
 
 
     /**
@@ -38,11 +35,11 @@ class ChangePassword implements ModelInterface
     public function __construct(
         private EntityManager $em,
         private ServerRequestWrapper $requestWrapper,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
-        $this->renderer = new Bootstrap4();
     }
 
     /**
@@ -94,11 +91,7 @@ class ChangePassword implements ModelInterface
      */
     private function getForm(): Form
     {
-        $form = new Form(
-            [
-                'method' => 'POST'
-            ]
-        );
+        $form = new Form();
 
         $form->text('password', 'Новый пароль')->addRule(Rules::REQUIRED);
 

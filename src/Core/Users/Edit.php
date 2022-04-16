@@ -14,7 +14,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -37,7 +37,8 @@ class Edit implements ModelInterface
     public function __construct(
         private EntityManager $em,
         private ServerRequestWrapper $requestWrapper,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private RendererInterface $renderer
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -77,8 +78,10 @@ class Edit implements ModelInterface
             $this->editUser();
         }
 
+        $this->renderer->setForm($form);
+
         return [
-            'form' => new Bootstrap4([], $form),
+            'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user,
             'breadcrumbs' => [
@@ -95,11 +98,7 @@ class Edit implements ModelInterface
      */
     private function getForm(): Form
     {
-        $form = new Form(
-            [
-                'method' => 'POST'
-            ]
-        );
+        $form = new Form();
         $form->setDefaults(
             [
                 'name' => $this->user->getName(),

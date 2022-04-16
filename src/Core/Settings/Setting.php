@@ -10,7 +10,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -53,7 +53,7 @@ class Setting implements ModelInterface
     {
         $settings = (array)$this->settingRepository->findAll();
 
-        $form = new Form(['method' => 'post']);
+        $form = new Form();
         $form->setDefaults(
             function () use ($settings) {
                 $data = [];

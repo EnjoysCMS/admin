@@ -7,6 +7,8 @@ namespace App\Module\Admin;
 use App\Module\Admin\Core\ModelInterface;
 use App\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
+use Enjoys\Forms\Interfaces\RendererInterface;
+use Enjoys\Forms\Renderer\Html\HtmlRenderer;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -22,6 +24,11 @@ abstract class BaseController extends \EnjoysCMS\Core\BaseController
     public function __construct(private ContainerInterface $container, ResponseInterface $response = null)
     {
         parent::__construct($response);
+
+        $this->container->set(RendererInterface::class, function (){
+            return new HtmlRenderer();
+        });
+
         $this->twig = $this->container->get(Environment::class);
         $this->twig->addExtension(new AdminHelpersExtension($this->container->get('Router')->getRouteCollection()));
 

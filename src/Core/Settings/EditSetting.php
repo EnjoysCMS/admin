@@ -13,7 +13,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Renderer\RendererInterface;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
@@ -64,7 +64,7 @@ final class EditSetting implements ModelInterface
      */
     private function getForm(): Form
     {
-        $form = new Form(['method' => 'post']);
+        $form = new Form();
         $form->setDefaults(
             [
                 'var' => $this->settingEntity->getVar(),
