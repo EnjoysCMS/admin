@@ -8,7 +8,7 @@ use App\Module\Admin\Core\ModelInterface;
 use App\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use Enjoys\Forms\Renderer\Html\HtmlRenderer;
+use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,7 +26,7 @@ abstract class BaseController extends \EnjoysCMS\Core\BaseController
         parent::__construct($response);
 
         $this->container->set(RendererInterface::class, function (){
-            return new HtmlRenderer();
+            return new Bootstrap4Renderer();
         });
 
         $this->twig = $this->container->get(Environment::class);
