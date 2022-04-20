@@ -5,7 +5,7 @@
     "require": {
         "php": ">=8.0",
         "enjoyscms/core": "^4.0",
-        "enjoys/forms": "5.x-dev",
+        "enjoys/forms": "^5.0",
         "enjoys/bootstrap4-renderer": "^1.0"
     },
     "autoload": {
