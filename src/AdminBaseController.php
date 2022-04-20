@@ -7,6 +7,7 @@ namespace EnjoysCMS\Module\Admin;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
+use EnjoysCMS\Core\BaseController;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
@@ -14,7 +15,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
 
-abstract class BaseController extends \EnjoysCMS\Core\BaseController
+abstract class AdminBaseController extends BaseController
 {
 
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
 use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
 use Psr\Container\ContainerExceptionInterface;
@@ -13,7 +13,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Widgets extends BaseController
+class Widgets extends AdminBaseController
 {
 
     #[Route(

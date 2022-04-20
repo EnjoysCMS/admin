@@ -4,7 +4,7 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Users\Add;
 use EnjoysCMS\Module\Admin\Core\Users\ChangePassword;
 use EnjoysCMS\Module\Admin\Core\Users\Delete;
@@ -13,7 +13,7 @@ use EnjoysCMS\Module\Admin\Core\Users\UsersList;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Users extends BaseController
+class Users extends AdminBaseController
 {
 
     #[Route(

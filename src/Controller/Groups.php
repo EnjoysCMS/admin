@@ -4,7 +4,7 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Groups\Add;
 use EnjoysCMS\Module\Admin\Core\Groups\Delete;
 use EnjoysCMS\Module\Admin\Core\Groups\Edit;
@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class Groups extends BaseController
+class Groups extends AdminBaseController
 {
 
     #[Route(

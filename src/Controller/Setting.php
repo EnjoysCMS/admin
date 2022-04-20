@@ -4,14 +4,14 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Settings\AddSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\DeleteSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\EditSetting;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Setting extends BaseController
+class Setting extends AdminBaseController
 {
 
 

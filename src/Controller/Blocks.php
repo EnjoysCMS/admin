@@ -6,7 +6,7 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use DI\FactoryInterface;
-use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Blocks\ActivateBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\AddBlocks;
 use EnjoysCMS\Module\Admin\Core\Blocks\BlockLocations;
@@ -20,7 +20,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Blocks extends BaseController
+class Blocks extends AdminBaseController
 {
 
     #[Route(
