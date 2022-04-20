@@ -1,7 +1,6 @@
 {% set appLinks = getApplicationAdminLinks() %}
 {% if appLinks %}
     <li class="nav-header">ПРИЛОЖЕНИЕ (APPLICATION)</li>
-    <li class="nav-item">
     {% for name, route in  appLinks %}
         {% if access2route(name) %}
             <li class="nav-item">
@@ -12,5 +11,5 @@
             </li>
         {% endif %}
     {% endfor %}
-    </li>
+    <li class="m-5"></li>
 {% endif %}
