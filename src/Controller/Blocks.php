@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Blocks\ActivateBlock;
-use App\Module\Admin\Core\Blocks\AddBlocks;
-use App\Module\Admin\Core\Blocks\BlockLocations;
-use App\Module\Admin\Core\Blocks\CloneBlock;
-use App\Module\Admin\Core\Blocks\DeleteBlock;
-use App\Module\Admin\Core\Blocks\EditBlock;
-use App\Module\Admin\Core\Blocks\ManageBlocks;
-use App\Module\Admin\Core\Blocks\SetupBlocks;
 use DI\FactoryInterface;
+use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\Core\Blocks\ActivateBlock;
+use EnjoysCMS\Module\Admin\Core\Blocks\AddBlocks;
+use EnjoysCMS\Module\Admin\Core\Blocks\BlockLocations;
+use EnjoysCMS\Module\Admin\Core\Blocks\CloneBlock;
+use EnjoysCMS\Module\Admin\Core\Blocks\DeleteBlock;
+use EnjoysCMS\Module\Admin\Core\Blocks\EditBlock;
+use EnjoysCMS\Module\Admin\Core\Blocks\ManageBlocks;
+use EnjoysCMS\Module\Admin\Core\Blocks\SetupBlocks;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;

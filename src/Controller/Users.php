@@ -1,15 +1,15 @@
 <?php
 
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Users\Add;
-use App\Module\Admin\Core\Users\ChangePassword;
-use App\Module\Admin\Core\Users\Delete;
-use App\Module\Admin\Core\Users\Edit;
-use App\Module\Admin\Core\Users\UsersList;
+use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\Core\Users\Add;
+use EnjoysCMS\Module\Admin\Core\Users\ChangePassword;
+use EnjoysCMS\Module\Admin\Core\Users\Delete;
+use EnjoysCMS\Module\Admin\Core\Users\Edit;
+use EnjoysCMS\Module\Admin\Core\Users\UsersList;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 

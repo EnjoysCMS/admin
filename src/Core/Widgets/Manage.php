@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Widgets;
+namespace EnjoysCMS\Module\Admin\Core\Widgets;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerInterface;
 
 class Manage implements ModelInterface

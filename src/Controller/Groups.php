@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Groups\Add;
-use App\Module\Admin\Core\Groups\Delete;
-use App\Module\Admin\Core\Groups\Edit;
-use App\Module\Admin\Core\Groups\GroupsList;
+use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\Core\Groups\Add;
+use EnjoysCMS\Module\Admin\Core\Groups\Delete;
+use EnjoysCMS\Module\Admin\Core\Groups\Edit;
+use EnjoysCMS\Module\Admin\Core\Groups\GroupsList;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 

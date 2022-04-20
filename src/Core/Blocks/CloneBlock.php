@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use DI\DependencyException;

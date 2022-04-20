@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Widgets;
+namespace EnjoysCMS\Module\Admin\Core\Widgets;
 
 
 use Doctrine\ORM\EntityManager;

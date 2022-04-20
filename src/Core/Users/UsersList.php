@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin\Core\Users;
+namespace EnjoysCMS\Module\Admin\Core\Users;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Helpers\Assets;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
 final class UsersList implements ModelInterface
 {

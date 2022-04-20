@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -18,6 +17,7 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

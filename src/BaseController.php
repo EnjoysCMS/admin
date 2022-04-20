@@ -1,15 +1,15 @@
 <?php
 
 
-namespace App\Module\Admin;
+namespace EnjoysCMS\Module\Admin;
 
 
-use App\Module\Admin\Core\ModelInterface;
-use App\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
 use EnjoysCMS\Core\Components\Helpers\Assets;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;

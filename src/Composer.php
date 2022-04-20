@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin;
+namespace EnjoysCMS\Module\Admin;
 
 use Composer\Script\Event;
 

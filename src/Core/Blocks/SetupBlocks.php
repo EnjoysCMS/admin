@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Log\LoggerInterface;
 
 class SetupBlocks implements ModelInterface

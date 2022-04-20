@@ -1,11 +1,9 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 
-use App\Module\Admin\Core\ModelInterface;
-use App\Module\Admin\Exception\CannotRemoveEntity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
@@ -16,6 +14,8 @@ use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface

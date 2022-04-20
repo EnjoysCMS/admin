@@ -3,10 +3,9 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin\Core\Settings;
+namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -18,6 +17,7 @@ use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class EditSetting implements ModelInterface

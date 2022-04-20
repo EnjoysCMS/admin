@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Widgets\ActivateWidget;
-use App\Module\Admin\Core\Widgets\Manage;
+use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
+use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;

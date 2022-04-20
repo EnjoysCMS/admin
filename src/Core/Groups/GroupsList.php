@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
 final class GroupsList implements ModelInterface
 {

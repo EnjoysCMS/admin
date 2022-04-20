@@ -1,10 +1,9 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use DI\FactoryInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
@@ -17,6 +16,7 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

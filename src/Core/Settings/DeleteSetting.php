@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 
-namespace App\Module\Admin\Core\Settings;
+namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 
-use App\Module\Admin\Exception\CannotRemoveEntity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class DeleteSetting

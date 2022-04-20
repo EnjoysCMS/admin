@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use EnjoysCMS\Core\Entities\Block;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
 class ManageBlocks implements ModelInterface
 {

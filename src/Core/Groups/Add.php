@@ -1,11 +1,9 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 
-use App\Module\Admin\Core\ACL\ACList;
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -22,6 +20,8 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Core\ACL\ACList;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface

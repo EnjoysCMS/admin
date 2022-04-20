@@ -1,10 +1,9 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
-use App\Module\Admin\Core\ModelInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
@@ -13,6 +12,7 @@ use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Location;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

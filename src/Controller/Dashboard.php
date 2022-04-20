@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
 use Doctrine\ORM\EntityManager;
 use EnjoysCMS\Core\Components\Widgets\WidgetsTwigExtension;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Module\Admin\BaseController;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 

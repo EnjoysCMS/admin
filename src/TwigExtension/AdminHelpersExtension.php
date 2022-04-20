@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Module\Admin\TwigExtension;
+namespace EnjoysCMS\Module\Admin\TwigExtension;
 
 
 use Symfony\Component\Routing\RouteCollection;

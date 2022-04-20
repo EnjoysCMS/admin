@@ -1,11 +1,9 @@
 <?php
 
 
-namespace App\Module\Admin\Core\Users;
+namespace EnjoysCMS\Module\Admin\Core\Users;
 
 
-use App\Module\Admin\Core\ModelInterface;
-use App\Module\Admin\Exception\NotEditableUser;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
@@ -20,6 +18,8 @@ use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Module\Admin\Components\DBAL;
+namespace EnjoysCMS\Module\Admin\Components\DBAL;
 
 
 use EnjoysCMS\Core\Components\Doctrine\EnumType;

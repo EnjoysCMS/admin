@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Module\Admin\Core;
+namespace EnjoysCMS\Module\Admin\Core;
 
 
 interface ModelInterface

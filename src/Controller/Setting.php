@@ -1,13 +1,14 @@
 <?php
 
 
-namespace App\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use App\Module\Admin\BaseController;
-use App\Module\Admin\Core\Settings\AddSetting;
-use App\Module\Admin\Core\Settings\DeleteSetting;
-use App\Module\Admin\Core\Settings\EditSetting;
+use EnjoysCMS\Module\Admin\BaseController;
+use EnjoysCMS\Module\Admin\Core\Settings\AddSetting;
+use EnjoysCMS\Module\Admin\Core\Settings\DeleteSetting;
+use EnjoysCMS\Module\Admin\Core\Settings\EditSetting;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Setting extends BaseController
@@ -21,11 +22,11 @@ class Setting extends BaseController
             'comment' => 'Настройки сайта'
         ]
     )]
-    public function setting(): \Psr\Http\Message\ResponseInterface
+    public function setting(): ResponseInterface
     {
         return $this->responseText($this->view(
             '@a/setting/setting.twig',
-            $this->getContext($this->getContainer()->get(\App\Module\Admin\Core\Settings\Setting::class))
+            $this->getContext($this->getContainer()->get(\EnjoysCMS\Module\Admin\Core\Settings\Setting::class))
         ));
     }
 
@@ -37,7 +38,7 @@ class Setting extends BaseController
             'comment' => 'Добавление глобальной настройки'
         ]
     )]
-    public function addSetting(): \Psr\Http\Message\ResponseInterface
+    public function addSetting(): ResponseInterface
     {
         return $this->responseText($this->view(
             '@a/setting/add.twig',
@@ -53,7 +54,7 @@ class Setting extends BaseController
             'comment' => 'Изменение глобальной настройки'
         ]
     )]
-    public function editSetting(): \Psr\Http\Message\ResponseInterface
+    public function editSetting(): ResponseInterface
     {
         return $this->responseText($this->view(
             '@a/setting/add.twig',

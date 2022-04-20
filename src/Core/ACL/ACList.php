@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Module\Admin\Core\ACL;
+namespace EnjoysCMS\Module\Admin\Core\ACL;
 
+use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Composer\Utils;
 use EnjoysCMS\Core\Components\Helpers\Modules;
-use EnjoysCMS\Core\Repositories\ACL;
-use Doctrine\Persistence\ObjectRepository;
 
 class ACList
 {
