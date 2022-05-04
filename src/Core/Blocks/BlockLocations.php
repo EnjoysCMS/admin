@@ -56,7 +56,7 @@ class BlockLocations implements ModelInterface
 
         $form->select('locations')
             ->setMultiple()
-            ->setAttr(AttributeFactory::create('size', 20))
+            ->setAttribute(AttributeFactory::create('size', 20))
             ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm())
         ;
         $form->submit('send');

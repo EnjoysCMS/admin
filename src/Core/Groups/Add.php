@@ -87,7 +87,7 @@ class Add implements ModelInterface
             ->setDescription('')
             ->fill(
                 [''] + $this->groupsRepository->getListGroupsForSelectForm()
-            )->setAttr(AttributeFactory::create('onchange', "location.href='{$urlModify}&by=' + this.value;"));
+            )->setAttribute(AttributeFactory::create('onchange', "location.href='{$urlModify}&by=' + this.value;"));
 
         $form->header('Информация о группе');
 

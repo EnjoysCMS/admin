@@ -93,7 +93,7 @@ class Delete implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form();
-        $form->text('check-delete')->addClass('d-none')->setAttr(AttributeFactory::create('disabled'))->addRule(
+        $form->text('check-delete')->addClass('d-none')->setAttribute(AttributeFactory::create('disabled'))->addRule(
             Rules::CALLBACK,
             'Этого пользователя нельзя удалить',
             function () {
