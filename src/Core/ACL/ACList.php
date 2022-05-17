@@ -5,6 +5,7 @@ namespace EnjoysCMS\Module\Admin\Core\ACL;
 use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Composer\Utils;
 use EnjoysCMS\Core\Components\Helpers\Modules;
+use EnjoysCMS\Core\Entities\ACL;
 
 class ACList
 {
@@ -37,7 +38,7 @@ class ACList
         $groupedAcl = $this->getGroupedAcl();
         foreach ($groupedAcl as $group => $acls) {
             /**
-             * @var \EnjoysCMS\Core\Entities\ACL $acl
+             * @var ACL $acl
              */
             foreach ($acls as $acl) {
                 $ret[$group][' ' . $acl->getId()] = [
@@ -70,7 +71,10 @@ class ACList
 
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
 
-            rsort($groupedAcl[$module->moduleName]);
+            uasort($groupedAcl[$module->moduleName], function(ACL $a, ACL$b){
+                return $a->getAction() <=> $b->getAction();
+
+            });
         }
 
         /**
