@@ -119,7 +119,13 @@ class Edit implements ModelInterface
             $i = 0;
             $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
             foreach ($aclsForCheckbox as $label => $item) {
-                $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
+                $fill = array_map(function ($i) {
+                    if (str_contains($i[0], 'Admin')) {
+                        $i[0] = sprintf('<span class="font-italic">%s</span>', $i[0]);
+                    }
+                    return $i;
+                }, $item);
+                $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($fill);
             }
         }
 
