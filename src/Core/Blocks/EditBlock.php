@@ -62,7 +62,12 @@ class EditBlock implements ModelInterface
         return [
             'form' => $this->renderer,
             'block' => $this->block,
-            'wysiwyg' => $wysiwyg->selector('#body')
+            'wysiwyg' => $wysiwyg->selector('#body'),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
+                sprintf('Редактирование блока `%s`', $this->block->getName())
+            ],
         ];
     }
 

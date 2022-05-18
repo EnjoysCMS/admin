@@ -10,6 +10,7 @@ use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Manage implements ModelInterface
 {
@@ -49,6 +50,13 @@ class Manage implements ModelInterface
         ));
         $notActiveWidgets = array_diff_key($allWidgets->getConfig(), $activeWidgets);
 
-        return ['activeWidgets' => $activeWidgets, 'notActiveWidgets' => $notActiveWidgets];
+        return [
+            'activeWidgets' => $activeWidgets,
+            'notActiveWidgets' => $notActiveWidgets,
+            'breadcrumbs' => [
+                $this->container->get(UrlGeneratorInterface::class)->generate('admin/index') => 'Главная',
+                'Менеджер виджетов',
+            ],
+        ];
     }
 }

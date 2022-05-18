@@ -8,6 +8,7 @@ use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SetupBlocks implements ModelInterface
 {
@@ -16,7 +17,8 @@ class SetupBlocks implements ModelInterface
     private LoggerInterface $logger;
 
     public function __construct(
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator
     ) {
         $this->logger = $logger->withName('Blocks Config');
     }
@@ -36,6 +38,13 @@ class SetupBlocks implements ModelInterface
             $allBlocks->addConfig($config, [], YAML::class);
         }
 
-        return ['blocks' => $allBlocks->getConfig()];
+        return [
+            'blocks' => $allBlocks->getConfig(),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
+                'Активация новых блоков'
+            ],
+        ];
     }
 }

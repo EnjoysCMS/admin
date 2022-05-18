@@ -5,6 +5,7 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 use Doctrine\ORM\EntityManager;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ManageBlocks implements ModelInterface
 {
@@ -15,7 +16,8 @@ class ManageBlocks implements ModelInterface
     private $blocksRepository;
 
     public function __construct(
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        private UrlGeneratorInterface $urlGenerator
     ) {
         $this->blocksRepository = $entityManager->getRepository(Block::class);
     }
@@ -23,7 +25,11 @@ class ManageBlocks implements ModelInterface
     public function getContext(): array
     {
         return [
-            'blocks' => $this->blocksRepository->findAll()
+            'blocks' => $this->blocksRepository->findAll(),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                'Менеджер блоков'
+            ],
         ];
     }
 

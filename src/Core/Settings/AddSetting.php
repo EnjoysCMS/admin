@@ -40,7 +40,12 @@ final class AddSetting implements ModelInterface
             'form' => $this->renderer,
             '_title' => 'Добавление настройки | Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get(
                     'sitename'
-                )
+                ),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/setting') => 'Глобальные параметры сайта',
+                'Добавление нового глобального параметра'
+            ],
         ];
     }
 
@@ -57,8 +62,7 @@ final class AddSetting implements ModelInterface
                 }
                 return false;
             }
-        )
-        ;
+        );
         $form->text('value', 'value');
         $form->select('type', 'type')->fill(
             [
@@ -68,8 +72,7 @@ final class AddSetting implements ModelInterface
                 'textarea'
             ],
             true
-        )->addRule(Rules::REQUIRED)
-        ;;
+        )->addRule(Rules::REQUIRED);;
         $form->text('params', 'params')->setDescription('json');
         $form->text('name', 'name')->addRule(Rules::REQUIRED);;
         $form->text('description', 'description');

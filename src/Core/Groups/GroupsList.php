@@ -12,13 +12,14 @@ use Doctrine\Persistence\ObjectRepository;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class GroupsList implements ModelInterface
 {
 
     private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
-    public function __construct(private EntityManager $em)
+    public function __construct(private EntityManager $em, private UrlGeneratorInterface $urlGenerator)
     {
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
@@ -28,7 +29,11 @@ final class GroupsList implements ModelInterface
     {
         return [
             'groups' => $this->groupsRepository->findAll(),
-            '_title' => 'Группы | Admin | ' . Setting::get('sitename')
+            '_title' => 'Группы | Admin | ' . Setting::get('sitename'),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                'Список групп пользователей',
+            ],
         ];
     }
 }

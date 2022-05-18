@@ -26,7 +26,9 @@ class BlockLocations implements ModelInterface
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getRequest()->getAttribute('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find(
+                $this->requestWrapper->getRequest()->getAttribute('id')
+            )) {
             throw new InvalidArgumentException('Invalid block ID');
         }
 
@@ -45,7 +47,16 @@ class BlockLocations implements ModelInterface
         }
         $this->renderer->setForm($form);
 
-        return ['form' => $this->renderer, 'block' => $this->block,];
+        return [
+            'form' => $this->renderer,
+            'block' => $this->block,
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
+                $this->urlGenerator->generate('admin/editblock', ['id' => $this->block->getId()]) => 'Редактирование блока',
+                sprintf('Настройка расположения блока `%s`', $this->block->getName())
+            ],
+        ];
     }
 
     private function getForm(): Form
@@ -57,8 +68,7 @@ class BlockLocations implements ModelInterface
         $form->select('locations')
             ->setMultiple()
             ->setAttribute(AttributeFactory::create('size', 20))
-            ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm())
-        ;
+            ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm());
         $form->submit('send');
         return $form;
     }
@@ -67,8 +77,7 @@ class BlockLocations implements ModelInterface
     {
         $locations = $this->entityManager->getRepository(Location::class)->findBy(
             ['id' => $this->requestWrapper->getPostData('locations', [])]
-        )
-        ;
+        );
 
         $this->block->removeLocations();
         foreach ($locations as $location) {

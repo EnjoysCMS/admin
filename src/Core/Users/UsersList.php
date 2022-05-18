@@ -13,14 +13,17 @@ use EnjoysCMS\Core\Components\Helpers\Assets;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class UsersList implements ModelInterface
 {
 
     private ObjectRepository|EntityRepository $usersRepository;
 
-    public function __construct(private EntityManager $entityManager)
-    {
+    public function __construct(
+        private EntityManager $entityManager,
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
         Assets::css(
             [
                 __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
@@ -43,7 +46,11 @@ final class UsersList implements ModelInterface
     {
         return [
             'users' => $this->usersRepository->findAll(),
-            '_title' => 'Пользователи | Admin | ' . Setting::get('sitename')
+            '_title' => 'Пользователи | Admin | ' . Setting::get('sitename'),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                'Список пользователей',
+            ],
         ];
     }
 }

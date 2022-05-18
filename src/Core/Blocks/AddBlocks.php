@@ -40,7 +40,12 @@ class AddBlocks implements ModelInterface
         }
         $this->renderer->setForm($form);
         return [
-            'form' => $this->renderer
+            'form' => $this->renderer,
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
+                'Добавление блока (пользовательский)'
+            ],
         ];
     }
 

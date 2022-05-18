@@ -55,7 +55,12 @@ final class EditSetting implements ModelInterface
             'form' => $this->renderer,
             '_title' => 'Изменение настройки | Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get(
                     'sitename'
-                )
+                ),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/setting') => 'Глобальные параметры сайта',
+                sprintf('Редактирование параметра `%s`', $this->settingEntity->getName()),
+            ],
         ];
     }
 
@@ -89,8 +94,7 @@ final class EditSetting implements ModelInterface
                 }
                 return false;
             }
-        )
-        ;
+        );
         $form->text('value', 'value');
         $form->select('type', 'type')->fill(
             [
@@ -100,8 +104,7 @@ final class EditSetting implements ModelInterface
                 'textarea'
             ],
             true
-        )->addRule(Rules::REQUIRED)
-        ;
+        )->addRule(Rules::REQUIRED);
         $form->text('params', 'params')->setDescription('json');
         $form->text('name', 'name')->addRule(Rules::REQUIRED);
         $form->text('description', 'description');

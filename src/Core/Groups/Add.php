@@ -49,7 +49,12 @@ class Add implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            '_title' => 'Добавление группы | Группы | Admin | ' . Setting::get('sitename')
+            '_title' => 'Добавление группы | Группы | Admin | ' . Setting::get('sitename'),
+            'breadcrumbs' => [
+                $this->urlGenerator->generate('admin/index') => 'Главная',
+                $this->urlGenerator->generate('admin/groups') => 'Список групп пользователей',
+                'Добавить новую группу'
+            ],
         ];
     }
 
