@@ -7,6 +7,7 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
@@ -27,7 +28,6 @@ class Add implements ModelInterface
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
-
     }
 
 
@@ -54,8 +54,8 @@ class Add implements ModelInterface
                 'Добавить нового пользователя'
             ],
             '_title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
-                'sitename'
-            )
+                    'sitename'
+                )
         ];
     }
 
@@ -90,22 +90,27 @@ class Add implements ModelInterface
     {
         $form = new Form();
         $form->setDefaults(['groups' => [2]]);
-        $form->text('name', 'Имя')->addRule(Rules::REQUIRED);
+        $form->text('name', 'Имя')
+            ->setAttribute(AttributeFactory::create('autocomplete', 'off'))
+            ->addRule(Rules::REQUIRED);
         $form->text('login', 'Логин')
+            ->setAttribute(AttributeFactory::create('autocomplete', 'off'))
             ->addRule(
                 Rules::CALLBACK,
                 'Такой логин уже занят',
                 function () {
                     if (null === $this->em->getRepository(User::class)->findOneBy(
-                        ['login' => $this->requestWrapper->getPostData('login')]
-                    )
+                            ['login' => $this->requestWrapper->getPostData('login')]
+                        )
                     ) {
                         return true;
                     }
                     return false;
                 }
             )->addRule(Rules::REQUIRED);
-        $form->text('password', 'Пароль')->addRule(Rules::REQUIRED);
+        $form->text('password', 'Пароль')
+            ->setAttribute(AttributeFactory::create('autocomplete', 'off'))
+            ->addRule(Rules::REQUIRED);
 
 
         $form->checkbox('groups', 'Группа')->fill(
