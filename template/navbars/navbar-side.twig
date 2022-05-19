@@ -13,7 +13,8 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="info">
-                <a href="#" class="d-block">{{ _user.getName ?? 'NoName' }}</a>
+                <span class="text-white d-block h4">{{ _user.getName ?? 'NoName' }}</span>
+                <a class="font-weight-bold d-block" href="{{ url('system/logout', {'login' : _user.getLogin}) }}">Выйти</a>
             </div>
         </div>
 
