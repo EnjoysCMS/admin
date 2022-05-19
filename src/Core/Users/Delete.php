@@ -17,7 +17,9 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
@@ -33,7 +35,8 @@ class Delete implements ModelInterface
         private EntityManager $em,
         private ServerRequestWrapper $requestWrapper,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private EventDispatcher $dispatcher
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -85,6 +88,7 @@ class Delete implements ModelInterface
 
     private function deleteUser(): void
     {
+        $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user), BeforeDeleteUserEvent::NAME);
         $this->em->remove($this->user);
         $this->em->flush();
         Redirect::http($this->urlGenerator->generate('admin/users'));
