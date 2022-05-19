@@ -48,7 +48,10 @@ final class DeleteBlock
             throw new \RuntimeException('Block is not removable');
         }
 
-        $container->make($block->getClass(), ['block' => $block])->preRemove();
+        try {
+            $container->make($block->getClass(), ['block' => $block])->preRemove();
+        } catch (DependencyException|NotFoundException) {
+        }
 
         $this->em->remove($block);
         $this->em->flush();
