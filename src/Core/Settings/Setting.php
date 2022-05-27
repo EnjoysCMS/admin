@@ -135,7 +135,7 @@ class Setting implements ModelInterface
      */
     private function doAction(): void
     {
-        foreach ($this->requestWrapper->getPostData()->getAll() as $k => $v) {
+        foreach ($this->requestWrapper->getPostData() as $k => $v) {
             /**
              *
              *
