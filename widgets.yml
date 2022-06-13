@@ -1,5 +1,12 @@
 EnjoysCMS\Module\Admin\Widgets\RegisterUsers:
   name: Зарегистрированные пользователи
   options:
-    min-h: 3
-    min-w: 2
+    overflow-y-hidden: true
+    gs:
+      min-h: 9
+      max-h: 11
+      min-w: 2
+      max-w: 5
+      h: 9
+      w: 2
+

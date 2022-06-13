@@ -46,13 +46,42 @@
             grid.enableResize(this.checked);
         });
 
-let serializedData = [];
-        serializedData.forEach((n, i) =>
-            n.content = `<button onClick="grid.removeWidget(this.parentNode.parentNode)">X</button><br> ${i}<br> ${n.content ? n.content : ''}`);
-        let serializedFull;
-
         grid.on('change', function(e, items) {
-          console.log(grid.save(false));
+
+            fetch("{{ path('admin/save-widgets') }}", {
+                        method: 'POST',
+                        mode: 'cors', // no-cors, *cors, same-origin
+                        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // 'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        referrerPolicy: 'no-referrer', // no-referrer, *client
+                        body: JSON.stringify(
+                            {
+                                "data": grid.save(false),
+                            }
+                        )
+
+
+                    }).then(
+                        function (response) {
+                            if (response.status !== 200) {
+                                response.json().then(function (data) {
+                                    console.log(data);
+                                });
+                                return false;
+                            }
+
+                            response.json().then(function (data) {
+                                console.log(data);
+                            });
+
+                        }
+                    )
+                        .catch(function (err) {
+                            console.log('Fetch Error :-S', err);
+                        });
         });
     </script>
     <section class="content">
@@ -64,7 +93,7 @@ let serializedData = [];
 
             <div class="grid-stack">
                 {% for widget in widgets %}
-                    <div class="grid-stack-item" gs-id="{{ widget.getId }}" {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=#{value}")|join(' ')}}>
+                    <div class="grid-stack-item" gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw}}>
                         <div class="grid-stack-item-content overflow-y-hidden">
                         {{ ViewWidget(widget.getId) }}
                         </div>

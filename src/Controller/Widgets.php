@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
+use Doctrine\ORM\EntityManager;
+use Enjoys\ServerRequestWrapper;
+use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
 use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
@@ -26,7 +29,6 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Удаление виджетов'
         ]
     )]
-
     public function delete(): void
     {
     }
@@ -41,7 +43,6 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Клонирование виджетов'
         ]
     )]
-
     public function clone(): void
     {
     }
@@ -56,7 +57,6 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Редактирование виджетов'
         ]
     )]
-
     public function edit(): void
     {
     }
@@ -72,13 +72,14 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Просмотр не активированных виджетов'
         ]
     )]
-
     public function manage(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/widgets/manage.twig',
-            $this->getContext($this->getContainer()->get(Manage::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/widgets/manage.twig',
+                $this->getContext($this->getContainer()->get(Manage::class))
+            )
+        );
     }
 
     /**
@@ -92,10 +93,48 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Установка (активация) виджетов'
         ]
     )]
-
     public function activate(): void
     {
         $this->getContainer()->get(ActivateWidget::class)();
+    }
+
+    #[Route(
+        path: '/admin/widgets/save',
+        name: 'admin/save-widgets',
+        options: [
+            'comment' => '[ADMIN] Сохранение расположения виджетов'
+        ],
+        methods: ['post']
+    )]
+    public function save(ServerRequestWrapper $request, EntityManager $em)
+    {
+        $widgetsRepository = $em->getRepository(Widget::class);
+        $data = json_decode($request->getRequest()->getBody()->getContents(), true)['data'];
+        foreach ($data as $options) {
+
+
+            /** @var Widget $widget */
+            $widget = $widgetsRepository->find($options['id']);
+            unset($options['id']);
+
+            foreach ($options as $key => $option) {
+                unset($options[$key]);
+                $newKey = function($key){
+                    return implode('-', array_map(function ($value){
+                        return strtolower($value);
+                    }, preg_split('/(?=[A-Z])/', $key, flags: PREG_SPLIT_NO_EMPTY)));
+                };
+                $options[$newKey($key)] = $option;
+            }
+
+            $widget->setOptions(array_merge($widget->getOptions(), ['gs' => $options]));
+        }
+
+        $em->flush();
+
+        return $this->responseJson(
+            'saved widgets'
+        );
     }
 
 }
