@@ -7,6 +7,7 @@
     {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css','minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css','minify': false},
     {0:  '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.css','minify': false},
+    'modules/admin/node_modules/gridstack/dist/gridstack.min.css'
 ]) %}
 {% do asset('js', [
     {0: '../modules/admin/node_modules/admin-lte/plugins/chart.js/Chart.min.js','minify': true},
@@ -19,27 +20,58 @@
     {0: '../modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js', 'minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.js', 'minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/dist/js/pages/dashboard.js', 'minify': false}
+    'modules/admin/node_modules/gridstack/dist/es5/gridstack-poly.js',
+    'modules/admin/node_modules/gridstack/dist/es5/gridstack-jq.js',
 ]) %}
 
 {% block content %}
-    <!-- Main content -->
+
+    <style>
+        .overflow-y-hidden {
+            overflow-y: hidden!important;
+        }
+    </style>
+    <script type="text/javascript">
+        let grid = GridStack.init({
+          cellHeight: 20,
+          disableResize: true,
+          disableDrag: true
+        });
+
+
+        let allowEditGrid = document.getElementById("allowEditGrid");
+
+        allowEditGrid.addEventListener('click', function (e) {
+            grid.enableMove(this.checked);
+            grid.enableResize(this.checked);
+        });
+
+let serializedData = [];
+        serializedData.forEach((n, i) =>
+            n.content = `<button onClick="grid.removeWidget(this.parentNode.parentNode)">X</button><br> ${i}<br> ${n.content ? n.content : ''}`);
+        let serializedFull;
+
+        grid.on('change', function(e, items) {
+          console.log(grid.save(false));
+        });
+    </script>
     <section class="content">
         <div class="container-fluid">
             <div class="custom-control custom-switch pb-3">
-                <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                <label class="custom-control-label" for="customSwitch1">Редактировать виджеты</label>
+                <input type="checkbox" class="custom-control-input" id="allowEditGrid">
+                <label class="custom-control-label" for="allowEditGrid">Редактировать виджеты</label>
             </div>
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
+
+            <div class="grid-stack">
                 {% for widget in widgets %}
-                    <div class="col">
+                    <div class="grid-stack-item" gs-id="{{ widget.getId }}" {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=#{value}")|join(' ')}}>
+                        <div class="grid-stack-item-content overflow-y-hidden">
                         {{ ViewWidget(widget.getId) }}
+                        </div>
                     </div>
                 {% endfor %}
             </div>
-            <!-- /.row -->
-
         </div><!-- /.container-fluid -->
     </section>
+
 {% endblock %}

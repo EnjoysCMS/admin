@@ -1,2 +1,5 @@
 EnjoysCMS\Module\Admin\Widgets\RegisterUsers:
   name: Зарегистрированные пользователи
+  options:
+    min-h: 3
+    min-w: 2
