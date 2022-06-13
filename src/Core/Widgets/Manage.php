@@ -34,7 +34,11 @@ class Manage implements ModelInterface
         );
 
         $allWidgets = new Config();
-        $configs = glob($_ENV['PROJECT_DIR'] . '/modules/*/widgets.yml');
+        $configs = array_merge(
+            [$_ENV['PROJECT_DIR'] . '/app/widgets.yml'],
+            glob($_ENV['PROJECT_DIR'] . '/modules/*/widgets.yml'),
+        );
+
         foreach ($configs as $config) {
             $allWidgets->addConfig($config, [], YAML::class);
         }

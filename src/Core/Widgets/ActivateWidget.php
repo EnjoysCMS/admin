@@ -42,7 +42,7 @@ class ActivateWidget
         $widget = new Widget();
         $widget->setName($data['name']);
         $widget->setClass($this->class);
-        $widget->setOptions($data['options']);
+        $widget->setOptions($data['options'] ?? []);
 
 
         $this->em->persist($widget);
@@ -54,7 +54,7 @@ class ActivateWidget
             $widget->getWidgetCommentAcl()
         );
 
-        Redirect::http($this->urlGenerator->generate('admin/editwidget', ['id' => $widget->getId()]));
+        Redirect::http($this->urlGenerator->generate('admin/index'));
     }
 
 
