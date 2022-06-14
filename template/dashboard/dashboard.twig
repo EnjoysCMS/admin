@@ -28,8 +28,21 @@
 
     <style>
         .overflow-y-hidden {
-            overflow-y: hidden!important;
+            overflow-y: hidden !important;
         }
+
+        .widget-toolbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            display: none;
+        }
+
+        #gs.editable .grid-stack-item-content:hover .widget-toolbox {
+            display: block;
+        }
+
     </style>
     <script type="text/javascript">
         let grid = GridStack.init({
@@ -40,10 +53,12 @@
 
 
         let allowEditGrid = document.getElementById("allowEditGrid");
+        let gsDiv = document.getElementById("gs");
 
         allowEditGrid.addEventListener('click', function (e) {
             grid.enableMove(this.checked);
             grid.enableResize(this.checked);
+            this.checked ? gsDiv.classList.add('editable') : gsDiv.classList.remove('editable')
         });
 
         grid.on('change', function(e, items) {
@@ -83,6 +98,7 @@
                             console.log('Fetch Error :-S', err);
                         });
         });
+
     </script>
     <section class="content">
         <div class="container-fluid">
@@ -91,11 +107,19 @@
                 <label class="custom-control-label" for="allowEditGrid">Редактировать виджеты</label>
             </div>
 
-            <div class="grid-stack">
+            <div class="grid-stack" id="gs">
                 {% for widget in widgets %}
-                    <div class="grid-stack-item" gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw}}>
+
+                    <div class="grid-stack-item"
+                         gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw }}>
+
                         <div class="grid-stack-item-content overflow-y-hidden">
-                        {{ ViewWidget(widget.getId) }}
+
+                            {{ ViewWidget(widget.getId) }}
+                            <div class="widget-toolbox">
+                                <a href="#" class="badge bg-dark p-2"><i class="fa fa-edit"></i></a>
+                                <a href="#" class="badge bg-dark p-2"><i class="fa fa-trash"></i></a>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
