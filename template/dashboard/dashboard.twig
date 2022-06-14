@@ -63,6 +63,9 @@
 
         grid.on('change', function(e, items) {
 
+
+
+
             fetch("{{ path('admin/save-widgets') }}", {
                         method: 'POST',
                         mode: 'cors', // no-cors, *cors, same-origin
@@ -99,6 +102,22 @@
                         });
         });
 
+        document.querySelectorAll('.delete-widget')
+            .forEach(function (item) {
+                item.addEventListener('click', function (e) {
+                   fetch(item.dataset.url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8',
+                        },
+                    }).then((response) => {
+                        return response.json()
+                    })
+                });
+
+            });
+
+
     </script>
     <section class="content">
         <div class="container-fluid">
@@ -118,9 +137,14 @@
                             {{ ViewWidget(widget.getId) }}
                             <div class="widget-toolbox">
                                 <a href="#" class="badge bg-dark p-2"><i class="fa fa-edit"></i></a>
-                                <a href="#" class="badge bg-dark p-2"><i class="fa fa-trash"></i></a>
+                                <button data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
+                                        class="delete-widget badge bg-dark p-2"><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
+                    </div>
+                {% else %}
+                    <div>
+                        Виджеты не добавлены, доступные виджеты можно посмотреть и установить в <a href="{{ path('admin/managewidgets') }}">этом разделе</a>
                     </div>
                 {% endfor %}
             </div>

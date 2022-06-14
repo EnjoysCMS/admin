@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
@@ -29,8 +30,17 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Удаление виджетов'
         ]
     )]
-    public function delete(): void
+    public function delete(ServerRequestWrapper $request, EntityManager $em): ResponseInterface
     {
+        $repository = $em->getRepository(Widget::class);
+        /** @var Widget|null $widget */
+        $widget = $repository->find($request->getAttributesData('id'));
+        if ($widget === null) {
+            throw new NoResultException();
+        }
+        $em->remove($widget);
+       // $em->flush();
+        return $this->responseJson(sprintf('Widget width id: %d removed', $request->getAttributesData('id')));
     }
 
     #[Route(
