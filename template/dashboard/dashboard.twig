@@ -50,10 +50,14 @@
 
     <section class="content">
         <div class="container-fluid">
-            <div class="custom-control custom-switch pb-3">
+            <div class="custom-control custom-switch pb-3 d-flex justify-content-between">
                 <input type="checkbox" class="custom-control-input" id="allowEditGrid">
                 <label class="custom-control-label" for="allowEditGrid">Редактировать виджеты</label>
+
+                <a class="btn btn-link" href="{{ path('admin/managewidgets') }}"><i class="fa fa-plus"></i>
+                    Добавить виджеты</a>
             </div>
+
 
             <div class="grid-stack" id="gs" data-save-url="{{ path('admin/save-widgets') }}">
                 {% for widget in widgets %}
@@ -65,13 +69,15 @@
                             <div class="widget-toolbox">
                                 <span href="#" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></span>
                                 <span data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
-                                        class="delete-widget btn btn-link badge bg-dark p-2"><i class="fa fa-trash"></i></span>
+                                      class="delete-widget btn btn-link badge bg-dark p-2"><i
+                                        class="fa fa-trash"></i></span>
                             </div>
                         </div>
                     </div>
                 {% else %}
                     <div>
-                        Виджеты не добавлены, доступные виджеты можно посмотреть и установить в <a href="{{ path('admin/managewidgets') }}">этом разделе</a>
+                        Виджеты не добавлены, доступные виджеты можно посмотреть и установить в <a
+                            href="{{ path('admin/managewidgets') }}">этом разделе</a>
                     </div>
                 {% endfor %}
             </div>
