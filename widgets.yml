@@ -1,7 +1,15 @@
 EnjoysCMS\Module\Admin\Widgets\RegisterUsers:
-  name: Зарегистрированные пользователи
+  name: &name Зарегистрированные пользователи
   options:
-    overflow-y-hidden: true
+    title: *name
+    background:
+      value: warning
+      type: select
+      data: [warning, info, danger, primary, secondary, dark, light]
+    overflowhidden:
+      value: "true"
+      type: radio
+      data: ["false", "true"]
     gs:
       min-h: 9
       max-h: 11

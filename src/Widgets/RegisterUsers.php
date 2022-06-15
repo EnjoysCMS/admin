@@ -26,6 +26,7 @@ final class RegisterUsers extends AbstractWidgets
     public function view(): string
     {
         return $this->twig->render('@a/widgets/template/register_users.twig', [
+            'widget' => $this->widget,
             'countUsers' => count($this->getContainer()->get(EntityManager::class)->getRepository(User::class)->findAll())
         ]);
     }
