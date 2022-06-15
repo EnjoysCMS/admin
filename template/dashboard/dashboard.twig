@@ -67,7 +67,7 @@
                         <div class="grid-stack-item-content overflow-y-hidden">
                             {{ ViewWidget(widget.getId) }}
                             <div class="widget-toolbox">
-                                <span href="#" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></span>
+                                <a href="{{ url('admin/editwidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
                                 <span data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
                                       class="delete-widget btn btn-link badge bg-dark p-2"><i
                                         class="fa fa-trash"></i></span>

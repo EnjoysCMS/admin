@@ -10,6 +10,7 @@ use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
+use EnjoysCMS\Module\Admin\Core\Widgets\Edit;
 use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -61,6 +62,7 @@ class Widgets extends AdminBaseController
     )]
     public function clone(): void
     {
+        throw new \Exception('Still Disable Clone Widgets');
     }
 
     #[Route(
@@ -73,8 +75,14 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Редактирование виджетов'
         ]
     )]
-    public function edit(): void
+    public function edit(): ResponseInterface
     {
+        return $this->responseText(
+            $this->view(
+                '@a/widgets/edit.twig',
+                $this->getContext($this->getContainer()->get(Edit::class))
+            )
+        );
     }
 
     /**
