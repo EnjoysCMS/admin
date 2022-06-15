@@ -71,18 +71,22 @@ final class Edit implements ModelInterface
         foreach ($options as $key => $value) {
             switch ($value['type'] ?? 'text') {
                 case 'radio':
-                    $form->radio($key, $key)
+                    $form->radio($key, $value['title'] ?? $key)
+                        ->setDescription($value['description'] ?? '')
                         ->fill($value['data'] ?? [], true)
                     ;
                     break;
                 case 'select':
-                    $form->select($key, $key)
+                    $form->select($key, $value['title'] ?? $key)
+                        ->setDescription($value['description'] ?? '')
                         ->fill($value['data'] ?? [], true)
                     ;
                     break;
                 case 'text':
                 default:
-                    $form->text($key, $key);
+                    $form->text($key, $value['title'] ?? $key)
+                        ->setDescription($value['description'] ?? '')
+                    ;
                     break;
             }
         }
@@ -94,10 +98,10 @@ final class Edit implements ModelInterface
     {
         $result = [];
         foreach ($this->request->getPostData() as $key => $value) {
-            if(!in_array($key, array_keys($this->widget->getOptions()))){
+            if (!in_array($key, array_keys($this->widget->getOptions()))) {
                 continue;
             }
-            $result[$key]['value']  = $value;
+            $result[$key]['value'] = $value;
         }
 
         $this->widget->setOptions(array_merge_recursive_distinct($this->widget->getOptions(), $result));
