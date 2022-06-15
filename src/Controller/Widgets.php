@@ -6,7 +6,6 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\NoResultException;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
@@ -28,19 +27,26 @@ class Widgets extends AdminBaseController
         ],
         options: [
             'aclComment' => 'Удаление виджетов'
-        ]
+        ],
+        methods: ['post']
     )]
     public function delete(ServerRequestWrapper $request, EntityManager $em): ResponseInterface
     {
-        $repository = $em->getRepository(Widget::class);
-        /** @var Widget|null $widget */
-        $widget = $repository->find($request->getAttributesData('id'));
-        if ($widget === null) {
-            throw new NoResultException();
+        try {
+            $repository = $em->getRepository(Widget::class);
+            /** @var Widget|null $widget */
+            $widget = $repository->find($request->getAttributesData('id'));
+            if ($widget === null) {
+                return $this->responseJson('The widget was not found, it may have been deleted')->withStatus(404);
+            }
+            $em->remove($widget);
+            $em->flush();
+        } catch (\Throwable $e) {
+            return $this->responseJson(
+                $e->getMessage()
+            )->withStatus(500);
         }
-        $em->remove($widget);
-       // $em->flush();
-        return $this->responseJson(sprintf('Widget width id: %d removed', $request->getAttributesData('id')));
+        return $this->responseJson(sprintf('Widget with id = %d removed', $request->getAttributesData('id')));
     }
 
     #[Route(
@@ -116,35 +122,42 @@ class Widgets extends AdminBaseController
         ],
         methods: ['post']
     )]
-    public function save(ServerRequestWrapper $request, EntityManager $em)
+    public function save(ServerRequestWrapper $request, EntityManager $em): ResponseInterface
     {
-        $widgetsRepository = $em->getRepository(Widget::class);
-        $data = json_decode($request->getRequest()->getBody()->getContents(), true)['data'];
-        foreach ($data as $options) {
+        try {
+            $widgetsRepository = $em->getRepository(Widget::class);
+            $data = json_decode($request->getRequest()->getBody()->getContents(), true)['data'];
+            foreach ($data as $options) {
+                /** @var Widget $widget */
+                $widget = $widgetsRepository->find($options['id']);
+                unset($options['id']);
 
+                foreach ($options as $key => $option) {
+                    unset($options[$key]);
+                    $newKey = function ($key) {
+                        return implode(
+                            '-',
+                            array_map(function ($value) {
+                                return strtolower($value);
+                            }, preg_split('/(?=[A-Z])/', $key, flags: PREG_SPLIT_NO_EMPTY))
+                        );
+                    };
+                    $options[$newKey($key)] = $option;
+                }
 
-            /** @var Widget $widget */
-            $widget = $widgetsRepository->find($options['id']);
-            unset($options['id']);
-
-            foreach ($options as $key => $option) {
-                unset($options[$key]);
-                $newKey = function($key){
-                    return implode('-', array_map(function ($value){
-                        return strtolower($value);
-                    }, preg_split('/(?=[A-Z])/', $key, flags: PREG_SPLIT_NO_EMPTY)));
-                };
-                $options[$newKey($key)] = $option;
+                $widget->setOptions(array_merge($widget->getOptions(), ['gs' => $options]));
             }
 
-            $widget->setOptions(array_merge($widget->getOptions(), ['gs' => $options]));
+            $em->flush();
+
+            return $this->responseJson(
+                'Расположение и размер виджетов успешно сохранены'
+            );
+        } catch (\Throwable $e) {
+            return $this->responseJson(
+                $e->getMessage()
+            )->withStatus(500);
         }
-
-        $em->flush();
-
-        return $this->responseJson(
-            'saved widgets'
-        );
     }
 
 }

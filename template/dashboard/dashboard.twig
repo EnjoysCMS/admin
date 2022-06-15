@@ -7,6 +7,7 @@
     {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css','minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css','minify': false},
     {0:  '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.css','minify': false},
+    'modules/admin/node_modules/toastr/build/toastr.css',
     'modules/admin/node_modules/gridstack/dist/gridstack.min.css'
 ]) %}
 {% do asset('js', [
@@ -20,8 +21,10 @@
     {0: '../modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js', 'minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.js', 'minify': false},
     {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'minify': false},
+    'modules/admin/node_modules/toastr/build/toastr.min.js',
     'modules/admin/node_modules/gridstack/dist/es5/gridstack-poly.js',
     'modules/admin/node_modules/gridstack/dist/es5/gridstack-jq.js',
+    'modules/admin/template/assets/widgets.js',
 ]) %}
 
 {% block content %}
@@ -44,81 +47,7 @@
         }
 
     </style>
-    <script type="text/javascript">
-        let grid = GridStack.init({
-          cellHeight: 20,
-          disableResize: true,
-          disableDrag: true
-        });
 
-
-        let allowEditGrid = document.getElementById("allowEditGrid");
-        let gsDiv = document.getElementById("gs");
-
-        allowEditGrid.addEventListener('click', function (e) {
-            grid.enableMove(this.checked);
-            grid.enableResize(this.checked);
-            this.checked ? gsDiv.classList.add('editable') : gsDiv.classList.remove('editable')
-        });
-
-        grid.on('change', function(e, items) {
-
-
-
-
-            fetch("{{ path('admin/save-widgets') }}", {
-                        method: 'POST',
-                        mode: 'cors', // no-cors, *cors, same-origin
-                        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                        headers: {
-                            'Content-Type': 'application/json'
-                            // 'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        referrerPolicy: 'no-referrer', // no-referrer, *client
-                        body: JSON.stringify(
-                            {
-                                "data": grid.save(false),
-                            }
-                        )
-
-
-                    }).then(
-                        function (response) {
-                            if (response.status !== 200) {
-                                response.json().then(function (data) {
-                                    console.log(data);
-                                });
-                                return false;
-                            }
-
-                            response.json().then(function (data) {
-                                console.log(data);
-                            });
-
-                        }
-                    )
-                        .catch(function (err) {
-                            console.log('Fetch Error :-S', err);
-                        });
-        });
-
-        document.querySelectorAll('.delete-widget')
-            .forEach(function (item) {
-                item.addEventListener('click', function (e) {
-                   fetch(item.dataset.url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json;charset=utf-8',
-                        },
-                    }).then((response) => {
-                        return response.json()
-                    })
-                });
-
-            });
-
-
-    </script>
     <section class="content">
         <div class="container-fluid">
             <div class="custom-control custom-switch pb-3">
@@ -126,19 +55,17 @@
                 <label class="custom-control-label" for="allowEditGrid">Редактировать виджеты</label>
             </div>
 
-            <div class="grid-stack" id="gs">
+            <div class="grid-stack" id="gs" data-save-url="{{ path('admin/save-widgets') }}">
                 {% for widget in widgets %}
 
                     <div class="grid-stack-item"
                          gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw }}>
-
                         <div class="grid-stack-item-content overflow-y-hidden">
-
                             {{ ViewWidget(widget.getId) }}
                             <div class="widget-toolbox">
-                                <a href="#" class="badge bg-dark p-2"><i class="fa fa-edit"></i></a>
-                                <button data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
-                                        class="delete-widget badge bg-dark p-2"><i class="fa fa-trash"></i></button>
+                                <span href="#" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></span>
+                                <span data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
+                                        class="delete-widget btn btn-link badge bg-dark p-2"><i class="fa fa-trash"></i></span>
                             </div>
                         </div>
                     </div>
