@@ -43,6 +43,7 @@ final class Edit implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer->output(),
+            'widget' => $this->widget,
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/managewidgets') => 'Менеджер виджетов',
