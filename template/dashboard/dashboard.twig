@@ -68,6 +68,7 @@
                             {{ ViewWidget(widget.getId) }}
                             <div class="widget-toolbox">
                                 <a href="{{ url('admin/editwidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
+                                <a href="{{ url('admin/clonewidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-copy"></i></a>
                                 <span data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
                                       class="delete-widget btn btn-link badge bg-dark p-2"><i
                                         class="fa fa-trash"></i></span>

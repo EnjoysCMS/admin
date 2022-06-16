@@ -6,7 +6,11 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Enjoys\ServerRequestWrapper;
+use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
@@ -16,6 +20,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Widgets extends AdminBaseController
 {
@@ -50,6 +55,11 @@ class Widgets extends AdminBaseController
         return $this->responseJson(sprintf('Widget with id = %d removed', $request->getAttributesData('id')));
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NoResultException
+     * @throws ORMException
+     */
     #[Route(
         path: '/admin/widgets/clone/{id}',
         name: 'admin/clonewidget',
@@ -60,9 +70,20 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Клонирование виджетов'
         ]
     )]
-    public function clone(): void
-    {
-        throw new \Exception('Still Disable Clone Widgets');
+    public function clone(
+        EntityManager $em,
+        ServerRequestWrapper $request,
+        UrlGeneratorInterface $urlGenerator
+    ): void {
+        $widget = $em->getRepository(Widget::class)->find($request->getAttributesData('id'));
+        if ($widget === null) {
+            throw new NoResultException();
+        }
+        $newWidget = clone $widget;
+        $em->persist($newWidget);
+        $em->flush();
+
+        Redirect::http($urlGenerator->generate('admin/index'));
     }
 
     #[Route(

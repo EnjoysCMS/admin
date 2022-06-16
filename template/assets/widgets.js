@@ -71,7 +71,7 @@ document.querySelectorAll('.delete-widget')
                 }
                 response.json()
                     .then(function (data) {
-                        item.closest('.grid-stack-item').remove();
+                        grid.removeWidget(item.closest('.grid-stack-item'));
                         toastr.success(data, 'Success', {timeOut: 2000})
                     })
                     .catch(function (err) {
