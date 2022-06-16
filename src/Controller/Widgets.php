@@ -10,6 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\ServerRequestWrapper;
+use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
@@ -36,12 +37,15 @@ class Widgets extends AdminBaseController
         ],
         methods: ['post']
     )]
-    public function delete(ServerRequestWrapper $request, EntityManager $em): ResponseInterface
+    public function delete(ServerRequestWrapper $request, EntityManager $em, Identity $identity): ResponseInterface
     {
         try {
             $repository = $em->getRepository(Widget::class);
             /** @var Widget|null $widget */
-            $widget = $repository->find($request->getAttributesData('id'));
+            $widget = $repository->findOneBy([
+                'id' => $request->getAttributesData('id'),
+                'user' => $identity->getUser()
+            ]);
             if ($widget === null) {
                 return $this->responseJson('The widget was not found, it may have been deleted')->withStatus(404);
             }

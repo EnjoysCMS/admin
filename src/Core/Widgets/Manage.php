@@ -7,6 +7,7 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
+use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerInterface;
@@ -30,7 +31,9 @@ class Manage implements ModelInterface
             function ($widget) {
                 return $widget->getClass();
             },
-            $this->container->get(EntityManager::class)->getRepository(Widget::class)->findAll()
+            $this->container->get(EntityManager::class)->getRepository(Widget::class)->findBy([
+                'user' => $this->container->get(Identity::class)->getUser()
+            ])
         );
 
         $allWidgets = new Config();

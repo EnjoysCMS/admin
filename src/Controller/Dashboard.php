@@ -5,6 +5,7 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use Doctrine\ORM\EntityManager;
+use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Components\Widgets\WidgetsTwigExtension;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
@@ -22,7 +23,7 @@ class Dashboard extends AdminBaseController
             'comment' => 'Доступ к главной странице в админке (dashboard)'
         ]
     )]
-    public function dashboard(UrlGeneratorInterface $urlGenerator): ResponseInterface
+    public function dashboard(UrlGeneratorInterface $urlGenerator, Identity $identity): ResponseInterface
     {
         $this->getTwig()->addExtension($this->getContainer()->get(WidgetsTwigExtension::class));
 
@@ -36,7 +37,7 @@ class Dashboard extends AdminBaseController
                 ],
                 'widgets' => $this->getContainer()->get(EntityManager::class)->getRepository(
                     Widget::class
-                )->getSortWidgets()
+                )->getSortWidgets($identity->getUser())
             ]
         ));
     }
