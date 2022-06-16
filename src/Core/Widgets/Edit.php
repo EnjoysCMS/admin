@@ -67,24 +67,23 @@ final class Edit implements ModelInterface
             }
         );
 
-
         foreach ($options as $key => $value) {
             switch ($value['type'] ?? 'text') {
                 case 'radio':
-                    $form->radio($key, $value['title'] ?? $key)
+                    $form->radio($key, $value['title'] ?? ucfirst($key))
                         ->setDescription($value['description'] ?? '')
                         ->fill($value['data'] ?? [], true)
                     ;
                     break;
                 case 'select':
-                    $form->select($key, $value['title'] ?? $key)
+                    $form->select($key, $value['title'] ?? ucfirst($key))
                         ->setDescription($value['description'] ?? '')
                         ->fill($value['data'] ?? [], true)
                     ;
                     break;
                 case 'text':
                 default:
-                    $form->text($key, $value['title'] ?? $key)
+                    $form->text($key, $value['title'] ?? ucfirst($key))
                         ->setDescription($value['description'] ?? '')
                     ;
                     break;

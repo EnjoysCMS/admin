@@ -1,4 +1,5 @@
-<div class="small-box bg-{{ widget.options.background.value }} h-100 d-flex flex-column justify-content-between">
+<div
+    class="small-box bg-{{ (widget.options['background-gradient'].value is same as('Yes')) ? 'gradient-' : '' }}{{ widget.options.background.value }} h-100 d-flex flex-column justify-content-between">
     <div class="inner">
         <h3>{{ countUsers }}</h3>
         <p>{{ widget.options.title.value ?? widget.options.title ?? widget.name }}</p>

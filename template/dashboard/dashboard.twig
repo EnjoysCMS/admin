@@ -30,10 +30,6 @@
 {% block content %}
 
     <style>
-        .overflow-y-hidden {
-            overflow-y: hidden !important;
-        }
-
         .widget-toolbox {
             position: absolute;
             top: 10px;
@@ -64,7 +60,7 @@
 
                     <div class="grid-stack-item"
                          gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw }}>
-                        <div class="grid-stack-item-content overflow-y-hidden">
+                        <div class="grid-stack-item-content" style="overflow-y: hidden">
                             {{ ViewWidget(widget.getId) }}
                             <div class="widget-toolbox">
                                 <a href="{{ url('admin/editwidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>

@@ -2,14 +2,14 @@ EnjoysCMS\Module\Admin\Widgets\RegisterUsers:
   name: &name Зарегистрированные пользователи
   options:
     title: *name
+    background-gradient:
+      value: "No"
+      type: radio
+      data: ["No", "Yes"]
     background:
       value: warning
       type: select
-      data: [warning, info, danger, primary, secondary, dark, light]
-    overflowhidden:
-      value: "true"
-      type: radio
-      data: ["false", "true"]
+      data: [primary, secondary, success, danger, warning, info, light, dark, white, transparent]
     gs:
       min-h: 9
       max-h: 11
