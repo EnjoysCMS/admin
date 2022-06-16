@@ -7,42 +7,35 @@
 
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Виджеты (Активация)</h2>
+                <h2 class="card-title">Список доступных виджетов</h2>
 
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <h4>Не активированные виджеты</h4>
                 <ul class="list-group pb-5">
-                    {% for path, item in notActiveWidgets %}
+                    {% for path, item in allowedWidgets %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
                                 <b>{{ item.name }}</b>
                                 <br>
                                 <small>{{ path }}</small>
                             </div>
-                            <div>
-                                <a class="btn btn-sm btn-primary" href="{{ path('admin/acivatewidget', {"class": path}) }}">Установить</a>
+                            <div class="d-flex align-content-end align-items-center">
+                                {% if path in installedWidgets %}
+                                    <div class="h4 text-success m-3"><i class="fa fa-check"></i></div>
+                                {% endif %}
+                                <div>
+                                <a class="btn btn-sm btn-primary"
+                                   href="{{ path('admin/acivatewidget', {"class": path}) }}">Добавить</a>
+                                </div>
                             </div>
                         </li>
                     {% else %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
-                    {% endfor %}
-                </ul>
-                <h4>Активированные виджеты</h4>
-                <ul class="list-group text-muted">
-                    {% for path, item in activeWidgets %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div class="flex-grow-1">
-                                <b>{{ item.name }}</b>
-                                <br>
-                                <small>{{ path }}</small>
-                            </div>
-                        </li>
-                    {% else %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center"><em>отсутствуют</em></li>
+                            <em>отсутствуют</em></li>
                     {% endfor %}
                 </ul>
+
             </div>
             <!-- /.card-body -->
         </div>

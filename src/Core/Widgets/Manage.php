@@ -37,6 +37,7 @@ class Manage implements ModelInterface
         );
 
         $allWidgets = new Config();
+
         $configs = array_merge(
             [$_ENV['PROJECT_DIR'] . '/app/widgets.yml'],
             glob($_ENV['PROJECT_DIR'] . '/modules/*/widgets.yml'),
@@ -45,21 +46,11 @@ class Manage implements ModelInterface
         foreach ($configs as $config) {
             $allWidgets->addConfig($config, [], YAML::class);
         }
-        $activeWidgets = (array_filter(
-            $allWidgets->getConfig(),
-            function ($k) use ($installedWidgets) {
-                if (in_array($k, $installedWidgets)) {
-                    return true;
-                }
-                return false;
-            },
-            ARRAY_FILTER_USE_KEY
-        ));
-        $notActiveWidgets = array_diff_key($allWidgets->getConfig(), $activeWidgets);
+
 
         return [
-            'activeWidgets' => $activeWidgets,
-            'notActiveWidgets' => $notActiveWidgets,
+            'allowedWidgets' => $allWidgets->getConfig(),
+            'installedWidgets' => $installedWidgets,
             'breadcrumbs' => [
                 $this->container->get(UrlGeneratorInterface::class)->generate('admin/index') => 'Главная',
                 'Менеджер виджетов',
