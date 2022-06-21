@@ -62,7 +62,7 @@ final class Edit implements ModelInterface
             function () use ($options) {
                 $data = [];
                 foreach ($options as $key => $value) {
-                    $data[$key] = $value['value'] ?? $value ?? null;
+                    $data[$key] = $value['value'] ?? (!is_array($value) ? $value : null) ?? null;
                 }
                 return $data;
             }
@@ -101,7 +101,7 @@ final class Edit implements ModelInterface
             if (!in_array($key, array_keys($this->widget->getOptions()))) {
                 continue;
             }
-            $result[$key]['value'] = $value;
+            $result[$key]['value'] = empty($value) ? null : $value;
         }
 
         $this->widget->setOptions(array_merge_recursive_distinct($this->widget->getOptions(), $result));
