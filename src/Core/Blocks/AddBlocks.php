@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Blocks\Custom;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Block;
@@ -32,6 +32,11 @@ class AddBlocks implements ModelInterface
     ) {
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -49,6 +54,9 @@ class AddBlocks implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -57,52 +65,47 @@ class AddBlocks implements ModelInterface
 
         $form->checkbox('groups', 'Группа')->fill(
             $this->entityManager->getRepository(Group::class)->getGroupsArray()
-        )->addRule(Rules::REQUIRED)
-        ;
+        )->addRule(Rules::REQUIRED);
 
         $form->submit('addblock', 'Добавить блок');
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
-        try {
-            $block = new Block();
-            $block->setName($this->requestWrapper->getPostData('name'));
-            $block->setAlias((string)Uuid::uuid4());
-            $block->setBody($this->requestWrapper->getPostData('body'));
-            $block->setRemovable(true);
-            $block->setOptions(Custom::getMeta()['options']);
+        $block = new Block();
+        $block->setName($this->requestWrapper->getPostData('name'));
+        $block->setAlias((string)Uuid::uuid4());
+        $block->setBody($this->requestWrapper->getPostData('body'));
+        $block->setRemovable(true);
+        $block->setOptions(Custom::getMeta()['options']);
 
-            $this->entityManager->beginTransaction();
-            $this->entityManager->persist($block);
-            $this->entityManager->flush();
+        $this->entityManager->beginTransaction();
+        $this->entityManager->persist($block);
+        $this->entityManager->flush();
 
-            /**
-             *
-             *
-             * @var ACL $acl
-             */
-            $acl = \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
-                $block->getBlockActionAcl(),
-                $block->getBlockCommentAcl()
-            );
-            //$acl->setGroups();
+        /**
+         * @var ACL $acl
+         */
+        $acl = \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
+            $block->getBlockActionAcl(),
+            $block->getBlockCommentAcl()
+        );
 
-            $groups = $this->entityManager->getRepository(Group::class)->findBy(
-                ['id' => $this->requestWrapper->getPostData('groups', [])]
-            )
-            ;
-            foreach ($groups as $group) {
-                $acl->setGroups($group);
-            }
-            $this->entityManager->persist($acl);
-            $this->entityManager->flush();
-            $this->entityManager->commit();
-
-            Redirect::http($this->urlGenerator->generate('admin/blocks'));
-        } catch (OptimisticLockException | ORMException $e) {
-            Error::code(500, $e->__toString());
+        $groups = $this->entityManager->getRepository(Group::class)->findBy(
+            ['id' => $this->requestWrapper->getPostData('groups', [])]
+        );
+        foreach ($groups as $group) {
+            $acl->setGroups($group);
         }
+        $this->entityManager->persist($acl);
+        $this->entityManager->flush();
+        $this->entityManager->commit();
+
+        Redirect::http($this->urlGenerator->generate('admin/blocks'));
     }
 }

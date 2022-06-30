@@ -1,20 +1,18 @@
 <?php
 
-
 namespace EnjoysCMS\Module\Admin\Core\Groups;
-
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\AttributeFactory;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Http;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
@@ -38,6 +36,11 @@ class Add implements ModelInterface
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -58,6 +61,9 @@ class Add implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -126,6 +132,10 @@ class Add implements ModelInterface
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
@@ -141,14 +151,9 @@ class Add implements ModelInterface
             $group->setAcl($acl);
         }
 
-
-        try {
-            $this->entityManager->persist($group);
-            $this->entityManager->flush();
-            Redirect::http($this->urlGenerator->generate('admin/groups'));
-        } catch (OptimisticLockException | ORMException $e) {
-            Error::code(500, $e->__toString());
-        }
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+        Redirect::http($this->urlGenerator->generate('admin/groups'));
     }
 
 
