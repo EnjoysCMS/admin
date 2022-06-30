@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace EnjoysCMS\Module\Admin\Core\Settings;
-
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
@@ -17,6 +15,7 @@ use Enjoys\Forms\Rules;
 use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Exception\NotFoundException;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -25,6 +24,9 @@ final class EditSetting implements ModelInterface
     private ObjectRepository $settingRepository;
     private ?\EnjoysCMS\Core\Entities\Setting $settingEntity;
 
+    /**
+     * @throws NotFoundException
+     */
     public function __construct(
         private EntityManager $entityManager,
         private ServerRequestWrapper $requestWrapper,
@@ -35,7 +37,14 @@ final class EditSetting implements ModelInterface
         $this->settingEntity = $this->settingRepository->find($requestWrapper->getQueryData('id'));
 
         if ($this->settingEntity === null) {
-            Error::code(404);
+            throw new NotFoundException(
+                sprintf(
+                    'Setting with name <u>%s</u> not found',
+                    htmlspecialchars(
+                        $requestWrapper->getQueryData('id')
+                    )
+                ),
+            );
         }
     }
 
