@@ -159,7 +159,7 @@ class Widgets extends AdminBaseController
     {
         try {
             $widgetsRepository = $em->getRepository(Widget::class);
-            $data = json_decode($request->getRequest()->getBody()->getContents(), true)['data'];
+            $data = json_decode($request->getRequest()->getBody()->__toString(), true)['data'];
             foreach ($data as $options) {
                 /** @var Widget $widget */
                 $widget = $widgetsRepository->find($options['id']);
