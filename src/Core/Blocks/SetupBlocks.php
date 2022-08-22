@@ -30,8 +30,8 @@ class SetupBlocks implements ModelInterface
     {
         $allBlocks = new Config($this->logger);
         $configs = array_merge(
-            [$_ENV['PROJECT_DIR'] . '/app/blocks.yml'],
-            glob($_ENV['PROJECT_DIR'] . '/modules/*/blocks.yml'),
+            [getenv('ROOT_PATH') . '/app/blocks.yml'],
+            glob(getenv('ROOT_PATH') . '/modules/*/blocks.yml'),
         );
 
         foreach ($configs as $config) {

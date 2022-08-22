@@ -4,7 +4,7 @@
     "type": "enjoyscms-module",
     "require": {
         "php": ">=8.0",
-        "enjoyscms/core": "^4.3",
+        "enjoyscms/core": "^4.5",
         "enjoys/forms": "^5.0",
         "enjoys/bootstrap4-renderer": "^1.0"
     },
