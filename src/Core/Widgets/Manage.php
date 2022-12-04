@@ -39,8 +39,8 @@ class Manage implements ModelInterface
         $allWidgets = new Config();
 
         $configs = array_merge(
-            [$_ENV['ROOT_PATH'] . '/app/widgets.yml'],
-            glob($_ENV['ROOT_PATH'] . '/modules/*/widgets.yml'),
+            [getenv('ROOT_PATH') . '/app/widgets.yml'],
+            glob(getenv('ROOT_PATH') . '/modules/*/widgets.yml'),
         );
 
         foreach ($configs as $config) {
