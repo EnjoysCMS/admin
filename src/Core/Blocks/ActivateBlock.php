@@ -6,10 +6,10 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
+use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,10 +20,10 @@ class ActivateBlock
 
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator
     ) {
-        $class = $this->requestWrapper->getQueryData('class');
+        $class = $this->request->getQueryParams()['class'] ?? null;
 
         if (!class_exists((string)$class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));

@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
@@ -20,6 +19,7 @@ use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -37,13 +37,13 @@ class Widgets extends AdminBaseController
         ],
         methods: ['post']
     )]
-    public function delete(ServerRequestWrapper $request, EntityManager $em, Identity $identity): ResponseInterface
+    public function delete(ServerRequestInterface $request, EntityManager $em, Identity $identity): ResponseInterface
     {
         try {
             $repository = $em->getRepository(Widget::class);
             /** @var Widget|null $widget */
             $widget = $repository->findOneBy([
-                'id' => $request->getAttributesData('id'),
+                'id' => $request->getAttribute('id'),
                 'user' => $identity->getUser()
             ]);
             if ($widget === null) {
@@ -56,7 +56,7 @@ class Widgets extends AdminBaseController
                 $e->getMessage()
             )->withStatus(500);
         }
-        return $this->responseJson(sprintf('Widget with id = %d removed', $request->getAttributesData('id')));
+        return $this->responseJson(sprintf('Widget with id = %d removed', $request->getAttribute('id')));
     }
 
     /**
@@ -76,10 +76,10 @@ class Widgets extends AdminBaseController
     )]
     public function clone(
         EntityManager $em,
-        ServerRequestWrapper $request,
+        ServerRequestInterface $request,
         UrlGeneratorInterface $urlGenerator
     ): void {
-        $widget = $em->getRepository(Widget::class)->find($request->getAttributesData('id'));
+        $widget = $em->getRepository(Widget::class)->find($request->getAttribute('id'));
         if ($widget === null) {
             throw new NoResultException();
         }
@@ -155,11 +155,11 @@ class Widgets extends AdminBaseController
         ],
         methods: ['post']
     )]
-    public function save(ServerRequestWrapper $request, EntityManager $em): ResponseInterface
+    public function save(ServerRequestInterface $request, EntityManager $em): ResponseInterface
     {
         try {
             $widgetsRepository = $em->getRepository(Widget::class);
-            $data = json_decode($request->getRequest()->getBody()->__toString(), true)['data'];
+            $data = json_decode($request->getBody()->__toString(), true)['data'];
             foreach ($data as $options) {
                 /** @var Widget $widget */
                 $widget = $widgetsRepository->find($options['id']);

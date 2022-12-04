@@ -12,11 +12,10 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
-use EnjoysCMS\Core\Components\Helpers\Error;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Exception\NotFoundException;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class EditSetting implements ModelInterface
@@ -29,19 +28,19 @@ final class EditSetting implements ModelInterface
      */
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
-        $this->settingEntity = $this->settingRepository->find($requestWrapper->getQueryData('id'));
+        $this->settingEntity = $this->settingRepository->find($request->getQueryParams()['id'] ?? 0);
 
         if ($this->settingEntity === null) {
             throw new NotFoundException(
                 sprintf(
                     'Setting with name <u>%s</u> not found',
                     htmlspecialchars(
-                        $requestWrapper->getQueryData('id')
+                        $request->getQueryParams()['id'] ?? 0
                     )
                 ),
             );
@@ -93,7 +92,7 @@ final class EditSetting implements ModelInterface
             Rules::CALLBACK,
             'Настройка с таким id уже существует',
             function () {
-                $newVar = $this->requestWrapper->getPostData('var');
+                $newVar = $this->request->getParsedBody()['var'] ?? null;
                 if ($newVar === $this->settingEntity->getVar()) {
                     return true;
                 }
@@ -105,15 +104,17 @@ final class EditSetting implements ModelInterface
             }
         );
         $form->text('value', 'value');
-        $form->select('type', 'type')->fill(
-            [
-                'text',
-                'select',
-                'radio',
-                'textarea'
-            ],
-            true
-        )->addRule(Rules::REQUIRED);
+        $form->select('type', 'type')
+            ->addRule(Rules::REQUIRED)
+            ->fill(
+                [
+                    'text',
+                    'select',
+                    'radio',
+                    'textarea'
+                ],
+                true
+            );
         $form->text('params', 'params')->setDescription('json');
         $form->text('name', 'name')->addRule(Rules::REQUIRED);
         $form->text('description', 'description');
@@ -127,12 +128,12 @@ final class EditSetting implements ModelInterface
      */
     private function doAction(): void
     {
-        $this->settingEntity->setVar($this->requestWrapper->getPostData('var'));
-        $this->settingEntity->setValue($this->requestWrapper->getPostData('value'));
-        $this->settingEntity->setType($this->requestWrapper->getPostData('type'));
-        $this->settingEntity->setParams($this->requestWrapper->getPostData('params'));
-        $this->settingEntity->setName($this->requestWrapper->getPostData('name'));
-        $this->settingEntity->setDescription($this->requestWrapper->getPostData('description'));
+        $this->settingEntity->setVar($this->request->getParsedBody()['var'] ?? null);
+        $this->settingEntity->setValue($this->request->getParsedBody()['value'] ?? null);
+        $this->settingEntity->setType($this->request->getParsedBody()['type'] ?? null);
+        $this->settingEntity->setParams($this->request->getParsedBody()['params'] ?? null);
+        $this->settingEntity->setName($this->request->getParsedBody()['name'] ?? null);
+        $this->settingEntity->setDescription($this->request->getParsedBody()['description'] ?? null);
 
         $this->entityManager->flush();
 

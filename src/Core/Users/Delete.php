@@ -12,13 +12,13 @@ use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -33,7 +33,7 @@ class Delete implements ModelInterface
      */
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
         private EventDispatcher $dispatcher
@@ -49,7 +49,7 @@ class Delete implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->requestWrapper->getRequest()->getAttribute('id')
+            $this->request->getAttribute('id')
         );
 
         if ($user === null) {

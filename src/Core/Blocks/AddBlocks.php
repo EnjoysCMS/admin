@@ -11,13 +11,13 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -26,7 +26,7 @@ class AddBlocks implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -63,9 +63,11 @@ class AddBlocks implements ModelInterface
         $form->text('name', 'Название')->addRule(Rules::REQUIRED);
         $form->textarea('body', 'Контент')->addRule(Rules::REQUIRED);
 
-        $form->checkbox('groups', 'Группа')->fill(
-            $this->entityManager->getRepository(Group::class)->getGroupsArray()
-        )->addRule(Rules::REQUIRED);
+        $form->checkbox('groups', 'Группа')
+            ->addRule(Rules::REQUIRED)
+            ->fill(
+                $this->entityManager->getRepository(Group::class)->getGroupsArray()
+            );
 
         $form->submit('addblock', 'Добавить блок');
         return $form;
@@ -78,9 +80,9 @@ class AddBlocks implements ModelInterface
     private function doAction(): void
     {
         $block = new Block();
-        $block->setName($this->requestWrapper->getPostData('name'));
+        $block->setName($this->request->getParsedBody()['name'] ?? null);
         $block->setAlias((string)Uuid::uuid4());
-        $block->setBody($this->requestWrapper->getPostData('body'));
+        $block->setBody($this->request->getParsedBody()['body'] ?? null);
         $block->setRemovable(true);
         $block->setOptions(Custom::getMeta()['options']);
 
@@ -97,7 +99,7 @@ class AddBlocks implements ModelInterface
         );
 
         $groups = $this->entityManager->getRepository(Group::class)->findBy(
-            ['id' => $this->requestWrapper->getPostData('groups', [])]
+            ['id' => $this->request->getParsedBody()['groups'] ?? []]
         );
         foreach ($groups as $group) {
             $acl->setGroups($group);

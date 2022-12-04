@@ -14,12 +14,12 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface
@@ -34,7 +34,7 @@ class ChangePassword implements ModelInterface
      */
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -49,7 +49,7 @@ class ChangePassword implements ModelInterface
     public function getUser(): User
     {
         $user = $this->usersRepository->find(
-            $this->requestWrapper->getRequest()->getAttribute('id')
+            $this->request->getAttribute('id')
         );
 
         if ($user === null) {
@@ -107,7 +107,7 @@ class ChangePassword implements ModelInterface
      */
     private function updatePassword(): void
     {
-        $this->user->genAdnSetPasswordHash($this->requestWrapper->getPostData('password'));
+        $this->user->genAdnSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
         $this->em->flush();
         Redirect::http($this->urlGenerator->generate('admin/users'));
     }

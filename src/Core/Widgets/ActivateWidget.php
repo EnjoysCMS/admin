@@ -7,11 +7,11 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivateWidget
@@ -23,11 +23,11 @@ class ActivateWidget
 
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private Identity $identity
     ) {
-        $class = $this->requestWrapper->getQueryData('class');
+        $class = $this->request->getQueryParams()['class'] ?? null;
         if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }

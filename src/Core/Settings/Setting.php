@@ -10,9 +10,9 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Setting implements ModelInterface
@@ -25,7 +25,7 @@ class Setting implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -135,7 +135,7 @@ class Setting implements ModelInterface
      */
     private function doAction(): void
     {
-        foreach ($this->requestWrapper->getPostData() as $k => $v) {
+        foreach ($this->request->getParsedBody() as $k => $v) {
             /**
              *
              *

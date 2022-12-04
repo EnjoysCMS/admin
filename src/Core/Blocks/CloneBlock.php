@@ -13,10 +13,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
+use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,7 +24,7 @@ final class CloneBlock
 {
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator
     ) {
     }
@@ -36,10 +36,10 @@ final class CloneBlock
      * @throws DependencyException
      * @throws NoResultException
      */
-    public function __invoke(FactoryInterface $container)
+    public function __invoke(FactoryInterface $container): void
     {
         $block = $this->em->getRepository(Block::class)->find(
-            $this->requestWrapper->getRequest()->getAttribute('id')
+            $this->request->getAttribute('id')
         );
 
         if ($block === null) {

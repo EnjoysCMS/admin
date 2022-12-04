@@ -8,12 +8,12 @@ use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Location;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BlockLocations implements ModelInterface
@@ -22,12 +22,12 @@ class BlockLocations implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
         if (null === $block = $entityManager->getRepository(Block::class)->find(
-                $this->requestWrapper->getRequest()->getAttribute('id')
+                $this->request->getAttribute('id')
             )) {
             throw new InvalidArgumentException('Invalid block ID');
         }
@@ -76,7 +76,7 @@ class BlockLocations implements ModelInterface
     private function doAction(): void
     {
         $locations = $this->entityManager->getRepository(Location::class)->findBy(
-            ['id' => $this->requestWrapper->getPostData('locations', [])]
+            ['id' => $this->request->getParsedBody()['locations'] ?? []]
         );
 
         $this->block->removeLocations();

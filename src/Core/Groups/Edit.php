@@ -11,7 +11,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
@@ -19,6 +18,7 @@ use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
@@ -31,7 +31,7 @@ class Edit implements ModelInterface
      */
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -46,7 +46,7 @@ class Edit implements ModelInterface
     private function getGroup(): Group
     {
         $group = $this->groupsRepository->find(
-            $this->requestWrapper->getRequest()->getAttribute('id')
+            $this->request->getAttribute('id')
         );
 
         if ($group === null) {
@@ -100,7 +100,7 @@ class Edit implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->entityManager->getRepository(Group::class)->findOneBy(
-                            ['name' => $this->requestWrapper->getPostData('name')]
+                            ['name' => $this->request->getParsedBody()['name'] ?? null]
                         )
                     ) {
                         return true;
@@ -142,12 +142,12 @@ class Edit implements ModelInterface
     private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
-            ['id' => $this->requestWrapper->getPostData('acl', [])]
+            ['id' => $this->request->getParsedBody()['acl'] ?? []]
         );
 
 
-        $this->group->setName($this->requestWrapper->getPostData('name'));
-        $this->group->setDescription($this->requestWrapper->getPostData('description'));
+        $this->group->setName($this->request->getParsedBody()['name'] ?? null);
+        $this->group->setDescription($this->request->getParsedBody()['description'] ?? null);
 
         $this->group->removeAcl();
 

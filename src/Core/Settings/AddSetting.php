@@ -11,9 +11,9 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class AddSetting implements ModelInterface
@@ -22,7 +22,7 @@ final class AddSetting implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -56,7 +56,7 @@ final class AddSetting implements ModelInterface
             Rules::CALLBACK,
             'Настройка с таким id уже существует',
             function () {
-                $check = $this->settingRepository->findOneBy(['var' => $this->requestWrapper->getPostData('var')]);
+                $check = $this->settingRepository->findOneBy(['var' => $this->request->getParsedBody()['var'] ?? null]);
                 if ($check === null) {
                     return true;
                 }
@@ -64,15 +64,17 @@ final class AddSetting implements ModelInterface
             }
         );
         $form->text('value', 'value');
-        $form->select('type', 'type')->fill(
-            [
-                'text',
-                'select',
-                'radio',
-                'textarea'
-            ],
-            true
-        )->addRule(Rules::REQUIRED);;
+        $form->select('type', 'type')
+            ->addRule(Rules::REQUIRED)
+            ->fill(
+                [
+                    'text',
+                    'select',
+                    'radio',
+                    'textarea'
+                ],
+                true
+            );
         $form->text('params', 'params')->setDescription('json');
         $form->text('name', 'name')->addRule(Rules::REQUIRED);;
         $form->text('description', 'description');
@@ -83,12 +85,12 @@ final class AddSetting implements ModelInterface
     private function doAction(): void
     {
         $setting = new \EnjoysCMS\Core\Entities\Setting();
-        $setting->setVar($this->requestWrapper->getPostData('var'));
-        $setting->setValue($this->requestWrapper->getPostData('value'));
-        $setting->setType($this->requestWrapper->getPostData('type'));
-        $setting->setParams($this->requestWrapper->getPostData('params'));
-        $setting->setName($this->requestWrapper->getPostData('name'));
-        $setting->setDescription($this->requestWrapper->getPostData('description'));
+        $setting->setVar($this->request->getParsedBody()['var'] ?? null);
+        $setting->setValue($this->request->getParsedBody()['value'] ?? null);
+        $setting->setType($this->request->getParsedBody()['type'] ?? null);
+        $setting->setParams($this->request->getParsedBody()['params'] ?? null);
+        $setting->setName($this->request->getParsedBody()['name'] ?? null);
+        $setting->setDescription($this->request->getParsedBody()['description'] ?? null);
         $setting->setRemovable(true);
 
         $this->entityManager->persist($setting);

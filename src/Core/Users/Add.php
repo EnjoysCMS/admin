@@ -12,19 +12,19 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
 {
     public function __construct(
         private EntityManager $em,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -66,12 +66,12 @@ class Add implements ModelInterface
     private function addUser(): void
     {
         $newUser = new User();
-        $newUser->setName($this->requestWrapper->getPostData('name'));
-        $newUser->setLogin($this->requestWrapper->getPostData('login'));
-        $newUser->genAdnSetPasswordHash($this->requestWrapper->getPostData('password'));
+        $newUser->setName($this->request->getParsedBody()['name'] ?? null);
+        $newUser->setLogin($this->request->getParsedBody()['login'] ?? null);
+        $newUser->genAdnSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
 
         $groups = $this->em->getRepository(Group::class)->findBy(
-            ['id' => $this->requestWrapper->getPostData('groups', [])]
+            ['id' => $this->request->getParsedBody()['groups'] ?? []]
         );
         foreach ($groups as $group) {
             $newUser->setGroups($group);
@@ -100,7 +100,7 @@ class Add implements ModelInterface
                 'Такой логин уже занят',
                 function () {
                     if (null === $this->em->getRepository(User::class)->findOneBy(
-                            ['login' => $this->requestWrapper->getPostData('login')]
+                            ['login' => $this->request->getParsedBody()['login'] ?? null]
                         )
                     ) {
                         return true;
@@ -113,9 +113,11 @@ class Add implements ModelInterface
             ->addRule(Rules::REQUIRED);
 
 
-        $form->checkbox('groups', 'Группа')->fill(
+        $form->checkbox('groups', 'Группа')
+            ->addRule(Rules::REQUIRED)
+            ->fill(
             $this->em->getRepository(Group::class)->getGroupsArray()
-        )->addRule(Rules::REQUIRED);
+        );
 
         $form->submit('sbmt1', 'Добавить');
 

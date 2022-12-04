@@ -4,12 +4,12 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
+use DI\Container;
 use DI\FactoryInterface;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Blocks\Custom;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
@@ -17,7 +17,7 @@ use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditBlock implements ModelInterface
@@ -34,12 +34,12 @@ class EditBlock implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
-        private ContainerInterface $container
+        private Container $container
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->requestWrapper->getRequest()->getAttribute('id'))) {
+        if (null === $block = $entityManager->getRepository(Block::class)->find($this->request->getAttribute('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
         }
         if (!($block instanceof Block)) {
@@ -96,7 +96,7 @@ class EditBlock implements ModelInterface
                 Rules::CALLBACK,
                 'Числа нельзя использовать в качестве псевдонима',
                 function () {
-                    $alias = $this->requestWrapper->getPostData('alias');
+                    $alias = $this->request->getParsedBody()['alias'] ?? null;
                     if ($alias === null) {
                         return true;
                     }
@@ -107,7 +107,7 @@ class EditBlock implements ModelInterface
                 Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
-                    $alias = $this->requestWrapper->getPostData('alias');
+                    $alias = $this->request->getParsedBody()['alias'] ?? null;
                     if ($alias === null) {
                         return true;
                     }
@@ -116,8 +116,7 @@ class EditBlock implements ModelInterface
                     $qb->select('b')
                         ->from(Block::class, 'b')
                         ->where('b.alias = :alias')
-                        ->setParameter('alias', $alias)
-                    ;
+                        ->setParameter('alias', $alias);
                     $block = $qb->getQuery()->getOneOrNullResult();
 
                     if ($block === null) {
@@ -129,8 +128,7 @@ class EditBlock implements ModelInterface
                     }
                     return false;
                 }
-            )
-        ;
+            );
 
         $form->text('name', 'Название');
 
@@ -184,9 +182,11 @@ class EditBlock implements ModelInterface
             }
         }
 
-        $form->checkbox('groups', 'Права доступа')->fill(
-            $this->groupsRepository->getGroupsArray()
-        )->addRule(Rules::REQUIRED);
+        $form->checkbox('groups', 'Права доступа')
+            ->addRule(Rules::REQUIRED)
+            ->fill(
+                $this->groupsRepository->getGroupsArray()
+            );
 
         $form->submit('send');
 
@@ -215,12 +215,12 @@ class EditBlock implements ModelInterface
     private function doAction(): void
     {
         $oldBlock = clone $this->block;
-        $this->block->setName($this->requestWrapper->getPostData('name'));
+        $this->block->setName($this->request->getParsedBody()['name'] ?? null);
         $this->block->setAlias(
-            empty($this->requestWrapper->getPostData('alias')) ? null : $this->requestWrapper->getPostData('alias')
+            empty($this->request->getParsedBody()['alias'] ?? null) ? null : $this->request->getParsedBody()['alias'] ?? null
         );
-        $this->block->setBody($this->requestWrapper->getPostData('body'));
-        $this->block->setOptions($this->getBlockOptions($this->requestWrapper->getPostData('options', [])));
+        $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
+        $this->block->setOptions($this->getBlockOptions($this->request->getParsedBody()['options'] ?? []));
 
 
         /**
@@ -229,7 +229,7 @@ class EditBlock implements ModelInterface
          * @var Group $group
          */
         foreach ($this->groupsRepository->findAll() as $group) {
-            if (in_array($group->getId(), $this->requestWrapper->getPostData('groups', []))) {
+            if (in_array($group->getId(), $this->request->getParsedBody()['groups'] ?? [])) {
                 $this->acl->setGroups($group);
                 continue;
             }
@@ -241,8 +241,7 @@ class EditBlock implements ModelInterface
         $this->container
             ->get(FactoryInterface::class)
             ->make($this->block->getClass(), ['block' => $this->block])
-            ->postEdit($oldBlock)
-        ;
+            ->postEdit($oldBlock);
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        Redirect::http();

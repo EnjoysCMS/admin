@@ -12,7 +12,6 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use Enjoys\ServerRequestWrapper;
 use EnjoysCMS\Core\Components\Helpers\Http;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
@@ -20,6 +19,7 @@ use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
@@ -29,7 +29,7 @@ class Add implements ModelInterface
 
     public function __construct(
         private EntityManager $entityManager,
-        private ServerRequestWrapper $requestWrapper,
+        private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer
     ) {
@@ -71,7 +71,7 @@ class Add implements ModelInterface
 
         $aclGroupByIds = [];
 
-        if (null !== $group = $this->groupsRepository->find($this->requestWrapper->getQueryData('by', 0))) {
+        if (null !== $group = $this->groupsRepository->find($this->request->getQueryParams()['by'] ?? 0)) {
             $aclGroupByIds = array_map(
                 function ($o) {
                     return $o->getId();
@@ -84,13 +84,13 @@ class Add implements ModelInterface
         $form->setDefaults(
             [
                 'acl' => $aclGroupByIds,
-                'by' => $this->requestWrapper->getQueryData('by')
+                'by' => $this->request->getQueryParams()['by'] ?? null
             ]
         );
 
-        $queryStrings = Http::getQueryParams($this->requestWrapper->getRequest()->getUri(), ['by']);
+        $queryStrings = Http::getQueryParams($this->request->getUri(), ['by']);
 
-        $urlModify = $this->requestWrapper->getRequest()->getUri()->withQuery(
+        $urlModify = $this->request->getUri()->withQuery(
             (empty($queryStrings)) ? uniqid() : $queryStrings
         );
         //var_dump($urlModify); die();
@@ -108,7 +108,7 @@ class Add implements ModelInterface
                 'Название группы должно быть уникальным',
                 function () {
                     if (null === $group = $this->groupsRepository->findOneBy(
-                            ['name' => $this->requestWrapper->getPostData('name')]
+                            ['name' => $this->request->getParsedBody()['name'] ?? null]
                         )
                     ) {
                         return true;
@@ -139,12 +139,12 @@ class Add implements ModelInterface
     private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
-            ['id' => $this->requestWrapper->getPostData('acl', [])]
+            ['id' => $this->request->getParsedBody()['acl'] ?? []]
         );
 
         $group = new Group();
-        $group->setName($this->requestWrapper->getPostData('name'));
-        $group->setDescription($this->requestWrapper->getPostData('description'));
+        $group->setName($this->request->getParsedBody()['name'] ?? null);
+        $group->setDescription($this->request->getParsedBody()['description'] ?? null);
         $group->setStatus(1);
         $group->setSystem(false);
         foreach ($acls as $acl) {
