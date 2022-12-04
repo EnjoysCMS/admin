@@ -73,7 +73,7 @@ abstract class AdminBaseController extends BaseController
      */
     protected function initAssets(): void
     {
-        $path = str_replace(realpath($_ENV['PROJECT_DIR']), '', realpath(__DIR__.'/../'));
+        $path = str_replace(realpath($_ENV['ROOT_PATH']), '', realpath(__DIR__.'/../'));
 
         Assets::createSymlink(
             $_ENV['PUBLIC_DIR'] . '/assets/adminLTE/dist',

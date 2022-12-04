@@ -80,7 +80,7 @@ class ACList
         /**
          * Добавление остальных ACL в системный модуль
          */
-        $systemNamespaces = Utils::parseComposerJson($_ENV['PROJECT_DIR'] . '/composer.json')->namespaces;
+        $systemNamespaces = Utils::parseComposerJson($_ENV['ROOT_PATH'] . '/composer.json')->namespaces;
         foreach ($systemNamespaces as $ns) {
             $groupedAcl['@Application'] = array_filter(
                 $activeAcl,
