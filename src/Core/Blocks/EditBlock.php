@@ -4,7 +4,6 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
-use App\Ace\Ace;
 use DI\Container;
 use DI\DependencyException;
 use DI\FactoryInterface;
@@ -22,6 +21,7 @@ use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -50,7 +50,8 @@ class EditBlock implements ModelInterface
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
         private ContentEditor $contentEditor,
-        private Container $container
+        private Container $container,
+        private Config $config,
     ) {
         if (null === $block = $entityManager->getRepository(Block::class)->find($this->request->getAttribute('id'))) {
             throw new \InvalidArgumentException('Invalid block ID');
@@ -82,7 +83,9 @@ class EditBlock implements ModelInterface
         return [
             'form' => $this->renderer,
             'block' => $this->block,
-            'contentEditor' => $this->contentEditor->withConfig(Ace::class)->setSelector('#body')->getEmbedCode(),
+            'contentEditor' => $this->contentEditor->withConfig(
+                $this->config->getContentEditorConfigParamForCustomBlocks()
+            )->setSelector('#body')->getEmbedCode(),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
