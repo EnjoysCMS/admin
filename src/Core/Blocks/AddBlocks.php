@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -12,10 +14,12 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
@@ -28,14 +32,18 @@ class AddBlocks implements ModelInterface
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private ContentEditor $contentEditor,
+        private Config $config
     ) {
     }
 
     /**
-     * @throws OptimisticLockException
      * @throws ExceptionRule
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function getContext(): array
     {
@@ -45,6 +53,9 @@ class AddBlocks implements ModelInterface
         }
         $this->renderer->setForm($form);
         return [
+            'contentEditor' => $this->contentEditor->withConfig(
+                $this->config->getContentEditorConfigParamForCustomBlocks()
+            )->setSelector('#body')->getEmbedCode(),
             'form' => $this->renderer,
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
@@ -67,7 +78,8 @@ class AddBlocks implements ModelInterface
             ->addRule(Rules::REQUIRED)
             ->fill(
                 $this->entityManager->getRepository(Group::class)->getGroupsArray()
-            );
+            )
+        ;
 
         $form->submit('addblock', 'Добавить блок');
         return $form;

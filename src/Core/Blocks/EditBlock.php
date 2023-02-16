@@ -4,19 +4,27 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
+use App\Ace\Ace;
 use DI\Container;
+use DI\DependencyException;
 use DI\FactoryInterface;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Components\WYSIWYG\WYSIWYG;
 use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -32,11 +40,16 @@ class EditBlock implements ModelInterface
     private $groupsRepository;
 
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
+        private ContentEditor $contentEditor,
         private Container $container
     ) {
         if (null === $block = $entityManager->getRepository(Block::class)->find($this->request->getAttribute('id'))) {
@@ -50,6 +63,13 @@ class EditBlock implements ModelInterface
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     * @throws NotFoundException
+     * @throws DependencyException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -57,12 +77,12 @@ class EditBlock implements ModelInterface
             $this->doAction();
         }
         $this->renderer->setForm($form);
-        $wysiwyg = WYSIWYG::getInstance('summernote', $this->container);
+
 
         return [
             'form' => $this->renderer,
             'block' => $this->block,
-            'wysiwyg' => $wysiwyg->selector('#body'),
+            'contentEditor' => $this->contentEditor->withConfig(Ace::class)->setSelector('#body')->getEmbedCode(),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
@@ -71,6 +91,9 @@ class EditBlock implements ModelInterface
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -212,6 +235,12 @@ class EditBlock implements ModelInterface
         return $blockOptions;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NotFoundException
+     * @throws ORMException
+     * @throws DependencyException
+     */
     private function doAction(): void
     {
         $oldBlock = clone $this->block;
