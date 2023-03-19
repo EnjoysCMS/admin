@@ -23,6 +23,7 @@ use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Invoker\Exception\NotCallableException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -166,15 +167,23 @@ class EditBlock implements ModelInterface
 
         if (null !== $this->block->getOptions()) {
             foreach ($this->block->getOptions() as $key => $option) {
-                if (isset($option['form']['type'])) {
-                    switch ($option['form']['type']) {
+                $type = $option['form']['type'] ?? null;
+
+                if ($type) {
+                    $data = $option['form']['data'] ?? [];
+                    try {
+                        $data = $this->container->call($data);
+                    } catch (NotCallableException) {
+                        //skip
+                    }
+                    switch ($type) {
                         case 'radio':
                             $form->radio(
                                 "options[{$key}]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
-                            )->fill($option['form']['data']);
+                            )->fill($data);
                             break;
                         case 'checkbox':
                             $form->checkbox(
@@ -182,7 +191,7 @@ class EditBlock implements ModelInterface
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
-                            )->fill($option['form']['data']);
+                            )->fill($data);
                             break;
                         case 'select':
                             $form->select(
@@ -190,7 +199,7 @@ class EditBlock implements ModelInterface
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
-                            )->fill($option['form']['data']);
+                            )->fill($data);
                             break;
                         case 'textarea':
                             $form->textarea(
