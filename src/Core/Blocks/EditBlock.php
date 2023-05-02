@@ -11,6 +11,7 @@ use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
@@ -170,8 +171,11 @@ class EditBlock implements ModelInterface
                 $type = $option['form']['type'] ?? null;
 
                 if ($type) {
-                    $data = $option['form']['data'] ?? [];
+                    $data = $option['form']['data'] ?? [null];
                     try {
+                        if (is_array($data) && !array_key_exists(0, $data)) {
+                            throw new NotCallableException();
+                        }
                         $data = $this->container->call($data);
                     } catch (NotCallableException) {
                         //skip
@@ -206,6 +210,14 @@ class EditBlock implements ModelInterface
                                 "options[{$key}]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription($option['description'] ?? '');
+                            break;
+                        case 'file':
+                            $form->file("options[{$key}]", $option['name'] ?? $key)
+                                ->setDescription($option['description'] ?? '')
+                                ->setMaxFileSize(
+                                    $data['max_file_size'] ?? iniSize2bytes(ini_get('upload_max_filesize'))
+                                )
+                                ->setAttributes(AttributeFactory::createFromArray($data['attributes'] ?? []));
                             break;
                     }
 
@@ -258,7 +270,8 @@ class EditBlock implements ModelInterface
         $oldBlock = clone $this->block;
         $this->block->setName($this->request->getParsedBody()['name'] ?? null);
         $this->block->setAlias(
-            empty($this->request->getParsedBody()['alias'] ?? null) ? null : $this->request->getParsedBody()['alias'] ?? null
+            empty($this->request->getParsedBody()['alias'] ?? null) ? null : $this->request->getParsedBody(
+            )['alias'] ?? null
         );
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
         $this->block->setOptions($this->getBlockOptions($this->request->getParsedBody()['options'] ?? []));
