@@ -290,12 +290,12 @@ class EditBlock implements ModelInterface
             $this->acl->removeGroups($group);
         }
 
-        $this->entityManager->flush();
-
         $this->container
             ->get(FactoryInterface::class)
             ->make($this->block->getClass(), ['block' => $this->block])
             ->postEdit($oldBlock);
+
+        $this->entityManager->flush();
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        Redirect::http();
