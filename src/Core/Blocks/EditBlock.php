@@ -271,10 +271,7 @@ class EditBlock implements ModelInterface
     {
         $oldBlock = clone $this->block;
         $this->block->setName($this->request->getParsedBody()['name'] ?? null);
-        $this->block->setAlias(
-            empty($this->request->getParsedBody()['alias'] ?? null) ? null : $this->request->getParsedBody(
-            )['alias'] ?? null
-        );
+        $this->block->setAlias($this->request->getParsedBody()['alias'] ?? null);
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
         $this->block->setOptions($this->getBlockOptions($this->request->getParsedBody()['options'] ?? []));
 

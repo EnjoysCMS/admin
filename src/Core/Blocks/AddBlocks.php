@@ -14,7 +14,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\Components\Blocks\UserBlock;
+use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
@@ -96,7 +96,7 @@ class AddBlocks implements ModelInterface
         $block->setAlias((string)Uuid::uuid4());
         $block->setBody($this->request->getParsedBody()['body'] ?? null);
         $block->setRemovable(true);
-        $block->setOptions(UserBlock::getMeta()['options']);
+        $block->setOptions(UserBlock::META['options']);
 
         $this->entityManager->beginTransaction();
         $this->entityManager->persist($block);
