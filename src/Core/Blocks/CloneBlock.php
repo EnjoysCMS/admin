@@ -10,12 +10,17 @@ use DI\DependencyException;
 use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Interfaces\RedirectInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,18 +30,22 @@ final class CloneBlock
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator
+        private RedirectInterface $redirect
     ) {
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     * @throws NotFoundException
+
      * @throws DependencyException
      * @throws NoResultException
+     * @throws NotFoundException
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(FactoryInterface $container): void
+    public function __invoke(FactoryInterface $container): ResponseInterface
     {
         $block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')
@@ -61,6 +70,6 @@ final class CloneBlock
 
         $container->make($block->getClassName(), ['block' => $block])->postClone($cloned);
 
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+        return $this->redirect->toRoute('admin/blocks');
     }
 }

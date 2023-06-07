@@ -30,6 +30,7 @@ use Invoker\Exception\NotCallableException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditBlock implements ModelInterface
@@ -127,9 +128,21 @@ class EditBlock implements ModelInterface
             ->addRule(Rules::REQUIRED)
             ->addRule(
                 Rules::CALLBACK,
+                'UUID is wrong',
+                function () {
+                    return Uuid::isValid($this->request->getParsedBody()['id'] ?? '');
+                }
+            )
+            ->addRule(
+                Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
                     $id = $this->request->getParsedBody()['id'] ?? null;
+
+                    if (!Uuid::isValid($id)){
+                        return true;
+                    }
+
                     if ($id === null) {
                         return true;
                     }

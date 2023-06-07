@@ -23,6 +23,8 @@ use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -47,11 +49,14 @@ class AddBlocks implements ModelInterface
     }
 
     /**
+     * @throws ContainerExceptionInterface
+     * @throws DependencyException
      * @throws ExceptionRule
+     * @throws NotFoundException
+     * @throws NotFoundExceptionInterface
+     * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws DependencyException
-     * @throws NotFoundException
      */
     public function getContext(): array
     {
@@ -73,8 +78,10 @@ class AddBlocks implements ModelInterface
         ];
     }
 
+
     /**
      * @throws ExceptionRule
+     * @throws NotSupported
      */
     private function getForm(): Form
     {
@@ -94,15 +101,13 @@ class AddBlocks implements ModelInterface
                 Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
+                    /** @var string $id */
                     $id = $this->request->getParsedBody()['id'] ?? '';
 
                     if (!Uuid::isValid($id)){
                         return true;
                     }
 
-                    if ($id === null) {
-                        return true;
-                    }
                     $block = $this->blockRepository->find($id);
 
                     if ($block === null) {
@@ -125,9 +130,13 @@ class AddBlocks implements ModelInterface
         return $form;
     }
 
+
     /**
-     * @throws OptimisticLockException
+     * @throws NotFoundExceptionInterface
      * @throws ORMException
+     * @throws ContainerExceptionInterface
+     * @throws OptimisticLockException
+     * @throws NotSupported
      */
     private function doAction(): void
     {
