@@ -9,6 +9,8 @@ use DI\DependencyException;
 use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
@@ -45,9 +47,10 @@ class EditBlock implements ModelInterface
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
+        private EntityManager $em,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
@@ -55,15 +58,14 @@ class EditBlock implements ModelInterface
         private Container $container,
         private Config $config,
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find($this->request->getAttribute('id'))) {
-            throw new \InvalidArgumentException('Invalid block ID');
-        }
-        if (!($block instanceof Block)) {
-            throw new \InvalidArgumentException('Invalid block');
-        }
-        $this->block = $block;
+        /** @var \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $repository */
+        $repository = $this->em->getRepository(Block::class);
+        $blockId = $this->request->getAttribute('id');
+        $this->block = $repository->find($blockId) ?? throw new \InvalidArgumentException(
+            sprintf('Invalid block ID: %s', $blockId)
+        );
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
-        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
+        $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 
     /**
@@ -140,7 +142,7 @@ class EditBlock implements ModelInterface
                         return true;
                     }
 
-                    $qb = $this->entityManager->createQueryBuilder();
+                    $qb = $this->em->createQueryBuilder();
                     $qb->select('b')
                         ->from(Block::class, 'b')
                         ->where('b.alias = :alias')
@@ -295,7 +297,7 @@ class EditBlock implements ModelInterface
             ->make($this->block->getClass(), ['block' => $this->block])
             ->postEdit($oldBlock);
 
-        $this->entityManager->flush();
+        $this->em->flush();
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
         //        Redirect::http();

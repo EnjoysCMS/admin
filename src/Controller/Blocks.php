@@ -49,9 +49,9 @@ class Blocks extends AdminBaseController
             'comment' => 'Установка (активация) блоков'
         ]
     )]
-    public function activate(): void
+    public function activate(): ResponseInterface
     {
-        $this->getContainer()->get(ActivateBlock::class)();
+        return $this->getContainer()->call(ActivateBlock::class);
     }
 
     /**
@@ -100,7 +100,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/edit/{id}',
         name: 'admin/editblock',
         requirements: [
-            'id' => '\d+'
+            'id' => '\d+|[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
         ],
         options: [
             'comment' => 'Редактирование блоков'
