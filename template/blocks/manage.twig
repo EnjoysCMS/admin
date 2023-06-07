@@ -16,20 +16,20 @@
                     {% for block in blocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
-                                <b>{{ block.getName }}</b>&nbsp;[id: <b>{{ block.getId }}</b>]
-                                {% if block.isCloned %}
+                                <b>{{ block.name }}</b>
+                                {% if block.cloned %}
                                     <span class="badge badge-primary badge-pill">cloned</span>
                                 {% endif %}
 
-                                <small class="d-block">{{ block.getClass }}</small>
-                                <small class="d-block text-monospace">alias: <b class="user-select-all">{{ block.getAlias }}</b></small>
+                                <small class="d-block">{{ block.class }}</small>
+                                <small class="d-block text-monospace">id: <b class="user-select-all">{{ block.id }}</b></small>
 
-                                <div class="collapse mt-3" id="collapseExample{{ block.getId }}">
+                                <div class="collapse mt-3" id="collapseExample{{ block.id }}">
                                     <div class="user-select-all">
                                         <code class="text-monospace">
-                                            &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
-                                            {{ block.getTwigTemplateString(true) }}<br>
-                                            &lt;!-- /Блок: "{{ block.getName }}" --&gt;
+                                            &lt;!-- Блок: "{{ block.name }}" --&gt;<br>
+                                            {{ '{{' }} ViewBlock('{{block.id}}') {{ '}}' }}<br>
+                                            &lt;!-- /Блок: "{{ block.name }}" --&gt;
                                         </code>
                                     </div>
                                 </div>
@@ -38,7 +38,7 @@
                             <div class="align-self-start">
                                 {% if access2route('admin/blocklocation') %}
                                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
-                                       href="{{ path('admin/blocklocation', {"id": block.getId}) }}"><i
+                                       href="{{ path('admin/blocklocation', {"id": block.id}) }}"><i
                                                 class="fa fa-th"></i>
                                         Расположение </a>
                                 {% endif %}

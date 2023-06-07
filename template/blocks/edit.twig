@@ -7,7 +7,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Редактирование блока <b>{{ block.getName }}</b></h2>
+                <h2 class="card-title">Редактирование блока <b>{{ block.name }}</b></h2>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -15,7 +15,7 @@
                 {% if access2route('admin/blocklocation') %}
                 <div class="my-3">
                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark"
-                       href="{{ path('admin/blocklocation', {"id": block.getId}) }}"><i class="fa fa-edit"></i>
+                       href="{{ path('admin/blocklocation', {"id": block.id}) }}"><i class="fa fa-edit"></i>
                         Управление местоположением блока </a>
                 </div>
                 {% endif %}
@@ -24,9 +24,9 @@
                         Для отображения блока в шаблоне, вставьте туда код
                     </p>
                     <code class="user-select-all">
-                        &lt;!-- Блок: "{{ block.getName }}" --&gt;<br>
-                            {{ block.getTwigTemplateString(true) }}<br>
-                        &lt;!-- /Блок: "{{ block.getName }}" --&gt;
+                        &lt;!-- Блок: "{{ block.name }}" --&gt;<br>
+                        {{ '{{' }} ViewBlock('{{block.id}}') {{ '}}' }}<br>
+                        &lt;!-- /Блок: "{{ block.name }}" --&gt;
                     </code>
 
                 </div>

@@ -23,6 +23,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class Blocks extends AdminBaseController
 {
 
+    private const ID_REQUIREMENT_RULE = '\d+|[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
+
     #[Route(
         path: '/admin/blocks/setting',
         name: 'admin/blocks',
@@ -62,7 +64,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/delete/{id}',
         name: 'admin/deleteblocks',
         requirements: [
-            'id' => '\d+'
+            'id' => self::ID_REQUIREMENT_RULE
         ],
         options: [
             'comment' => 'Удаление блоков'
@@ -81,7 +83,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/clone/{id}',
         name: 'admin/cloneblocks',
         requirements: [
-            'id' => '\d+'
+            'id' => self::ID_REQUIREMENT_RULE
         ],
         options: [
             'comment' => 'Клонирование блоков'
@@ -100,7 +102,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/edit/{id}',
         name: 'admin/editblock',
         requirements: [
-            'id' => '\d+|[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+            'id' => self::ID_REQUIREMENT_RULE
         ],
         options: [
             'comment' => 'Редактирование блоков'
@@ -133,7 +135,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/locations/{id}',
         name: 'admin/blocklocation',
         requirements: [
-            'id' => '\d+'
+            'id' => self::ID_REQUIREMENT_RULE
         ],
         options: [
             'comment' => 'Установка расположения блоков'
