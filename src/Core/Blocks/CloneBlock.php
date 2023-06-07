@@ -59,7 +59,7 @@ final class CloneBlock
         );
 
 
-        $container->make($block->getClass(), ['block' => $block])->postClone($cloned);
+        $container->make($block->getClassName(), ['block' => $block])->postClone($cloned);
 
         Redirect::http($this->urlGenerator->generate('admin/blocks'));
     }

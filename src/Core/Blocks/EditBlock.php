@@ -22,8 +22,8 @@ use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Components\Blocks\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Invoker\Exception\NotCallableException;
@@ -42,6 +42,7 @@ class EditBlock implements ModelInterface
      * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
      */
     private $groupsRepository;
+    private \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $blockRepository;
 
 
     /**
@@ -57,11 +58,11 @@ class EditBlock implements ModelInterface
         private ContentEditor $contentEditor,
         private Container $container,
         private Config $config,
+        private RedirectInterface $redirect,
     ) {
-        /** @var \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $repository */
-        $repository = $this->em->getRepository(Block::class);
+        $this->blockRepository = $this->em->getRepository(Block::class);
         $blockId = $this->request->getAttribute('id');
-        $this->block = $repository->find($blockId) ?? throw new \InvalidArgumentException(
+        $this->block = $this->blockRepository->find($blockId) ?? throw new \InvalidArgumentException(
             sprintf('Invalid block ID: %s', $blockId)
         );
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
@@ -80,6 +81,7 @@ class EditBlock implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/blocks', emit: true);
         }
         $this->renderer->setForm($form);
 
@@ -108,6 +110,7 @@ class EditBlock implements ModelInterface
         $form->setDefaults(
             [
                 'name' => $this->block->getName(),
+                'id' => $this->block->getId(),
                 'alias' => $this->block->getAlias(),
                 'body' => $this->block->getBody(),
                 'options' => $this->block->getOptionsKeyValue(),
@@ -119,6 +122,29 @@ class EditBlock implements ModelInterface
                 ),
             ]
         );
+
+        $form->text('id', 'Id')
+            ->addRule(Rules::REQUIRED)
+            ->addRule(
+                Rules::CALLBACK,
+                'Такой идентификатор уже существует',
+                function () {
+                    $id = $this->request->getParsedBody()['id'] ?? null;
+                    if ($id === null) {
+                        return true;
+                    }
+                    $block = $this->blockRepository->find($id);
+
+                    if ($block === null) {
+                        return true;
+                    }
+
+                    if ($block->getId() === $this->block->getId()) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
 
         $form->text('alias', 'Alias')
             ->setDescription('Псевдоним идентификатора')
@@ -163,7 +189,7 @@ class EditBlock implements ModelInterface
         $form->text('name', 'Название');
 
 
-        if ($this->block->getClass() === UserBlock::class) {
+        if ($this->block->getClassName() === UserBlock::class) {
             $form->textarea('body', 'Контент');
         }
 
@@ -271,6 +297,7 @@ class EditBlock implements ModelInterface
     {
         $oldBlock = clone $this->block;
         $this->block->setName($this->request->getParsedBody()['name'] ?? null);
+        $this->block->setId($this->request->getParsedBody()['id'] ?? null);
         $this->block->setAlias($this->request->getParsedBody()['alias'] ?? null);
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
         $this->block->setOptions($this->getBlockOptions($this->request->getParsedBody()['options'] ?? []));
@@ -291,12 +318,9 @@ class EditBlock implements ModelInterface
 
         $this->container
             ->get(FactoryInterface::class)
-            ->make($this->block->getClass(), ['block' => $this->block])
+            ->make($this->block->getClassName(), ['block' => $this->block])
             ->postEdit($oldBlock);
 
         $this->em->flush();
-
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
-        //        Redirect::http();
     }
 }

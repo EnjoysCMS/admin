@@ -7,6 +7,8 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
@@ -28,6 +30,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AddBlocks implements ModelInterface
 {
 
+    private \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $blockRepository;
+
+    /**
+     * @throws NotSupported
+     */
     public function __construct(
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
@@ -36,6 +43,7 @@ class AddBlocks implements ModelInterface
         private ContentEditor $contentEditor,
         private Config $config
     ) {
+        $this->blockRepository = $this->entityManager->getRepository(Block::class);
     }
 
     /**
@@ -71,6 +79,39 @@ class AddBlocks implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form();
+        $form->setDefaults([
+            'id' => Uuid::uuid7()->toString()
+        ]);
+        $form->text('id', 'ID')
+            ->addRule(
+                Rules::CALLBACK,
+                'UUID is wrong',
+                function () {
+                    return Uuid::isValid($this->request->getParsedBody()['id'] ?? '');
+                }
+            )
+            ->addRule(
+                Rules::CALLBACK,
+                'Такой идентификатор уже существует',
+                function () {
+                    $id = $this->request->getParsedBody()['id'] ?? '';
+
+                    if (!Uuid::isValid($id)){
+                        return true;
+                    }
+
+                    if ($id === null) {
+                        return true;
+                    }
+                    $block = $this->blockRepository->find($id);
+
+                    if ($block === null) {
+                        return true;
+                    }
+
+                    return false;
+                }
+            );
         $form->text('name', 'Название')->addRule(Rules::REQUIRED);
         $form->textarea('body', 'Контент')->addRule(Rules::REQUIRED);
 
@@ -78,8 +119,7 @@ class AddBlocks implements ModelInterface
             ->addRule(Rules::REQUIRED)
             ->fill(
                 $this->entityManager->getRepository(Group::class)->getGroupsArray()
-            )
-        ;
+            );
 
         $form->submit('addblock', 'Добавить блок');
         return $form;
@@ -93,7 +133,8 @@ class AddBlocks implements ModelInterface
     {
         $block = new Block();
         $block->setName($this->request->getParsedBody()['name'] ?? null);
-        $block->setAlias((string)Uuid::uuid4());
+        $block->setId($this->request->getParsedBody()['id'] ?? '');
+        $block->setClassName(UserBlock::class);
         $block->setBody($this->request->getParsedBody()['body'] ?? null);
         $block->setRemovable(true);
         $block->setOptions(UserBlock::META['options']);

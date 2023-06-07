@@ -52,9 +52,9 @@ class ActivateBlock
 
         $block = new Block\Entity\Block();
         $id = Uuid::uuid4()->toString();
-        $block->setAlias($id);
+        $block->setId($id);
         $block->setName($data->getName());
-        $block->setClass($this->class->getName());
+        $block->setClassName($this->class->getName());
         $block->setCloned(false);
         $block->setRemovable(true);
         $block->setOptions($data->getOptions());
