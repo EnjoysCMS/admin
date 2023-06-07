@@ -13,11 +13,11 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Block\Entity\Block;
+use EnjoysCMS\Core\Components\Blocks\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
@@ -96,7 +96,7 @@ class AddBlocks implements ModelInterface
         $block->setAlias((string)Uuid::uuid4());
         $block->setBody($this->request->getParsedBody()['body'] ?? null);
         $block->setRemovable(true);
-        $block->setOptions(Custom::getMeta()['options']);
+        $block->setOptions(UserBlock::getMeta()['options']);
 
         $this->entityManager->beginTransaction();
         $this->entityManager->persist($block);

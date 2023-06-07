@@ -16,11 +16,11 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Blocks\Custom;
+use EnjoysCMS\Core\Block\Entity\Block;
+use EnjoysCMS\Core\Components\Blocks\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Entities\Block;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
@@ -161,7 +161,7 @@ class EditBlock implements ModelInterface
         $form->text('name', 'Название');
 
 
-        if ($this->block->getClass() === Custom::class) {
+        if ($this->block->getClass() === UserBlock::class) {
             $form->textarea('body', 'Контент');
         }
 

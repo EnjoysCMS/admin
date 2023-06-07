@@ -3,7 +3,7 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 use Doctrine\ORM\EntityManager;
-use EnjoysCMS\Core\Entities\Block;
+use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
