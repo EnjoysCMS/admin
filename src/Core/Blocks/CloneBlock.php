@@ -11,19 +11,17 @@ use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class CloneBlock
 {
@@ -35,13 +33,12 @@ final class CloneBlock
     }
 
     /**
-
      * @throws DependencyException
      * @throws NoResultException
      * @throws NotFoundException
      * @throws OptimisticLockException
      * @throws NotSupported
-     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws ORMException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -56,7 +53,7 @@ final class CloneBlock
         }
 
         $cloned = clone $block;
-        $cloned->setAlias((string)Uuid::uuid4());
+        $cloned->setId(Uuid::uuid4()->toString());
         $cloned->setRemovable(true);
         $cloned->setCloned(true);
         $this->em->persist($cloned);

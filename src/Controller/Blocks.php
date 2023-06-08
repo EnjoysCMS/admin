@@ -25,6 +25,10 @@ class Blocks extends AdminBaseController
 
     private const ID_REQUIREMENT_RULE = '\d+|[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/setting',
         name: 'admin/blocks',
@@ -116,6 +120,10 @@ class Blocks extends AdminBaseController
         ));
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/add',
         name: 'admin/addblock',
@@ -131,6 +139,10 @@ class Blocks extends AdminBaseController
         ));
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/locations/{id}',
         name: 'admin/blocklocation',
@@ -149,6 +161,10 @@ class Blocks extends AdminBaseController
         ));
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     #[Route(
         path: '/admin/blocks/setup',
         name: 'admin/setupblocks',

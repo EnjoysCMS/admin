@@ -20,12 +20,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionException;
 
 class ActivateBlock
 {
     private ReflectionClass $class;
 
 
+    /**
+     * @throws ReflectionException
+     */
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
@@ -48,10 +52,10 @@ class ActivateBlock
      */
     public function __invoke(): ResponseInterface
     {
+        $id = Uuid::uuid4()->toString();
         $data = $this->getAnnotations($this->class);
 
         $block = new Block\Entity\Block();
-        $id = Uuid::uuid4()->toString();
         $block->setId($id);
         $block->setName($data->getName());
         $block->setClassName($this->class->getName());

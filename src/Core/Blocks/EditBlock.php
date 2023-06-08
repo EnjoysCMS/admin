@@ -8,6 +8,7 @@ use DI\Container;
 use DI\DependencyException;
 use DI\FactoryInterface;
 use DI\NotFoundException;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
@@ -19,13 +20,14 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\Components\Blocks\UserBlock;
+use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use InvalidArgumentException;
 use Invoker\Exception\NotCallableException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -39,10 +41,7 @@ class EditBlock implements ModelInterface
     private Block $block;
 
     private ?\EnjoysCMS\Core\Entities\ACL $acl;
-    /**
-     * @var \Doctrine\ORM\EntityRepository|\Doctrine\Persistence\ObjectRepository
-     */
-    private $groupsRepository;
+    private EntityRepository $groupsRepository;
     private \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $blockRepository;
 
 
@@ -63,7 +62,7 @@ class EditBlock implements ModelInterface
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
         $blockId = $this->request->getAttribute('id');
-        $this->block = $this->blockRepository->find($blockId) ?? throw new \InvalidArgumentException(
+        $this->block = $this->blockRepository->find($blockId) ?? throw new InvalidArgumentException(
             sprintf('Invalid block ID: %s', $blockId)
         );
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
@@ -137,25 +136,26 @@ class EditBlock implements ModelInterface
                 Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
-                    $id = $this->request->getParsedBody()['id'] ?? null;
+                    try {
+                        $id = $this->request->getParsedBody()['id'] ?? null;
 
-                    if (!Uuid::isValid($id)){
+                        if ($id === null) {
+                            return true;
+                        }
+
+                        $block = $this->blockRepository->find($id);
+
+                        if ($block === null) {
+                            return true;
+                        }
+
+                        if ($block->getId() === $this->block->getId()) {
+                            return true;
+                        }
+                        return false;
+                    } catch (ConversionException) {
                         return true;
                     }
-
-                    if ($id === null) {
-                        return true;
-                    }
-                    $block = $this->blockRepository->find($id);
-
-                    if ($block === null) {
-                        return true;
-                    }
-
-                    if ($block->getId() === $this->block->getId()) {
-                        return true;
-                    }
-                    return false;
                 }
             );
 
@@ -174,19 +174,14 @@ class EditBlock implements ModelInterface
             )
             ->addRule(
                 Rules::CALLBACK,
-                'Такой идентификатор уже существует',
+                'Такой alias или идентификатор уже существует',
                 function () {
                     $alias = $this->request->getParsedBody()['alias'] ?? null;
                     if ($alias === null) {
                         return true;
                     }
 
-                    $qb = $this->em->createQueryBuilder();
-                    $qb->select('b')
-                        ->from(Block::class, 'b')
-                        ->where('b.alias = :alias')
-                        ->setParameter('alias', $alias);
-                    $block = $qb->getQuery()->getOneOrNullResult();
+                    $block = $this->blockRepository->find($alias);
 
                     if ($block === null) {
                         return true;
@@ -224,7 +219,7 @@ class EditBlock implements ModelInterface
                     switch ($type) {
                         case 'radio':
                             $form->radio(
-                                "options[{$key}]",
+                                "options[$key]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
@@ -232,7 +227,7 @@ class EditBlock implements ModelInterface
                             break;
                         case 'checkbox':
                             $form->checkbox(
-                                "options[{$key}]",
+                                "options[$key]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
@@ -240,7 +235,7 @@ class EditBlock implements ModelInterface
                             break;
                         case 'select':
                             $form->select(
-                                "options[{$key}]",
+                                "options[$key]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription(
                                 $option['description'] ?? ''
@@ -248,12 +243,12 @@ class EditBlock implements ModelInterface
                             break;
                         case 'textarea':
                             $form->textarea(
-                                "options[{$key}]",
+                                "options[$key]",
                                 (isset($option['name'])) ? $option['name'] : $key
                             )->setDescription($option['description'] ?? '');
                             break;
                         case 'file':
-                            $form->file("options[{$key}]", $option['name'] ?? $key)
+                            $form->file("options[$key]", $option['name'] ?? $key)
                                 ->setDescription($option['description'] ?? '')
                                 ->setMaxFileSize(
                                     $data['max_file_size'] ?? iniSize2bytes(ini_get('upload_max_filesize'))
@@ -264,7 +259,7 @@ class EditBlock implements ModelInterface
 
                     continue;
                 }
-                $form->text("options[{$key}]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
+                $form->text("options[$key]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
                     $option['description'] ?? ''
                 );
             }

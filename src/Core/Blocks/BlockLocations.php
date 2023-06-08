@@ -5,12 +5,15 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Location;
+use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,30 +23,32 @@ class BlockLocations implements ModelInterface
 {
     private Block $block;
 
+    /**
+     * @throws NotSupported
+     */
     public function __construct(
-        private EntityManager $entityManager,
+        private EntityManager $em,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private  RedirectInterface $redirect,
     ) {
-        if (null === $block = $entityManager->getRepository(Block::class)->find(
-                $this->request->getAttribute('id')
-            )) {
-            throw new InvalidArgumentException('Invalid block ID');
-        }
-
-        if (!($block instanceof Block)) {
-            throw new InvalidArgumentException('Invalid block');
-        }
-
-        $this->block = $block;
+        $this->block = $this->em->getRepository(Block::class)->find(
+            $this->request->getAttribute('id')
+        ) ?? throw new InvalidArgumentException('Invalid block ID');
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/blocks', emit: true);
         }
         $this->renderer->setForm($form);
 
@@ -59,6 +64,9 @@ class BlockLocations implements ModelInterface
         ];
     }
 
+    /**
+     * @throws NotSupported
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -68,14 +76,19 @@ class BlockLocations implements ModelInterface
         $form->select('locations')
             ->setMultiple()
             ->setAttribute(AttributeFactory::create('size', 20))
-            ->fill($this->entityManager->getRepository(Location::class)->getListLocationsForSelectForm());
+            ->fill($this->em->getRepository(Location::class)->getListLocationsForSelectForm());
         $form->submit('send');
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
+     */
     private function doAction(): void
     {
-        $locations = $this->entityManager->getRepository(Location::class)->findBy(
+        $locations = $this->em->getRepository(Location::class)->findBy(
             ['id' => $this->request->getParsedBody()['locations'] ?? []]
         );
 
@@ -84,7 +97,6 @@ class BlockLocations implements ModelInterface
             $this->block->setLocations($location);
         }
 
-        $this->entityManager->flush();
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+        $this->em->flush();
     }
 }

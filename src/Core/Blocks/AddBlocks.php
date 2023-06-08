@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 use DI\DependencyException;
 use DI\NotFoundException;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
@@ -18,9 +19,9 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -38,14 +39,15 @@ class AddBlocks implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
+        private EntityManager $em,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
         private ContentEditor $contentEditor,
+        private RedirectInterface $redirect,
         private Config $config
     ) {
-        $this->blockRepository = $this->entityManager->getRepository(Block::class);
+        $this->blockRepository = $this->em->getRepository(Block::class);
     }
 
     /**
@@ -63,6 +65,7 @@ class AddBlocks implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/blocks', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -101,20 +104,20 @@ class AddBlocks implements ModelInterface
                 Rules::CALLBACK,
                 'Такой идентификатор уже существует',
                 function () {
-                    /** @var string $id */
-                    $id = $this->request->getParsedBody()['id'] ?? '';
+                    try {
+                        /** @var string $id */
+                        $id = $this->request->getParsedBody()['id'] ?? '';
 
-                    if (!Uuid::isValid($id)){
+                        $block = $this->blockRepository->find($id);
+
+                        if ($block === null) {
+                            return true;
+                        }
+
+                        return false;
+                    } catch (ConversionException) {
                         return true;
                     }
-
-                    $block = $this->blockRepository->find($id);
-
-                    if ($block === null) {
-                        return true;
-                    }
-
-                    return false;
                 }
             );
         $form->text('name', 'Название')->addRule(Rules::REQUIRED);
@@ -123,7 +126,7 @@ class AddBlocks implements ModelInterface
         $form->checkbox('groups', 'Группа')
             ->addRule(Rules::REQUIRED)
             ->fill(
-                $this->entityManager->getRepository(Group::class)->getGroupsArray()
+                $this->em->getRepository(Group::class)->getGroupsArray()
             );
 
         $form->submit('addblock', 'Добавить блок');
@@ -148,9 +151,9 @@ class AddBlocks implements ModelInterface
         $block->setRemovable(true);
         $block->setOptions(UserBlock::META['options']);
 
-        $this->entityManager->beginTransaction();
-        $this->entityManager->persist($block);
-        $this->entityManager->flush();
+        $this->em->beginTransaction();
+        $this->em->persist($block);
+        $this->em->flush();
 
         /**
          * @var ACL $acl
@@ -160,16 +163,14 @@ class AddBlocks implements ModelInterface
             $block->getBlockCommentAcl()
         );
 
-        $groups = $this->entityManager->getRepository(Group::class)->findBy(
+        $groups = $this->em->getRepository(Group::class)->findBy(
             ['id' => $this->request->getParsedBody()['groups'] ?? []]
         );
         foreach ($groups as $group) {
             $acl->setGroups($group);
         }
-        $this->entityManager->persist($acl);
-        $this->entityManager->flush();
-        $this->entityManager->commit();
-
-        Redirect::http($this->urlGenerator->generate('admin/blocks'));
+        $this->em->persist($acl);
+        $this->em->flush();
+        $this->em->commit();
     }
 }

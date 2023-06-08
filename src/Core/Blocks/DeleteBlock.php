@@ -18,6 +18,7 @@ use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 final class DeleteBlock
 {
@@ -42,7 +43,7 @@ final class DeleteBlock
 
 
         if (!$block->isRemovable()) {
-            throw new \RuntimeException('Block is not removable');
+            throw new RuntimeException('Block is not removable');
         }
 
         try {
