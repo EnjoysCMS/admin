@@ -57,7 +57,7 @@ class ActivateBlock
         $block->setClassName($metadata->getClassName());
         $block->setCloned(false);
         $block->setRemovable(true);
-        $block->setOptions($metadata->getOptions()->all());
+        $block->setOptions($metadata->getOptions());
         $this->em->persist($block);
         $this->em->flush();
 

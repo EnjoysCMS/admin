@@ -6,7 +6,6 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 use DI\Container;
 use DI\DependencyException;
-use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManager;
@@ -19,7 +18,9 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
+use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
@@ -57,6 +58,7 @@ class EditBlock implements ModelInterface
         private RendererInterface $renderer,
         private ContentEditor $contentEditor,
         private Container $container,
+        private BlockFactory $blockFactory,
         private Config $config,
         private RedirectInterface $redirect,
     ) {
@@ -202,7 +204,7 @@ class EditBlock implements ModelInterface
         }
 
 
-        foreach ($this->block->getOptions()->all() as $key => $option) {
+        foreach ($this->block->getOptions() as $key => $option) {
             $type = $option['form']['type'] ?? null;
 
             if ($type) {
@@ -275,24 +277,6 @@ class EditBlock implements ModelInterface
         return $form;
     }
 
-    private function getBlockOptions(array $options): array
-    {
-        if (empty($options)) {
-            return [];
-        }
-
-        $blockOptions = $this->block->getOptions()->all();
-
-        foreach ($blockOptions as $key => $value) {
-            if (array_key_exists($key, $options)) {
-                $blockOptions[$key]['value'] = $options[$key];
-            } else {
-                $blockOptions[$key]['value'] = null;
-            }
-        }
-
-        return $blockOptions;
-    }
 
     /**
      * @throws OptimisticLockException
@@ -307,7 +291,7 @@ class EditBlock implements ModelInterface
         $this->block->setId($this->request->getParsedBody()['id'] ?? null);
         $this->block->setAlias($this->request->getParsedBody()['alias'] ?? null);
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
-        $this->block->setOptions($this->getBlockOptions($this->request->getParsedBody()['options'] ?? []));
+        $this->block->setOptions(Options::createFromArray($this->request->getParsedBody()['options'] ?? []));
 
 
         /**
@@ -323,10 +307,8 @@ class EditBlock implements ModelInterface
             $this->acl->removeGroups($group);
         }
 
-        $this->container
-            ->get(FactoryInterface::class)
-            ->make($this->block->getClassName(), ['block' => $this->block])
-            ->postEdit($oldBlock);
+        $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit($oldBlock);
+
 
         $this->em->flush();
     }
