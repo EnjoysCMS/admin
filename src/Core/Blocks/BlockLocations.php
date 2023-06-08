@@ -5,6 +5,7 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -14,6 +15,7 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Entities\Location;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
+use EnjoysCMS\Core\Repositories\Locations;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +24,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class BlockLocations implements ModelInterface
 {
     private Block $block;
+    private Locations|EntityRepository $locationRepository;
 
     /**
      * @throws NotSupported
@@ -36,6 +39,8 @@ class BlockLocations implements ModelInterface
         $this->block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')
         ) ?? throw new InvalidArgumentException('Invalid block ID');
+
+        $this->locationRepository = $this->em->getRepository(Location::class);
     }
 
     /**
@@ -64,9 +69,6 @@ class BlockLocations implements ModelInterface
         ];
     }
 
-    /**
-     * @throws NotSupported
-     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -76,7 +78,7 @@ class BlockLocations implements ModelInterface
         $form->select('locations')
             ->setMultiple()
             ->setAttribute(AttributeFactory::create('size', 20))
-            ->fill($this->em->getRepository(Location::class)->getListLocationsForSelectForm());
+            ->fill($this->locationRepository->getListLocationsForSelectForm());
         $form->submit('send');
         return $form;
     }

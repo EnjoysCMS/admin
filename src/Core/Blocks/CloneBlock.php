@@ -14,6 +14,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
@@ -28,6 +29,7 @@ final class CloneBlock
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
+        private BlockFactory $blockFactory,
         private RedirectInterface $redirect
     ) {
     }
@@ -42,7 +44,7 @@ final class CloneBlock
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(FactoryInterface $container): ResponseInterface
+    public function __invoke(): ResponseInterface
     {
         $block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')
@@ -65,7 +67,7 @@ final class CloneBlock
         );
 
 
-        $container->make($block->getClassName(), ['block' => $block])->postClone($cloned);
+        $this->blockFactory->create($block->getClassName())->setEntity($block)->postClone($cloned);
 
         return $this->redirect->toRoute('admin/blocks');
     }

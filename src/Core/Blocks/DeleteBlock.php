@@ -14,6 +14,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -25,18 +26,21 @@ final class DeleteBlock
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
+        private BlockFactory$blockFactory,
         private RedirectInterface $redirect,
     ) {
     }
 
+
     /**
-     * @throws NoResultException
-     * @throws NotSupported
      * @throws OptimisticLockException
      * @throws ORMException
+     * @throws NotSupported
+     * @throws NoResultException
      */
-    public function __invoke(FactoryInterface $container): ResponseInterface
+    public function __invoke(): ResponseInterface
     {
+        /** @var Block $block */
         $block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')
         ) ?? throw new NoResultException();
@@ -47,7 +51,7 @@ final class DeleteBlock
         }
 
         try {
-            $container->make($block->getClassName(), ['block' => $block])->preRemove();
+            $this->blockFactory->create($block->getClassName())->setEntity($block)->preRemove();
         } catch (DependencyException|NotFoundException) {
         }
 

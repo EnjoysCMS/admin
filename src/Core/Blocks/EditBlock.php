@@ -61,7 +61,7 @@ class EditBlock implements ModelInterface
         private RedirectInterface $redirect,
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
-        $blockId = $this->request->getAttribute('id');
+        $blockId = $this->request->getAttribute('id', '');
         $this->block = $this->blockRepository->find($blockId) ?? throw new InvalidArgumentException(
             sprintf('Invalid block ID: %s', $blockId)
         );

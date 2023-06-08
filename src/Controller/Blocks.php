@@ -5,7 +5,13 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
-use DI\FactoryInterface;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Blocks\ActivateBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\AddBlocks;
@@ -15,6 +21,7 @@ use EnjoysCMS\Module\Admin\Core\Blocks\DeleteBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\EditBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\ManageBlocks;
 use EnjoysCMS\Module\Admin\Core\Blocks\SetupBlocks;
+use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -23,9 +30,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class Blocks extends AdminBaseController
 {
 
+
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws NotSupported
      */
     #[Route(
         path: '/admin/blocks/setting',
@@ -34,19 +41,22 @@ class Blocks extends AdminBaseController
             'comment' => 'Просмотр активных блоков'
         ]
     )]
-    public function manage(): ResponseInterface
+    public function manage(ManageBlocks $manageBlocks): ResponseInterface
     {
         return $this->responseText(
             $this->view(
                 '@a/blocks/manage.twig',
-                $this->getContext($this->getContainer()->get(ManageBlocks::class))
+                $manageBlocks->getContext()
             )
         );
     }
 
+
     /**
-     * @throws ContainerExceptionInterface
+     * @throws OptimisticLockException
      * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws ContainerExceptionInterface
      */
     #[Route(
         path: '/admin/blocks/activate',
@@ -55,14 +65,17 @@ class Blocks extends AdminBaseController
             'comment' => 'Установка (активация) блоков'
         ]
     )]
-    public function activate(): ResponseInterface
+    public function activate(ActivateBlock $activateBlock): ResponseInterface
     {
-        return $this->getContainer()->call(ActivateBlock::class);
+        return $activateBlock();
     }
 
+
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws NotSupported
+     * @throws NoResultException
      */
     #[Route(
         path: '/admin/blocks/delete/{id}',
@@ -74,14 +87,21 @@ class Blocks extends AdminBaseController
             'comment' => 'Удаление блоков'
         ]
     )]
-    public function delete(): ResponseInterface
+    public function delete(DeleteBlock $deleteBlock): ResponseInterface
     {
-        return $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
+        return $deleteBlock();
     }
 
+
     /**
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws ContainerExceptionInterface
+     * @throws DependencyException
+     * @throws OptimisticLockException
+     * @throws NotFoundException
+     * @throws NotSupported
+     * @throws NoResultException
      */
     #[Route(
         path: '/admin/blocks/clone/{id}',
@@ -93,14 +113,17 @@ class Blocks extends AdminBaseController
             'comment' => 'Клонирование блоков'
         ]
     )]
-    public function clone(): ResponseInterface
+    public function clone(CloneBlock $cloneBlock): ResponseInterface
     {
-       return $this->getContainer()->get(CloneBlock::class)($this->getContainer());
+        return $cloneBlock();
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws DependencyException
+     * @throws NotFoundException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
      */
     #[Route(
         path: '/admin/blocks/edit/{id}',
@@ -112,19 +135,25 @@ class Blocks extends AdminBaseController
             'comment' => 'Редактирование блоков'
         ]
     )]
-    public function edit(): ResponseInterface
+    public function edit(EditBlock $editBlock): ResponseInterface
     {
         return $this->responseText(
             $this->view(
                 '@a/blocks/edit.twig',
-                $this->getContext($this->getContainer()->get(FactoryInterface::class)->make(EditBlock::class))
+                $editBlock->getContext()
             )
         );
     }
 
     /**
      * @throws ContainerExceptionInterface
+     * @throws DependencyException
+     * @throws ExceptionRule
+     * @throws NotFoundException
      * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws NotSupported
      */
     #[Route(
         path: '/admin/blocks/add',
@@ -133,19 +162,20 @@ class Blocks extends AdminBaseController
             'comment' => 'Добавление пользовательского блока (простой текстовый блок)'
         ]
     )]
-    public function add(): ResponseInterface
+    public function add(AddBlocks $addBlocks): ResponseInterface
     {
         return $this->responseText(
             $this->view(
                 '@a/blocks/add.twig',
-                $this->getContext($this->getContainer()->get(AddBlocks::class))
+                $addBlocks->getContext()
             )
         );
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     #[Route(
         path: '/admin/blocks/locations/{id}',
@@ -157,19 +187,19 @@ class Blocks extends AdminBaseController
             'comment' => 'Установка расположения блоков'
         ]
     )]
-    public function location(): ResponseInterface
+    public function location(BlockLocations $blockLocations): ResponseInterface
     {
         return $this->responseText(
             $this->view(
                 '@a/blocks/locations.twig',
-                $this->getContext($this->getContainer()->get(BlockLocations::class))
+                $blockLocations->getContext()
             )
         );
     }
 
+
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws Exception
      */
     #[Route(
         path: '/admin/blocks/setup',
@@ -178,12 +208,12 @@ class Blocks extends AdminBaseController
             'comment' => 'Просмотре не активированных блоков'
         ]
     )]
-    public function setUp(): ResponseInterface
+    public function setUp(SetupBlocks $setupBlocks): ResponseInterface
     {
         return $this->responseText(
             $this->view(
                 '@a/blocks/setup.twig',
-                $this->getContext($this->getContainer()->get(SetupBlocks::class))
+                $setupBlocks->getContext()
             )
         );
     }

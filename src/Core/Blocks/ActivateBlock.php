@@ -20,24 +20,21 @@ use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionAttribute;
 use ReflectionClass;
-use ReflectionException;
 
 class ActivateBlock
 {
     private ReflectionClass $class;
 
 
-    /**
-     * @throws ReflectionException
-     */
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
         private RedirectInterface $redirect,
     ) {
-        $class = $this->request->getQueryParams()['class'] ?? null;
+        /** @var class-string $class */
+        $class = $this->request->getQueryParams()['class'] ?? '';
 
-        if (!class_exists((string)$class)) {
+        if (!class_exists($class)) {
             throw new InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
@@ -53,14 +50,14 @@ class ActivateBlock
     public function __invoke(): ResponseInterface
     {
         $id = Uuid::uuid4()->toString();
-        $data = $this->getAnnotations($this->class);
+        $metadata = new Block\Metadata($this->class, $this->getAnnotations($this->class));
         $block = new Block\Entity\Block();
         $block->setId($id);
-        $block->setName($data->getName() ?? $this->class->getShortName());
-        $block->setClassName($this->class->getName());
+        $block->setName($metadata->getName());
+        $block->setClassName($metadata->getClassName());
         $block->setCloned(false);
         $block->setRemovable(true);
-        $block->setOptions($data->getOptions()->all());
+        $block->setOptions($metadata->getOptions()->all());
         $this->em->persist($block);
         $this->em->flush();
 
