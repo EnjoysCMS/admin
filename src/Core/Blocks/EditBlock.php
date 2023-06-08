@@ -67,6 +67,7 @@ class EditBlock implements ModelInterface
         $this->block = $this->blockRepository->find($blockId) ?? throw new InvalidArgumentException(
             sprintf('Invalid block ID: %s', $blockId)
         );
+
         $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
@@ -287,11 +288,17 @@ class EditBlock implements ModelInterface
     private function doAction(): void
     {
         $oldBlock = clone $this->block;
+
+
         $this->block->setName($this->request->getParsedBody()['name'] ?? null);
         $this->block->setId($this->request->getParsedBody()['id'] ?? null);
         $this->block->setAlias($this->request->getParsedBody()['alias'] ?? null);
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
-        $this->block->setOptions(Options::createFromArray($this->request->getParsedBody()['options'] ?? []));
+
+        $options = $this->block->getOptions();
+        $options->setValues($this->request->getParsedBody()['options'] ?? []);
+
+        $this->block->setOptions($options);
 
 
         /**
