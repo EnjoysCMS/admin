@@ -4,7 +4,7 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
-use EnjoysCMS\Core\Block\BlockCollection;
+use EnjoysCMS\Core\Block\Collection;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,7 +13,7 @@ class SetupBlocks implements ModelInterface
 {
 
     public function __construct(
-        private BlockCollection $blockCollection,
+        private Collection $blockCollection,
         private UrlGeneratorInterface $urlGenerator
     ) {
     }
