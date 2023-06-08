@@ -54,16 +54,13 @@ class ActivateBlock
     {
         $id = Uuid::uuid4()->toString();
         $data = $this->getAnnotations($this->class);
-
         $block = new Block\Entity\Block();
         $block->setId($id);
-        $block->setName($data->getName());
+        $block->setName($data->getName() ?? $this->class->getShortName());
         $block->setClassName($this->class->getName());
         $block->setCloned(false);
         $block->setRemovable(true);
-        $block->setOptions($data->getOptions());
-
-
+        $block->setOptions($data->getOptions()->all());
         $this->em->persist($block);
         $this->em->flush();
 

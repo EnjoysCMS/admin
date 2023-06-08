@@ -202,68 +202,67 @@ class EditBlock implements ModelInterface
         }
 
 
-        if (null !== $this->block->getOptions()) {
-            foreach ($this->block->getOptions() as $key => $option) {
-                $type = $option['form']['type'] ?? null;
+        foreach ($this->block->getOptions()->all() as $key => $option) {
+            $type = $option['form']['type'] ?? null;
 
-                if ($type) {
-                    $data = $option['form']['data'] ?? [null];
-                    try {
-                        if (is_array($data) && !array_key_exists(0, $data)) {
-                            throw new NotCallableException();
-                        }
-                        $data = $this->container->call($data);
-                    } catch (NotCallableException) {
-                        //skip
+            if ($type) {
+                $data = $option['form']['data'] ?? [null];
+                try {
+                    if (is_array($data) && !array_key_exists(0, $data)) {
+                        throw new NotCallableException();
                     }
-                    switch ($type) {
-                        case 'radio':
-                            $form->radio(
-                                "options[$key]",
-                                (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription(
-                                $option['description'] ?? ''
-                            )->fill($data);
-                            break;
-                        case 'checkbox':
-                            $form->checkbox(
-                                "options[$key]",
-                                (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription(
-                                $option['description'] ?? ''
-                            )->fill($data);
-                            break;
-                        case 'select':
-                            $form->select(
-                                "options[$key]",
-                                (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription(
-                                $option['description'] ?? ''
-                            )->fill($data);
-                            break;
-                        case 'textarea':
-                            $form->textarea(
-                                "options[$key]",
-                                (isset($option['name'])) ? $option['name'] : $key
-                            )->setDescription($option['description'] ?? '');
-                            break;
-                        case 'file':
-                            $form->file("options[$key]", $option['name'] ?? $key)
-                                ->setDescription($option['description'] ?? '')
-                                ->setMaxFileSize(
-                                    $data['max_file_size'] ?? iniSize2bytes(ini_get('upload_max_filesize'))
-                                )
-                                ->setAttributes(AttributeFactory::createFromArray($data['attributes'] ?? []));
-                            break;
-                    }
-
-                    continue;
+                    $data = $this->container->call($data);
+                } catch (NotCallableException) {
+                    //skip
                 }
-                $form->text("options[$key]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
-                    $option['description'] ?? ''
-                );
+                switch ($type) {
+                    case 'radio':
+                        $form->radio(
+                            "options[$key]",
+                            (isset($option['name'])) ? $option['name'] : $key
+                        )->setDescription(
+                            $option['description'] ?? ''
+                        )->fill($data);
+                        break;
+                    case 'checkbox':
+                        $form->checkbox(
+                            "options[$key]",
+                            (isset($option['name'])) ? $option['name'] : $key
+                        )->setDescription(
+                            $option['description'] ?? ''
+                        )->fill($data);
+                        break;
+                    case 'select':
+                        $form->select(
+                            "options[$key]",
+                            (isset($option['name'])) ? $option['name'] : $key
+                        )->setDescription(
+                            $option['description'] ?? ''
+                        )->fill($data);
+                        break;
+                    case 'textarea':
+                        $form->textarea(
+                            "options[$key]",
+                            (isset($option['name'])) ? $option['name'] : $key
+                        )->setDescription($option['description'] ?? '');
+                        break;
+                    case 'file':
+                        $form->file("options[$key]", $option['name'] ?? $key)
+                            ->setDescription($option['description'] ?? '')
+                            ->setMaxFileSize(
+                                $data['max_file_size'] ?? iniSize2bytes(ini_get('upload_max_filesize'))
+                            )
+                            ->setAttributes(AttributeFactory::createFromArray($data['attributes'] ?? []));
+                        break;
+                }
+
+                continue;
             }
+            $form->text("options[$key]", (isset($option['name'])) ? $option['name'] : $key)->setDescription(
+                $option['description'] ?? ''
+            );
         }
+
 
         $form->checkbox('groups', 'Права доступа')
             ->addRule(Rules::REQUIRED)
@@ -276,13 +275,13 @@ class EditBlock implements ModelInterface
         return $form;
     }
 
-    private function getBlockOptions(array $options): ?array
+    private function getBlockOptions(array $options): array
     {
         if (empty($options)) {
-            return null;
+            return [];
         }
 
-        $blockOptions = $this->block->getOptions();
+        $blockOptions = $this->block->getOptions()->all();
 
         foreach ($blockOptions as $key => $value) {
             if (array_key_exists($key, $options)) {

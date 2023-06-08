@@ -18,6 +18,7 @@ use Twig\Environment;
 abstract class AdminBaseController extends BaseController
 {
 
+    public const UUID_RULE_REQUIREMENT = '[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 
     private Environment $twig;
 

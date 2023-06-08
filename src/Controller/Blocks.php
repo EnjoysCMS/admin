@@ -23,8 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class Blocks extends AdminBaseController
 {
 
-    private const ID_REQUIREMENT_RULE = '\d+|[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
-
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -38,10 +36,12 @@ class Blocks extends AdminBaseController
     )]
     public function manage(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/blocks/manage.twig',
-            $this->getContext($this->getContainer()->get(ManageBlocks::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/blocks/manage.twig',
+                $this->getContext($this->getContainer()->get(ManageBlocks::class))
+            )
+        );
     }
 
     /**
@@ -68,15 +68,15 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/delete/{id}',
         name: 'admin/deleteblocks',
         requirements: [
-            'id' => self::ID_REQUIREMENT_RULE
+            'id' => self::UUID_RULE_REQUIREMENT
         ],
         options: [
             'comment' => 'Удаление блоков'
         ]
     )]
-    public function delete(): void
+    public function delete(): ResponseInterface
     {
-        $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
+        return $this->getContainer()->get(DeleteBlock::class)($this->getContainer());
     }
 
     /**
@@ -87,15 +87,15 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/clone/{id}',
         name: 'admin/cloneblocks',
         requirements: [
-            'id' => self::ID_REQUIREMENT_RULE
+            'id' => self::UUID_RULE_REQUIREMENT
         ],
         options: [
             'comment' => 'Клонирование блоков'
         ]
     )]
-    public function clone(): void
+    public function clone(): ResponseInterface
     {
-        $this->getContainer()->get(CloneBlock::class)($this->getContainer());
+       return $this->getContainer()->get(CloneBlock::class)($this->getContainer());
     }
 
     /**
@@ -106,7 +106,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/edit/{id}',
         name: 'admin/editblock',
         requirements: [
-            'id' => self::ID_REQUIREMENT_RULE
+            'id' => self::UUID_RULE_REQUIREMENT
         ],
         options: [
             'comment' => 'Редактирование блоков'
@@ -114,10 +114,12 @@ class Blocks extends AdminBaseController
     )]
     public function edit(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/blocks/edit.twig',
-            $this->getContext($this->getContainer()->get(FactoryInterface::class)->make(EditBlock::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/blocks/edit.twig',
+                $this->getContext($this->getContainer()->get(FactoryInterface::class)->make(EditBlock::class))
+            )
+        );
     }
 
     /**
@@ -133,10 +135,12 @@ class Blocks extends AdminBaseController
     )]
     public function add(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/blocks/add.twig',
-            $this->getContext($this->getContainer()->get(AddBlocks::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/blocks/add.twig',
+                $this->getContext($this->getContainer()->get(AddBlocks::class))
+            )
+        );
     }
 
     /**
@@ -147,7 +151,7 @@ class Blocks extends AdminBaseController
         path: '/admin/blocks/locations/{id}',
         name: 'admin/blocklocation',
         requirements: [
-            'id' => self::ID_REQUIREMENT_RULE
+            'id' => self::UUID_RULE_REQUIREMENT
         ],
         options: [
             'comment' => 'Установка расположения блоков'
@@ -155,10 +159,12 @@ class Blocks extends AdminBaseController
     )]
     public function location(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/blocks/locations.twig',
-            $this->getContext($this->getContainer()->get(BlockLocations::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/blocks/locations.twig',
+                $this->getContext($this->getContainer()->get(BlockLocations::class))
+            )
+        );
     }
 
     /**
@@ -174,10 +180,12 @@ class Blocks extends AdminBaseController
     )]
     public function setUp(): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/blocks/setup.twig',
-            $this->getContext($this->getContainer()->get(SetupBlocks::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/blocks/setup.twig',
+                $this->getContext($this->getContainer()->get(SetupBlocks::class))
+            )
+        );
     }
 
 
