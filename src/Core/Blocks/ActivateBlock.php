@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Block;
-use EnjoysCMS\Core\Block\Annotation\Block as BlockAnnotation;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Interfaces\RedirectInterface;
 use InvalidArgumentException;
@@ -18,7 +17,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
-use ReflectionAttribute;
 use ReflectionClass;
 
 class ActivateBlock
@@ -30,6 +28,7 @@ class ActivateBlock
         private EntityManager $em,
         private ServerRequestInterface $request,
         private RedirectInterface $redirect,
+        private Block\Collection $blockCollection
     ) {
         /** @var class-string $class */
         $class = $this->request->getQueryParams()['class'] ?? '';
@@ -50,7 +49,11 @@ class ActivateBlock
     public function __invoke(): ResponseInterface
     {
         $id = Uuid::uuid4()->toString();
-        $metadata = new Block\Metadata($this->class, $this->getAnnotations($this->class));
+
+        $metadata = $this->blockCollection->getMetadata($this->class) ?? throw new InvalidArgumentException(
+            sprintf('Class "%s" not supported', $this->class->getName())
+        );;
+
         $block = new Block\Entity\Block();
         $block->setId($id);
         $block->setName($metadata->getName());
@@ -69,19 +72,5 @@ class ActivateBlock
 
         return $this->redirect->toRoute('admin/editblock', ['id' => $id]);
     }
-
-    private function getAnnotations(ReflectionClass $reflection): BlockAnnotation
-    {
-        foreach (
-            $reflection->getAttributes(
-                Block\Annotation\Block::class,
-                ReflectionAttribute::IS_INSTANCEOF
-            ) as $attribute
-        ) {
-            return $attribute->newInstance();
-        }
-        throw new InvalidArgumentException(sprintf('Class "%s" not supported', $reflection->getName()));
-    }
-
 
 }
