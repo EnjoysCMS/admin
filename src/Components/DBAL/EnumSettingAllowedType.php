@@ -4,7 +4,8 @@
 namespace EnjoysCMS\Module\Admin\Components\DBAL;
 
 
-use EnjoysCMS\Core\Components\Doctrine\EnumType;
+
+use EnjoysCMS\Core\Extensions\Doctrine\EnumType;
 
 class EnumSettingAllowedType extends EnumType
 {
