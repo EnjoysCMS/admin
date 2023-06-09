@@ -24,7 +24,7 @@ class SetupBlocks implements ModelInterface
     public function getContext(): array
     {
         return [
-            'blocks' => $this->blockCollection->getCollection(),
+            'blocks' => $this->blockCollection,
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',

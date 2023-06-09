@@ -50,17 +50,17 @@ class ActivateBlock
     {
         $id = Uuid::uuid4()->toString();
 
-        $metadata = $this->blockCollection->getMetadata($this->class) ?? throw new InvalidArgumentException(
+        $blockAnnotation = $this->blockCollection->getBlockAnnotation($this->class) ?? throw new InvalidArgumentException(
             sprintf('Class "%s" not supported', $this->class->getName())
-        );;
+        );
 
         $block = new Block\Entity\Block();
         $block->setId($id);
-        $block->setName($metadata->getName());
-        $block->setClassName($metadata->getClassName());
+        $block->setName($blockAnnotation->getName());
+        $block->setClassName($blockAnnotation->getClassName());
         $block->setCloned(false);
         $block->setRemovable(true);
-        $block->setOptions($metadata->getOptions());
+        $block->setOptions($blockAnnotation->getOptions());
         $this->em->persist($block);
         $this->em->flush();
 
