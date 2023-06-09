@@ -22,7 +22,7 @@ use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
-use EnjoysCMS\Core\Interfaces\RedirectInterface;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;

@@ -17,7 +17,7 @@ use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Interfaces\RedirectInterface;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;

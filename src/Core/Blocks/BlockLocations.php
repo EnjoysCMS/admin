@@ -14,7 +14,7 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Entities\Location;
-use EnjoysCMS\Core\Interfaces\RedirectInterface;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Repositories\Locations;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
