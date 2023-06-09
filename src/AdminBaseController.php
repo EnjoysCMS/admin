@@ -106,7 +106,6 @@ abstract class AdminBaseController extends BaseController
 
     protected function getContext(ModelInterface $model): array
     {
-        dd($model);
         return $model->getContext();
     }
 
