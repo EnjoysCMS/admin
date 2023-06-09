@@ -14,15 +14,15 @@
             <div class="card-body">
                 <h4>Зарегистрированные блоки</h4>
                 <ul class="list-group pb-5">
-                    {% for path, item in blocks %}
+                    {% for block in blocks %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div class="flex-grow-1">
-                                <b>{{ item.name }}</b>
+                                <b>{{ block.name }}</b>
                                 <br>
-                                <small>{{ path }}</small>
+                                <small>{{ block.className }}</small>
                             </div>
                             <div>
-                                <a class="btn btn-sm btn-primary" href="{{ path('admin/acivateblocks', {"class": path}) }}">Добавить</a>
+                                <a class="btn btn-sm btn-primary" href="{{ path('admin/acivateblocks', {"class": block.className}) }}">Добавить</a>
                             </div>
                         </li>
                     {% else %}

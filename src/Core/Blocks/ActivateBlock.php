@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
+use EnjoysCMS\Core\Block\Collection;
 use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Block;
@@ -15,32 +16,36 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ActivateBlock
 {
-    private string $class;
+    private \ReflectionClass $class;
 
 
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private Collection $blockCollection,
     ) {
         $class = $this->request->getQueryParams()['class'] ?? null;
 
         if (!class_exists((string)$class)) {
             throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
-        $this->class = $class;
+        $this->class = new \ReflectionClass($class);
     }
 
     public function __invoke()
     {
-        $data = $this->class::getMeta();
+        $blockAnnotation = $this->blockCollection->getBlockAnnotation($this->class) ?? throw new \InvalidArgumentException(
+            sprintf('Class "%s" not supported', $this->class->getName())
+        );
+
         $block = new Block();
-        $block->setName($data['name']);
+        $block->setName($blockAnnotation->getName());
         $block->setAlias((string)Uuid::uuid4());
-        $block->setClass($this->class);
+        $block->setClass($blockAnnotation->getClassName());
         $block->setCloned(false);
         $block->setRemovable(true);
-        $block->setOptions($data['options']);
+        $block->setOptions($blockAnnotation->getOptions()->getIterator()->getArrayCopy());
 
 
         $this->em->persist($block);
