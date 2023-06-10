@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin;
 
 
-use EnjoysCMS\Core\Components\Modules\ModuleCollection;
+use EnjoysCMS\Core\Modules\ModuleCollection;
 use Exception;
 use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
