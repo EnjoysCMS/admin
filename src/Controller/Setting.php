@@ -4,10 +4,15 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Settings\AddSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\DeleteSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\EditSetting;
+use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,6 +20,10 @@ class Setting extends AdminBaseController
 {
 
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     #[Route(
         path: '/admin/setting',
         name: 'admin/setting',
@@ -22,12 +31,14 @@ class Setting extends AdminBaseController
             'comment' => 'Настройки сайта'
         ]
     )]
-    public function setting(): ResponseInterface
+    public function setting(\EnjoysCMS\Module\Admin\Core\Settings\Setting $setting): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/setting/setting.twig',
-            $this->getContext($this->getContainer()->get(\EnjoysCMS\Module\Admin\Core\Settings\Setting::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/setting/setting.twig',
+                $setting->getContext()
+            )
+        );
     }
 
 
@@ -38,15 +49,22 @@ class Setting extends AdminBaseController
             'comment' => 'Добавление глобальной настройки'
         ]
     )]
-    public function addSetting(): ResponseInterface
+    public function addSetting(AddSetting $addSetting): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/setting/add.twig',
-            $this->getContext($this->getContainer()->get(AddSetting::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/setting/add.twig',
+                $addSetting->getContext()
+            )
+        );
     }
 
 
+    /**
+     * @throws ExceptionRule
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     #[Route(
         path: '/admin/setting/edit',
         name: 'admin/setting/edit',
@@ -54,15 +72,23 @@ class Setting extends AdminBaseController
             'comment' => 'Изменение глобальной настройки'
         ]
     )]
-    public function editSetting(): ResponseInterface
+    public function editSetting(EditSetting $editSetting): ResponseInterface
     {
-        return $this->responseText($this->view(
-            '@a/setting/add.twig',
-            $this->getContext($this->getContainer()->get(EditSetting::class))
-        ));
+        return $this->responseText(
+            $this->view(
+                '@a/setting/add.twig',
+                $editSetting->getContext()
+            )
+        );
     }
 
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws NoResultException
+     * @throws CannotRemoveEntity
+     */
     #[Route(
         path: '/admin/setting/delete',
         name: 'admin/setting/delete',
@@ -70,8 +96,8 @@ class Setting extends AdminBaseController
             'comment' => 'Удаление глобальной настройки'
         ]
     )]
-    public function deleteSetting(): void
+    public function deleteSetting(DeleteSetting $deleteSetting): ResponseInterface
     {
-        $this->getContainer()->get(DeleteSetting::class)();
+        return $deleteSetting();
     }
 }

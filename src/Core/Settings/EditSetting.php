@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Exception\NotFoundException;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,7 +32,8 @@ final class EditSetting implements ModelInterface
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private RedirectInterface $redirect,
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
         $this->settingEntity = $this->settingRepository->find($request->getQueryParams()['id'] ?? 0);
@@ -48,15 +51,18 @@ final class EditSetting implements ModelInterface
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws ORMException
      * @throws ExceptionRule
+     * @throws OptimisticLockException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ORMException
      */
     public function getContext(): array
     {
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/setting', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -136,7 +142,5 @@ final class EditSetting implements ModelInterface
         $this->settingEntity->setDescription($this->request->getParsedBody()['description'] ?? null);
 
         $this->entityManager->flush();
-
-        Redirect::http($this->urlGenerator->generate('admin/setting'));
     }
 }

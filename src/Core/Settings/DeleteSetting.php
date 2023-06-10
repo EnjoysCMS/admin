@@ -11,7 +11,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,7 +23,7 @@ final class DeleteSetting
     public function __construct(
         private EntityManager $em,
         private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator
+        private RedirectInterface $redirect,
     ) {
     }
 
@@ -31,7 +33,7 @@ final class DeleteSetting
      * @throws ORMException
      * @throws NoResultException
      */
-    public function __invoke()
+    public function __invoke(): ResponseInterface
     {
         if (null === $setting = $this->em->getRepository(\EnjoysCMS\Core\Entities\Setting::class)->find(
                 $this->request->getQueryParams()['id'] ?? 0
@@ -47,7 +49,6 @@ final class DeleteSetting
         $this->em->remove($setting);
         $this->em->flush();
 
-
-        Redirect::http($this->urlGenerator->generate('admin/setting'));
+        return $this->redirect->toRoute('admin/setting');
     }
 }

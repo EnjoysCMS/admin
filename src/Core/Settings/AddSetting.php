@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,7 +24,8 @@ final class AddSetting implements ModelInterface
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private RedirectInterface $redirect
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
@@ -34,6 +35,7 @@ final class AddSetting implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/setting', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -96,6 +98,6 @@ final class AddSetting implements ModelInterface
         $this->entityManager->persist($setting);
         $this->entityManager->flush();
 
-        Redirect::http($this->urlGenerator->generate('admin/setting'));
+
     }
 }

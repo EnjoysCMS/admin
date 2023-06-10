@@ -5,13 +5,15 @@ namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -27,20 +29,24 @@ class Setting implements ModelInterface
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private RedirectInterface $redirect
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
     }
 
     /**
-     * @throws OptimisticLockException
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function getContext(): array
     {
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/setting', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -70,8 +76,6 @@ class Setting implements ModelInterface
 
 
         /**
-         *
-         *
          * @var \EnjoysCMS\Core\Entities\Setting $setting
          */
         foreach ($settings as $setting) {
@@ -97,8 +101,7 @@ class Setting implements ModelInterface
                     $form->radio($setting->getVar(), $name)
                         ->addClass('w-100', Form::ATTRIBUTES_LABEL)
                         ->setDescription((string)$setting->getDescription())
-                        ->fill((!is_array($params)) ? [] : $params)
-                    ;
+                        ->fill((!is_array($params)) ? [] : $params);
 
                     unset($data);
                     break;
@@ -107,21 +110,18 @@ class Setting implements ModelInterface
                     $form->select($setting->getVar(), $name)
                         ->addClass('w-100', Form::ATTRIBUTES_LABEL)
                         ->setDescription((string)$setting->getDescription())
-                        ->fill((!is_array($params)) ? [] : $params)
-                    ;
+                        ->fill((!is_array($params)) ? [] : $params);
                     break;
                 case 'textarea':
                     $form->textarea($setting->getVar(), $name)
                         ->addClass('w-100', Form::ATTRIBUTES_LABEL)
-                        ->setDescription((string)$setting->getDescription())
-                    ;
+                        ->setDescription((string)$setting->getDescription());
                     break;
                 case 'text':
                 default:
                     $form->text($setting->getVar(), $name)
                         ->addClass('w-100', Form::ATTRIBUTES_LABEL)
-                        ->setDescription((string)$setting->getDescription())
-                    ;
+                        ->setDescription((string)$setting->getDescription());
                     break;
             }
         }
@@ -148,6 +148,5 @@ class Setting implements ModelInterface
             $this->entityManager->persist($item);
         }
         $this->entityManager->flush();
-        Redirect::http($this->urlGenerator->generate('admin/setting'));
     }
 }
