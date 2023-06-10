@@ -4,6 +4,7 @@
 namespace EnjoysCMS\Module\Admin\TwigExtension;
 
 
+use EnjoysCMS\Core\Modules\ModuleCollection;
 use Symfony\Component\Routing\RouteCollection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -11,11 +12,11 @@ use Twig\TwigFunction;
 
 class AdminHelpersExtension extends AbstractExtension
 {
-    private RouteCollection $routeCollection;
 
-    public function __construct(RouteCollection $routeCollection)
-    {
-        $this->routeCollection = $routeCollection;
+    public function __construct(
+        private RouteCollection $routeCollection,
+        private ModuleCollection $moduleCollection
+    ) {
     }
 
     public function getFunctions(): array
@@ -43,7 +44,7 @@ class AdminHelpersExtension extends AbstractExtension
     public function getModules(): array
     {
         return array_filter(
-            \EnjoysCMS\Core\Components\Helpers\Modules::installed(),
+            $this->moduleCollection->getCollection(),
             function ($m) {
                 if (!empty($m->adminLinks)) {
                     return true;

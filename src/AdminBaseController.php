@@ -32,7 +32,7 @@ abstract class AdminBaseController extends BaseController
         });
 
         $this->twig = $this->container->get(Environment::class);
-        $this->twig->addExtension(new AdminHelpersExtension($this->container->get('Router')->getRouteCollection()));
+        $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
 
         $this->initAssets();
 
