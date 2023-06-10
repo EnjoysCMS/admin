@@ -17,6 +17,7 @@ use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,13 +26,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Add implements ModelInterface
 {
 
-    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
     public function __construct(
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private RedirectInterface $redirect,
+        private ACList $ACList,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
     }
@@ -47,6 +50,7 @@ class Add implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/groups', emit: true);
         }
 
         $this->renderer->setForm($form);
@@ -122,7 +126,7 @@ class Add implements ModelInterface
 
         $form->header('Права доступа');
         $i = 0;
-        $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
+        $aclsForCheckbox = $this->ACList->getArrayForCheckboxForm();
         foreach ($aclsForCheckbox as $label => $item) {
             $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($item);
         }
@@ -153,7 +157,7 @@ class Add implements ModelInterface
 
         $this->entityManager->persist($group);
         $this->entityManager->flush();
-        Redirect::http($this->urlGenerator->generate('admin/groups'));
+
     }
 
 

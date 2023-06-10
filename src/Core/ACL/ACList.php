@@ -2,35 +2,70 @@
 
 namespace EnjoysCMS\Module\Admin\Core\ACL;
 
-use Doctrine\Persistence\ObjectRepository;
-use EnjoysCMS\Core\Components\Composer\Utils;
-use EnjoysCMS\Core\Components\Helpers\Modules;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\Extensions\Composer\Utils;
+use EnjoysCMS\Core\Modules\ModuleCollection;
+use Symfony\Component\Routing\RouteCollection;
 
 class ACList
 {
-    private ObjectRepository $repositoryAcl;
-
+    private \EnjoysCMS\Core\Repositories\ACL|EntityRepository $repositoryAcl;
 
     /**
-     * ACList constructor.
-     *
-     * @param ObjectRepository $repositoryAcl
+     * @throws NotSupported
      */
-    public function __construct(ObjectRepository $repositoryAcl)
-    {
-        $this->repositoryAcl = $repositoryAcl;
-    }
-
-    public function getActiveACL()
-    {
-        return $this->repositoryAcl->getAllActiveACL();
+    public function __construct(
+        private readonly EntityManager $em,
+        private readonly RouteCollection $routeCollection,
+        private readonly ModuleCollection $moduleCollection
+    ) {
+        $this->repositoryAcl = $em->getRepository(ACL::class);
     }
 
     /**
-     * @return (int[]|string)[][][]
-     *
-     * @psalm-return array<array<string, array{0: string, 1: array{id: int}}>>
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
+     */
+    public function getActiveACL(): array
+    {
+
+        /** @var Block[] $blocks */
+        $blocks = $this->em->getRepository(Block::class)->findAll();
+        $allActiveBlocksController = [];
+        foreach ($blocks as $block) {
+            $allActiveBlocksController[] = $block->getBlockActionAcl();
+        }
+
+        $allActiveControllers = [];
+        foreach ($this->routeCollection as $route) {
+            $allActiveControllers[] = implode('::', (array)$route->getDefault('_controller'));
+        }
+
+        $allAcl = $this->repositoryAcl->findAll();
+        /** @var ACL $acl */
+        foreach ($allAcl as $key => $acl) {
+            if (!in_array($acl->getAction(), array_merge($allActiveControllers, $allActiveBlocksController))) {
+                unset($allAcl[$key]);
+                $this->em->remove($acl);
+            }
+        }
+        $this->em->flush();
+
+        return $allAcl;
+    }
+
+
+    /**
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
      */
     public function getArrayForCheckboxForm(): array
     {
@@ -51,6 +86,12 @@ class ACList
         return $ret;
     }
 
+
+    /**
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
+     */
     public function getGroupedAcl(): array
     {
         $activeAcl = $this->getActiveACL();
@@ -58,8 +99,9 @@ class ACList
         /**
          * Группировка ACL по модулям
          */
-        foreach (Modules::installed() as $module) {
+        foreach ($this->moduleCollection->getCollection() as $module) {
             foreach ($module->namespaces as $ns) {
+
                 $groupedAcl[$module->moduleName] = array_filter(
                     $activeAcl,
                     function ($v) use ($ns) {
@@ -71,9 +113,8 @@ class ACList
 
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
 
-            uasort($groupedAcl[$module->moduleName], function(ACL $a, ACL$b){
+            uasort($groupedAcl[$module->moduleName], function (ACL $a, ACL $b) {
                 return $a->getAction() <=> $b->getAction();
-
             });
         }
 

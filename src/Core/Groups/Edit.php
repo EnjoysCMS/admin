@@ -6,8 +6,11 @@ namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
@@ -16,51 +19,53 @@ use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
 {
     private Group $group;
-    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
     /**
      * @throws NoResultException
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private readonly EntityManager $entityManager,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly ACList $ACList,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
-        $this->group = $this->getGroup();
+        $this->group = $this->groupsRepository->find(
+            $this->request->getAttribute('id')
+        ) ?? throw new NoResultException();
     }
+
 
     /**
-     * @throws NoResultException
+     * @throws OptimisticLockException
+     * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws ContainerExceptionInterface
+     * @throws NotSupported
      */
-    private function getGroup(): Group
-    {
-        $group = $this->groupsRepository->find(
-            $this->request->getAttribute('id')
-        );
-
-        if ($group === null) {
-            throw new NoResultException();
-        }
-        return $group;
-    }
-
     public function getContext(): array
     {
         $form = $this->getForm();
 
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/groups', emit: true);
         }
 
         $this->renderer->setForm($form);
@@ -76,6 +81,12 @@ class Edit implements ModelInterface
         ];
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     * @throws NotSupported
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -122,7 +133,7 @@ class Edit implements ModelInterface
             $form->header('Права доступа');
 
             $i = 0;
-            $aclsForCheckbox = (new ACList($this->entityManager->getRepository(ACL::class)))->getArrayForCheckboxForm();
+            $aclsForCheckbox = $this->ACList->getArrayForCheckboxForm();
             foreach ($aclsForCheckbox as $label => $item) {
                 $fill = array_map(function ($i) {
                     if (str_contains($i[0], 'Admin')) {
@@ -139,6 +150,11 @@ class Edit implements ModelInterface
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NotSupported
+     * @throws ORMException
+     */
     private function doAction(): void
     {
         $acls = $this->entityManager->getRepository(ACL::class)->findBy(
@@ -156,8 +172,6 @@ class Edit implements ModelInterface
         }
 
         $this->entityManager->flush();
-        Redirect::http($this->urlGenerator->generate('admin/groups'));
-        //        Redirect::http();
     }
 
 
