@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
@@ -72,32 +71,26 @@ class Add implements ModelInterface
     {
         $form = new Form();
 
-
-        $aclGroupByIds = [];
-
-        if (null !== $group = $this->groupsRepository->find($this->request->getQueryParams()['by'] ?? 0)) {
-            $aclGroupByIds = array_map(
-                function ($o) {
-                    return $o->getId();
-                },
-                $group->getAcl()->toArray()
-            );
-        }
-
-
         $form->setDefaults(
             [
-                'acl' => $aclGroupByIds,
+                'acl' => array_map(
+                    function ($item) {
+                        return $item->getId();
+                    },
+                    $this->groupsRepository->find($this->request->getQueryParams()['by'] ?? 0)?->getAcl()->toArray(
+                    ) ?? []
+                ),
                 'by' => $this->request->getQueryParams()['by'] ?? null
             ]
         );
 
-        $queryStrings = Http::getQueryParams($this->request->getUri(), ['by']);
+        $queryString = $this->request->getQueryParams();
+        unset($queryString['by']);
 
         $urlModify = $this->request->getUri()->withQuery(
-            (empty($queryStrings)) ? uniqid() : $queryStrings
+            (empty($queryStrings)) ? "t=" . time() : $queryStrings
         );
-        //var_dump($urlModify); die();
+
         $form->select('by', 'Заполнить права доступа по...')
             ->setDescription('')
             ->fill(
@@ -111,14 +104,9 @@ class Add implements ModelInterface
                 Rules::CALLBACK,
                 'Название группы должно быть уникальным',
                 function () {
-                    if (null === $group = $this->groupsRepository->findOneBy(
+                    return null === $this->groupsRepository->findOneBy(
                             ['name' => $this->request->getParsedBody()['name'] ?? null]
-                        )
-                    ) {
-                        return true;
-                    }
-
-                    return false;
+                        );
                 }
             )->addRule(Rules::REQUIRED);
 
@@ -157,7 +145,6 @@ class Add implements ModelInterface
 
         $this->entityManager->persist($group);
         $this->entityManager->flush();
-
     }
 
 
