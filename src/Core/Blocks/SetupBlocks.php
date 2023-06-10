@@ -13,7 +13,7 @@ class SetupBlocks implements ModelInterface
 
 
     public function __construct(
-        private Collection $blockColection,
+        private Collection $blockCollection,
         private UrlGeneratorInterface $urlGenerator
     ) {
     }
@@ -24,7 +24,7 @@ class SetupBlocks implements ModelInterface
     public function getContext(): array
     {
         return [
-            'blocks' => $this->blockColection,
+            'blocks' => $this->blockCollection,
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
