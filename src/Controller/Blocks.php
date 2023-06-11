@@ -26,6 +26,9 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Blocks extends AdminBaseController
 {
@@ -33,6 +36,9 @@ class Blocks extends AdminBaseController
 
     /**
      * @throws NotSupported
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route(
         path: '/admin/blocks/setting',
