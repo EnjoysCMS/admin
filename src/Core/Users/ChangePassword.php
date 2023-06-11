@@ -14,13 +14,12 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChangePassword implements ModelInterface
 {
@@ -35,7 +34,7 @@ class ChangePassword implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Setting $setting,
         private readonly RendererInterface $renderer,
         readonly private RedirectInterface $redirect
     ) {
@@ -57,7 +56,7 @@ class ChangePassword implements ModelInterface
             throw new NoResultException();
         }
 
-        if (!$user->isEditable()){
+        if (!$user->isEditable()) {
             throw new NotEditableUser('User is not editable');
         }
 
@@ -81,7 +80,7 @@ class ChangePassword implements ModelInterface
         $this->renderer->setForm($form);
 
         return [
-            '_title' => 'Смена пароля пользователя | Пользователи | Admin | ' . Setting::get('sitename'),
+            '_title' => 'Смена пароля пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
             'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user
@@ -111,6 +110,5 @@ class ChangePassword implements ModelInterface
     {
         $this->user->genAndSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
         $this->em->flush();
-
     }
 }

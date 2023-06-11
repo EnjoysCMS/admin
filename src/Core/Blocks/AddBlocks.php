@@ -40,13 +40,13 @@ class AddBlocks implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private ContentEditor $contentEditor,
-        private RedirectInterface $redirect,
-        private Config $config
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly ContentEditor $contentEditor,
+        private readonly RedirectInterface $redirect,
+        private readonly Config $config
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
     }

@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -14,10 +15,9 @@ use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
@@ -35,14 +35,16 @@ class Delete implements ModelInterface
     /**
      * @throws NotEditableUser
      * @throws NoResultException
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private EventDispatcher $dispatcher,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly EventDispatcher $dispatcher,
+        private readonly RedirectInterface $redirect,
+        private readonly Setting $setting,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -95,7 +97,7 @@ class Delete implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Удаление пользователя',
             ],
-            '_title' => 'Удаление пользователя | Пользователи | Admin | ' . Setting::get('sitename')
+            '_title' => 'Удаление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
 

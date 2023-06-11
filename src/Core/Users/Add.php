@@ -13,10 +13,10 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -31,6 +31,7 @@ class Add implements ModelInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
+        private readonly Setting $setting,
     ) {
     }
 
@@ -60,9 +61,7 @@ class Add implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Добавить нового пользователя'
             ],
-            '_title' => 'Добавление пользователя | Пользователи | Admin | ' . Setting::get(
-                    'sitename'
-                )
+            '_title' => 'Добавление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
 

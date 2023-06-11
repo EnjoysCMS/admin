@@ -25,10 +25,10 @@ class ActivateBlock
 
 
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private RedirectInterface $redirect,
-        private Block\Collection $blockCollection
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly RedirectInterface $redirect,
+        private readonly Block\Collection $blockCollection
     ) {
         /** @var class-string $class */
         $class = $this->request->getQueryParams()['class'] ?? '';

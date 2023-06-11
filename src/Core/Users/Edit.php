@@ -15,10 +15,10 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Container\ContainerExceptionInterface;
@@ -44,6 +44,7 @@ class Edit implements ModelInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
+        private readonly Setting $setting,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -97,7 +98,7 @@ class Edit implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Список пользователей',
                 'Редактирование пользователя',
             ],
-            '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . Setting::get('sitename')
+            '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
 

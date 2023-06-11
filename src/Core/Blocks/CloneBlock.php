@@ -27,10 +27,10 @@ use Ramsey\Uuid\Uuid;
 final class CloneBlock
 {
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private BlockFactory $blockFactory,
-        private RedirectInterface $redirect
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly BlockFactory $blockFactory,
+        private readonly RedirectInterface $redirect
     ) {
     }
 

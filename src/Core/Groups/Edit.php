@@ -14,12 +14,11 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -43,6 +42,7 @@ class Edit implements ModelInterface
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
+        private readonly Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -72,7 +72,7 @@ class Edit implements ModelInterface
 
         return [
             'form' => $this->renderer,
-            '_title' => 'Редактирование группы | Группы | Admin | ' . Setting::get('sitename'),
+            '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename'),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/groups') => 'Список групп пользователей',

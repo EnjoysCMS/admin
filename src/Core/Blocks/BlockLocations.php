@@ -30,11 +30,11 @@ class BlockLocations implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private  RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
     ) {
         $this->block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')

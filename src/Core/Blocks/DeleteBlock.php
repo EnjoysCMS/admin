@@ -7,7 +7,6 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use DI\DependencyException;
-use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
@@ -24,10 +23,10 @@ use RuntimeException;
 final class DeleteBlock
 {
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private BlockFactory$blockFactory,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly BlockFactory $blockFactory,
+        private readonly RedirectInterface $redirect,
     ) {
     }
 

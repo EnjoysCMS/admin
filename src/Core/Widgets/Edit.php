@@ -10,8 +10,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,7 +25,8 @@ final class Edit implements ModelInterface
         private EntityManager $em,
         private ServerRequestInterface $request,
         private RendererInterface $renderer,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private RedirectInterface $redirect,
     ) {
         $widget = $this->em->getRepository(Widget::class)->find($this->request->getAttribute('id'));
         if ($widget === null) {
@@ -39,6 +40,7 @@ final class Edit implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
+            $this->redirect->toRoute('admin/index', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -106,6 +108,6 @@ final class Edit implements ModelInterface
 
         $this->widget->setOptions(array_merge_recursive_distinct($this->widget->getOptions(), $result));
         $this->em->flush();
-        Redirect::http($this->urlGenerator->generate('admin/index'));
+
     }
 }

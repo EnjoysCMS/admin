@@ -9,9 +9,9 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
-use EnjoysCMS\Core\Components\Helpers\Assets;
-use EnjoysCMS\Core\Components\Helpers\Setting;
+use Enjoys\AssetsCollector\Assets;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,9 +21,10 @@ final class UsersList implements ModelInterface
     private ObjectRepository|EntityRepository $usersRepository;
 
     public function __construct(
-        private EntityManager $entityManager,
-        private UrlGeneratorInterface $urlGenerator,
-        private \Enjoys\AssetsCollector\Assets $assets
+        private readonly EntityManager $entityManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Assets $assets,
+        private readonly Setting $setting,
     ) {
         $this->assets->add('css',
             [
@@ -47,7 +48,7 @@ final class UsersList implements ModelInterface
     {
         return [
             'users' => $this->usersRepository->findAll(),
-            '_title' => 'Пользователи | Admin | ' . Setting::get('sitename'),
+            '_title' => 'Пользователи | Admin | ' . $this->setting->get('sitename'),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 'Список пользователей',

@@ -5,12 +5,14 @@ namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting as SettingComponent;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -20,19 +22,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Setting implements ModelInterface
 {
 
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $settingRepository;
+    private SettingComponent\Repository\Setting|EntityRepository $settingRepository;
 
+    /**
+     * @throws NotSupported
+     */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private RedirectInterface $redirect
+        private readonly EntityManager $entityManager,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly SettingComponent\Setting $setting,
     ) {
-        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
+        $this->settingRepository = $this->entityManager->getRepository(SettingComponent\Entity\Setting::class);
     }
 
     /**
@@ -51,7 +54,7 @@ class Setting implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            '_title' => 'Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename'),
+            '_title' => 'Настройки | Admin | ' . $this->setting->get('sitename'),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 'Глобальные настройки сайта',
@@ -61,7 +64,8 @@ class Setting implements ModelInterface
 
     private function getForm(): Form
     {
-        $settings = (array)$this->settingRepository->findAll();
+        /** @var SettingComponent\Entity\Setting[] $settings */
+        $settings = $this->settingRepository->findAll();
 
         $form = new Form();
         $form->setDefaults(
@@ -75,9 +79,6 @@ class Setting implements ModelInterface
         );
 
 
-        /**
-         * @var \EnjoysCMS\Core\Entities\Setting $setting
-         */
         foreach ($settings as $setting) {
             $name = $setting->getName();
             $name .= " <small>[{$setting->getVar()}]</small>";
@@ -136,12 +137,9 @@ class Setting implements ModelInterface
     private function doAction(): void
     {
         foreach ($this->request->getParsedBody() as $k => $v) {
-            /**
-             *
-             *
-             * @var \EnjoysCMS\Core\Entities\Setting $item
-             */
-            if (null === $item = $this->settingRepository->find($k)) {
+            /** @var SettingComponent\Entity\Setting $item */
+            $item = $this->settingRepository->find($k);
+            if ($item === null) {
                 continue;
             }
             $item->setValue($v);

@@ -12,8 +12,8 @@ class ManageBlocks implements ModelInterface
 {
 
     public function __construct(
-        private EntityManager $em,
-        private UrlGeneratorInterface $urlGenerator
+        private readonly EntityManager $em,
+        private readonly UrlGeneratorInterface $urlGenerator
     ) {
     }
 

@@ -27,19 +27,21 @@ class Dashboard extends AdminBaseController
     {
         $this->twig->addExtension($this->container->get(WidgetsTwigExtension::class));
 
-        return $this->response($this->twig->render(
-            '@a/dashboard/dashboard.twig',
-            [
-                '_title' => 'Dashboard | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename'),
-                'breadcrumbs' => [
-                    $urlGenerator->generate('admin/index') => 'Главная',
-                    'Dashboard',
-                ],
-                'widgets' => $this->container->get(EntityManager::class)->getRepository(
-                    Widget::class
-                )->getSortWidgets($identity->getUser())
-            ]
-        ));
+        return $this->response(
+            $this->twig->render(
+                '@a/dashboard/dashboard.twig',
+                [
+                    '_title' => 'Dashboard | Admin | ' . $this->setting->get('sitename'),
+                    'breadcrumbs' => [
+                        $urlGenerator->generate('admin/index') => 'Главная',
+                        'Dashboard',
+                    ],
+                    'widgets' => $this->container->get(EntityManager::class)->getRepository(
+                        Widget::class
+                    )->getSortWidgets($identity->getUser())
+                ]
+            )
+        );
     }
 
 

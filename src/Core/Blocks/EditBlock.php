@@ -20,7 +20,6 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Components\Helpers\ACL;
@@ -52,15 +51,15 @@ class EditBlock implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private ContentEditor $contentEditor,
-        private Container $container,
-        private BlockFactory $blockFactory,
-        private Config $config,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly ContentEditor $contentEditor,
+        private readonly Container $container,
+        private readonly BlockFactory $blockFactory,
+        private readonly Config $config,
+        private readonly RedirectInterface $redirect,
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
         $blockId = $this->request->getAttribute('id', '');

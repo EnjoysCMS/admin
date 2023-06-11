@@ -7,23 +7,22 @@ namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class DeleteSetting
 {
 
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly RedirectInterface $redirect,
     ) {
     }
 
@@ -32,14 +31,14 @@ final class DeleteSetting
      * @throws CannotRemoveEntity
      * @throws ORMException
      * @throws NoResultException
+     * @throws NotSupported
      */
     public function __invoke(): ResponseInterface
     {
-        if (null === $setting = $this->em->getRepository(\EnjoysCMS\Core\Entities\Setting::class)->find(
-                $this->request->getQueryParams()['id'] ?? 0
-            )) {
-            throw new NoResultException();
-        }
+        $setting = $this->em->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class)->find(
+            $this->request->getQueryParams()['id'] ?? 0
+        ) ?? throw new NoResultException();
+
 
         if (!$setting->isRemovable()) {
             throw new CannotRemoveEntity('This the setting not removable');

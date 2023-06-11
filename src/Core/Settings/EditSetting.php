@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Core\Settings;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
@@ -22,32 +23,32 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class EditSetting implements ModelInterface
 {
-    private ObjectRepository $settingRepository;
-    private ?\EnjoysCMS\Core\Entities\Setting $settingEntity;
+    private \EnjoysCMS\Core\Setting\Repository\Setting|EntityRepository $settingRepository;
+    private \EnjoysCMS\Core\Setting\Entity\Setting $settingEntity;
 
     /**
      * @throws NotFoundException
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $entityManager,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly \EnjoysCMS\Core\Setting\Setting $setting
     ) {
-        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Entities\Setting::class);
-        $this->settingEntity = $this->settingRepository->find($request->getQueryParams()['id'] ?? 0);
-
-        if ($this->settingEntity === null) {
-            throw new NotFoundException(
-                sprintf(
-                    'Setting with name <u>%s</u> not found',
-                    htmlspecialchars(
-                        $request->getQueryParams()['id'] ?? 0
-                    )
-                ),
-            );
-        }
+        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
+        $this->settingEntity = $this->settingRepository->find(
+            $request->getQueryParams()['id'] ?? 0
+        ) ?? throw new NotFoundException(
+            sprintf(
+                'Setting with name <u>%s</u> not found',
+                htmlspecialchars(
+                    $request->getQueryParams()['id'] ?? 0
+                )
+            ),
+        );
     }
 
     /**
@@ -67,9 +68,7 @@ final class EditSetting implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            '_title' => 'Изменение настройки | Настройки | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get(
-                    'sitename'
-                ),
+            '_title' => 'Изменение настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
             'breadcrumbs' => [
                 $this->urlGenerator->generate('admin/index') => 'Главная',
                 $this->urlGenerator->generate('admin/setting') => 'Глобальные параметры сайта',

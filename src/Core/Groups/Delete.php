@@ -10,10 +10,9 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
-use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,6 +32,7 @@ class Delete implements ModelInterface
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
         private RedirectInterface $redirect,
+        private Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -76,7 +76,7 @@ class Delete implements ModelInterface
                 $this->urlGenerator->generate('admin/users') => 'Группы пользователей',
                 'Удаление группы',
             ],
-            '_title' => 'Удаление группы | Группы | Admin | ' . Setting::get('sitename')
+            '_title' => 'Удаление группы | Группы | Admin | ' . $this->setting->get('sitename')
         ];
     }
 

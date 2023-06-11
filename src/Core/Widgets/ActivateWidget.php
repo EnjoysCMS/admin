@@ -5,12 +5,17 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use EnjoysCMS\Core\Components\Auth\Identity;
 use EnjoysCMS\Core\Components\Helpers\ACL;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Setting\Setting;
+use InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -22,23 +27,26 @@ class ActivateWidget
 
 
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private Identity $identity
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Identity $identity,
+        private readonly RedirectInterface $redirect,
     ) {
         $class = $this->request->getQueryParams()['class'] ?? null;
         if (!class_exists($class)) {
-            throw new \InvalidArgumentException(sprintf('Class not found: %s', $class));
+            throw new InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
         $this->class = $class;
     }
 
     /**
-     * @throws OptimisticLockException
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke()
+    public function __invoke(): ResponseInterface
     {
         $data = $this->class::getMeta();
         $widget = new Widget();
@@ -56,7 +64,7 @@ class ActivateWidget
             $widget->getWidgetCommentAcl()
         );
 
-        Redirect::http($this->urlGenerator->generate('admin/index'));
+        return $this->redirect->toRoute('admin/index');
     }
 
 

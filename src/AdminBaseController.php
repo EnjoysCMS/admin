@@ -9,6 +9,7 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
 use EnjoysCMS\Core\Components\Helpers\Assets;
+use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Exception;
@@ -33,6 +34,7 @@ abstract class AdminBaseController
         protected readonly Container $container,
         protected readonly Environment $twig,
         protected readonly \Enjoys\AssetsCollector\Assets $assets,
+        protected readonly Setting $setting,
         protected ResponseInterface $response,
     ) {
         $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
@@ -93,6 +95,13 @@ abstract class AdminBaseController
     protected function response(string $body): ResponseInterface
     {
         $this->response->getBody()->write($body);
+        return $this->response;
+    }
+
+    protected function jsonResponse(mixed $payload): ResponseInterface
+    {
+        $this->response = $this->response->withHeader('Content-Type', 'application/json');
+        $this->response->getBody()->write(json_encode($payload));
         return $this->response;
     }
 }

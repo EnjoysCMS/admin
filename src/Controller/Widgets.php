@@ -10,8 +10,8 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Components\Auth\Identity;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
 use EnjoysCMS\Module\Admin\Core\Widgets\Edit;
@@ -21,7 +21,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Widgets extends AdminBaseController
 {
@@ -47,16 +46,16 @@ class Widgets extends AdminBaseController
                 'user' => $identity->getUser()
             ]);
             if ($widget === null) {
-                return $this->responseJson('The widget was not found, it may have been deleted')->withStatus(404);
+                return $this->jsonResponse('The widget was not found, it may have been deleted')->withStatus(404);
             }
             $em->remove($widget);
             $em->flush();
         } catch (\Throwable $e) {
-            return $this->responseJson(
+            return $this->jsonResponse(
                 $e->getMessage()
             )->withStatus(500);
         }
-        return $this->responseJson(sprintf('Widget with id = %d removed', $request->getAttribute('id')));
+        return $this->jsonResponse(sprintf('Widget with id = %d removed', $request->getAttribute('id')));
     }
 
     /**
@@ -77,8 +76,8 @@ class Widgets extends AdminBaseController
     public function clone(
         EntityManager $em,
         ServerRequestInterface $request,
-        UrlGeneratorInterface $urlGenerator
-    ): void {
+        RedirectInterface $redirect,
+    ): ResponseInterface {
         $widget = $em->getRepository(Widget::class)->find($request->getAttribute('id'));
         if ($widget === null) {
             throw new NoResultException();
@@ -87,7 +86,7 @@ class Widgets extends AdminBaseController
         $em->persist($newWidget);
         $em->flush();
 
-        Redirect::http($urlGenerator->generate('admin/index'));
+        return $redirect->toRoute('admin/index');
     }
 
     #[Route(
@@ -100,12 +99,12 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Редактирование виджетов'
         ]
     )]
-    public function edit(): ResponseInterface
+    public function edit(Edit $edit): ResponseInterface
     {
         return $this->response(
-            $this->view(
+            $this->twig->render(
                 '@a/widgets/edit.twig',
-                $this->getContext($this->getContainer()->get(Edit::class))
+                $edit->getContext()
             )
         );
     }
@@ -121,12 +120,12 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Просмотр не активированных виджетов'
         ]
     )]
-    public function manage(): ResponseInterface
+    public function manage(Manage $manage): ResponseInterface
     {
         return $this->response(
-            $this->view(
+            $this->twig->render(
                 '@a/widgets/manage.twig',
-                $this->getContext($this->getContainer()->get(Manage::class))
+                $manage->getContext()
             )
         );
     }
@@ -142,9 +141,9 @@ class Widgets extends AdminBaseController
             'aclComment' => 'Установка (активация) виджетов'
         ]
     )]
-    public function activate(): void
+    public function activate(ActivateWidget $activateWidget): ResponseInterface
     {
-        $this->getContainer()->get(ActivateWidget::class)();
+        return $activateWidget();
     }
 
     #[Route(
@@ -183,11 +182,11 @@ class Widgets extends AdminBaseController
 
             $em->flush();
 
-            return $this->responseJson(
+            return $this->jsonResponse(
                 'Расположение и размер виджетов успешно сохранены'
             );
         } catch (\Throwable $e) {
-            return $this->responseJson(
+            return $this->jsonResponse(
                 $e->getMessage()
             )->withStatus(500);
         }

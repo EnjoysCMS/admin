@@ -13,8 +13,8 @@ class SetupBlocks implements ModelInterface
 {
 
     public function __construct(
-        private Collection $blockCollection,
-        private UrlGeneratorInterface $urlGenerator
+        private readonly Collection $blockCollection,
+        private readonly UrlGeneratorInterface $urlGenerator
     ) {
     }
 
