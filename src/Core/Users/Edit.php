@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -14,12 +15,14 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -31,14 +34,16 @@ class Edit implements ModelInterface
 
 
     /**
-     * @throws NotEditableUser
      * @throws NoResultException
+     * @throws NotEditableUser
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -66,9 +71,11 @@ class Edit implements ModelInterface
     }
 
     /**
-     * @throws OptimisticLockException
      * @throws ExceptionRule
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function getContext(): array
     {
@@ -76,6 +83,7 @@ class Edit implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->editUser();
+            $this->redirect->toRoute('admin/users');
         }
 
         $this->renderer->setForm($form);
@@ -197,8 +205,6 @@ class Edit implements ModelInterface
         }
 
         $this->em->flush();
-
-        Redirect::http($this->urlGenerator->generate('admin/users'));
     }
 
 

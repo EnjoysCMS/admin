@@ -11,11 +11,19 @@ use EnjoysCMS\Module\Admin\Core\Groups\Edit;
 use EnjoysCMS\Module\Admin\Core\Groups\GroupsList;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 
 class Groups extends AdminBaseController
 {
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route(
         path: '/admin/groups',
         name: 'admin/groups',
@@ -23,12 +31,12 @@ class Groups extends AdminBaseController
             'comment' => 'Доступ к просмотру списка групп'
         ]
     )]
-    public function list(): ResponseInterface
+    public function list(GroupsList $groupsList): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/groups/list.twig',
-                $this->getContext($this->getContainer()->get(GroupsList::class))
+                $groupsList->getContext()
             )
         );
     }
@@ -44,12 +52,12 @@ class Groups extends AdminBaseController
             'comment' => 'Редактирование групп пользователей'
         ]
     )]
-    public function edit(): ResponseInterface
+    public function edit(Edit $edit): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/groups/edit.twig',
-                $this->getContext($this->getContainer()->get(Edit::class))
+                $edit->getContext()
             )
         );
     }
@@ -61,12 +69,12 @@ class Groups extends AdminBaseController
             'comment' => 'Добаление групп пользователей'
         ]
     )]
-    public function add(): ResponseInterface
+    public function add(Add $add): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/groups/add.twig',
-                $this->getContext($this->getContainer()->get(Add::class))
+                $add->getContext()
             )
         );
     }
@@ -81,12 +89,12 @@ class Groups extends AdminBaseController
             'comment' => 'Удаление групп пользователей'
         ]
     )]
-    public function delete(): ResponseInterface
+    public function delete(Delete $delete): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/groups/delete.twig',
-                $this->getContext($this->getContainer()->get(Delete::class))
+                $delete->getContext()
             )
         );
     }

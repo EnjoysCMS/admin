@@ -43,8 +43,8 @@ class Blocks extends AdminBaseController
     )]
     public function manage(ManageBlocks $manageBlocks): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/blocks/manage.twig',
                 $manageBlocks->getContext()
             )
@@ -137,8 +137,8 @@ class Blocks extends AdminBaseController
     )]
     public function edit(EditBlock $editBlock): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/blocks/edit.twig',
                 $editBlock->getContext()
             )
@@ -164,8 +164,8 @@ class Blocks extends AdminBaseController
     )]
     public function add(AddBlocks $addBlocks): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/blocks/add.twig',
                 $addBlocks->getContext()
             )
@@ -189,8 +189,8 @@ class Blocks extends AdminBaseController
     )]
     public function location(BlockLocations $blockLocations): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/blocks/locations.twig',
                 $blockLocations->getContext()
             )
@@ -210,8 +210,8 @@ class Blocks extends AdminBaseController
     )]
     public function setUp(SetupBlocks $setupBlocks): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/blocks/setup.twig',
                 $setupBlocks->getContext()
             )

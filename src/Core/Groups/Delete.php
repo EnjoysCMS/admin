@@ -13,6 +13,7 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,7 +31,8 @@ class Delete implements ModelInterface
         private EntityManager $entityManager,
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private RendererInterface $renderer,
+        private RedirectInterface $redirect,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -82,7 +84,7 @@ class Delete implements ModelInterface
     {
         $this->entityManager->remove($this->group);
         $this->entityManager->flush();
-        Redirect::http($this->urlGenerator->generate('admin/groups'));
+        $this->redirect->toRoute('admin/groups', emit: true);
     }
 
     private function getForm(): Form

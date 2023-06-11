@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 final class GroupsList implements ModelInterface
 {
 
-    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
 
     public function __construct(private EntityManager $em, private UrlGeneratorInterface $urlGenerator)
     {

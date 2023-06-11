@@ -6,17 +6,17 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,10 +33,11 @@ class ChangePassword implements ModelInterface
      * @throws NoResultException
      */
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        readonly private RedirectInterface $redirect
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -65,8 +66,8 @@ class ChangePassword implements ModelInterface
 
     /**
      * @throws ExceptionRule
-     * @throws ORMException
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function getContext(): array
     {
@@ -74,6 +75,7 @@ class ChangePassword implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->updatePassword();
+            $this->redirect->toRoute('admin/users', emit: true);
         }
 
         $this->renderer->setForm($form);
@@ -107,8 +109,8 @@ class ChangePassword implements ModelInterface
      */
     private function updatePassword(): void
     {
-        $this->user->genAdnSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
+        $this->user->genAndSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
         $this->em->flush();
-        Redirect::http($this->urlGenerator->generate('admin/users'));
+
     }
 }

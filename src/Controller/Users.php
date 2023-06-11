@@ -23,12 +23,12 @@ class Users extends AdminBaseController
             'comment' => 'Доступ к просмотру списка пользователей'
         ]
     )]
-    public function list(): ResponseInterface
+    public function list(UsersList $usersList): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/users/users-list.twig',
-                $this->getContext($this->getContainer()->get(UsersList::class))
+                $usersList->getContext()
             )
         );
     }
@@ -43,12 +43,12 @@ class Users extends AdminBaseController
             'comment' => 'Редактирование пользователей'
         ]
     )]
-    public function edit(): ResponseInterface
+    public function edit(Edit $edit): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/users/edituser.twig',
-                $this->getContext($this->getContainer()->get(Edit::class))
+                $edit->getContext()
             )
         );
     }
@@ -60,12 +60,12 @@ class Users extends AdminBaseController
             'comment' => 'Добавление пользователей'
         ]
     )]
-    public function add(): ResponseInterface
+    public function add(Add $add): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/users/adduser.twig',
-                $this->getContext($this->getContainer()->get(Add::class))
+                $add->getContext()
             )
         );
     }
@@ -81,12 +81,12 @@ class Users extends AdminBaseController
             'comment' => 'Удаление пользователей'
         ]
     )]
-    public function delete(): ResponseInterface
+    public function delete(Delete $delete): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/users/deleteuser.twig',
-                $this->getContext($this->getContainer()->get(Delete::class))
+                $delete->getContext()
             )
         );
     }
@@ -101,12 +101,12 @@ class Users extends AdminBaseController
             'comment' => 'Изменение паролей у пользователей'
         ]
     )]
-    public function changePassword(): ResponseInterface
+    public function changePassword(ChangePassword $changePassword): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/users/change-password.twig',
-                $this->getContext($this->getContainer()->get(ChangePassword::class))
+                $changePassword->getContext()
             )
         );
     }

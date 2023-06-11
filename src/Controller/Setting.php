@@ -33,8 +33,8 @@ class Setting extends AdminBaseController
     )]
     public function setting(\EnjoysCMS\Module\Admin\Core\Settings\Setting $setting): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/setting/setting.twig',
                 $setting->getContext()
             )
@@ -51,8 +51,8 @@ class Setting extends AdminBaseController
     )]
     public function addSetting(AddSetting $addSetting): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/setting/add.twig',
                 $addSetting->getContext()
             )
@@ -74,8 +74,8 @@ class Setting extends AdminBaseController
     )]
     public function editSetting(EditSetting $editSetting): ResponseInterface
     {
-        return $this->responseText(
-            $this->view(
+        return $this->response(
+            $this->twig->render(
                 '@a/setting/add.twig',
                 $editSetting->getContext()
             )

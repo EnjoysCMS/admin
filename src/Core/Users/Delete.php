@@ -6,7 +6,9 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
@@ -15,9 +17,12 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -36,7 +41,8 @@ class Delete implements ModelInterface
         private ServerRequestInterface $request,
         private UrlGeneratorInterface $urlGenerator,
         private RendererInterface $renderer,
-        private EventDispatcher $dispatcher
+        private EventDispatcher $dispatcher,
+        private RedirectInterface $redirect,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();
@@ -63,6 +69,12 @@ class Delete implements ModelInterface
         return $user;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws ContainerExceptionInterface
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -70,6 +82,7 @@ class Delete implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->deleteUser();
+            $this->redirect->toRoute('admin/users', emit: true);
         }
 
         $this->renderer->setForm($form);
@@ -86,12 +99,15 @@ class Delete implements ModelInterface
         ];
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function deleteUser(): void
     {
         $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user), BeforeDeleteUserEvent::NAME);
         $this->em->remove($this->user);
         $this->em->flush();
-        Redirect::http($this->urlGenerator->generate('admin/users'));
     }
 
     private function getForm(): Form

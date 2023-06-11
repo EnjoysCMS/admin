@@ -25,9 +25,9 @@ class Dashboard extends AdminBaseController
     )]
     public function dashboard(UrlGeneratorInterface $urlGenerator, Identity $identity): ResponseInterface
     {
-        $this->getTwig()->addExtension($this->getContainer()->get(WidgetsTwigExtension::class));
+        $this->twig->addExtension($this->container->get(WidgetsTwigExtension::class));
 
-        return $this->responseText($this->view(
+        return $this->response($this->twig->render(
             '@a/dashboard/dashboard.twig',
             [
                 '_title' => 'Dashboard | Admin | ' . \EnjoysCMS\Core\Components\Helpers\Setting::get('sitename'),
@@ -35,7 +35,7 @@ class Dashboard extends AdminBaseController
                     $urlGenerator->generate('admin/index') => 'Главная',
                     'Dashboard',
                 ],
-                'widgets' => $this->getContainer()->get(EntityManager::class)->getRepository(
+                'widgets' => $this->container->get(EntityManager::class)->getRepository(
                     Widget::class
                 )->getSortWidgets($identity->getUser())
             ]

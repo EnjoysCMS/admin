@@ -6,6 +6,10 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin;
 
 
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Modules\ModuleCollection;
 use Exception;
 use InvalidArgumentException;
@@ -22,6 +26,7 @@ final class Config
      */
     public function __construct(
         private readonly \Enjoys\Config\Config $config,
+        private Container $container,
         ModuleCollection $moduleCollection
     ) {
         $module = $moduleCollection->find(self::MODULE_NAME) ?? throw new InvalidArgumentException(
@@ -61,6 +66,16 @@ final class Config
     public function getContentEditorConfigParamForCustomBlocks(): string|array|null
     {
         return $this->get('editor->custom_blocks');
+    }
+
+    /**
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    public function getRendererForm(): RendererInterface
+    {
+        $rendererFormClassString = $this->get('renderer') ?? RendererInterface::class;
+        return $this->container->make($rendererFormClassString);
     }
 
 }

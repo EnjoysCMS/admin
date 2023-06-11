@@ -1,2 +1,4 @@
 editor:
   custom_blocks: null
+
+renderer: \Enjoys\Forms\Renderer\AbstractRenderer

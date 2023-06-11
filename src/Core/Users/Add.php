@@ -5,36 +5,42 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Components\Helpers\Redirect;
 use EnjoysCMS\Core\Components\Helpers\Setting;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
 {
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
     ) {
     }
 
 
     /**
-     * @throws OptimisticLockException
      * @throws ExceptionRule
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function getContext(): array
     {
@@ -42,6 +48,7 @@ class Add implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->addUser();
+            $this->redirect->toRoute('admin/users', emit: true);
         }
 
         $this->renderer->setForm($form);
@@ -68,7 +75,7 @@ class Add implements ModelInterface
         $newUser = new User();
         $newUser->setName($this->request->getParsedBody()['name'] ?? null);
         $newUser->setLogin($this->request->getParsedBody()['login'] ?? null);
-        $newUser->genAdnSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
+        $newUser->genAndSetPasswordHash($this->request->getParsedBody()['password'] ?? null);
 
         $groups = $this->em->getRepository(Group::class)->findBy(
             ['id' => $this->request->getParsedBody()['groups'] ?? []]
@@ -80,11 +87,11 @@ class Add implements ModelInterface
         $this->em->persist($newUser);
         $this->em->flush();
 
-        Redirect::http($this->urlGenerator->generate('admin/users'));
     }
 
     /**
      * @throws ExceptionRule
+     * @throws NotSupported
      */
     private function getForm(): Form
     {

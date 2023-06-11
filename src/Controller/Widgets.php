@@ -102,7 +102,7 @@ class Widgets extends AdminBaseController
     )]
     public function edit(): ResponseInterface
     {
-        return $this->responseText(
+        return $this->response(
             $this->view(
                 '@a/widgets/edit.twig',
                 $this->getContext($this->getContainer()->get(Edit::class))
@@ -123,7 +123,7 @@ class Widgets extends AdminBaseController
     )]
     public function manage(): ResponseInterface
     {
-        return $this->responseText(
+        return $this->response(
             $this->view(
                 '@a/widgets/manage.twig',
                 $this->getContext($this->getContainer()->get(Manage::class))

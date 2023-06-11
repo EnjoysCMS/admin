@@ -23,14 +23,15 @@ final class UsersList implements ModelInterface
     public function __construct(
         private EntityManager $entityManager,
         private UrlGeneratorInterface $urlGenerator,
+        private \Enjoys\AssetsCollector\Assets $assets
     ) {
-        Assets::css(
+        $this->assets->add('css',
             [
                 __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
                 __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
             ]
         );
-        Assets::js(
+        $this->assets->add('js',
             [
                 __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
                 __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
