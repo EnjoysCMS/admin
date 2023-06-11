@@ -15,9 +15,9 @@ use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Delete implements ModelInterface
 {
     private User $user;
-    private ObjectRepository|EntityRepository $usersRepository;
+    private EntityRepository $usersRepository;
 
     /**
      * @throws NotEditableUser

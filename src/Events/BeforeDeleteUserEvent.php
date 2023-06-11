@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EnjoysCMS\Module\Admin\Events;
 
-use EnjoysCMS\Core\Entities\User;
+use EnjoysCMS\Core\Users\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 final class BeforeDeleteUserEvent extends Event

@@ -15,10 +15,10 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Entities\Group;
-use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\Group;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Container\ContainerExceptionInterface;
@@ -30,7 +30,7 @@ class Edit implements ModelInterface
 {
 
     private User $user;
-    private ObjectRepository|EntityRepository $usersRepository;
+    private EntityRepository $usersRepository;
 
 
     /**

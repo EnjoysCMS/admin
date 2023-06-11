@@ -15,10 +15,10 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Group;
-use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\Group;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Edit implements ModelInterface
 {
     private Group $group;
-    private EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;
 
     /**
      * @throws NoResultException

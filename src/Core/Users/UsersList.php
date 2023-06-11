@@ -10,8 +10,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
 use Enjoys\AssetsCollector\Assets;
-use EnjoysCMS\Core\Entities\User;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

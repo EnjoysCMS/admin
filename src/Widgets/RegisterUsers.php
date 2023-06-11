@@ -7,8 +7,8 @@ namespace EnjoysCMS\Module\Admin\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Core\Widgets\AbstractWidgets;
-use EnjoysCMS\Core\Entities\User;
 use Symfony\Component\Yaml\Yaml;
 
 final class RegisterUsers extends AbstractWidgets
