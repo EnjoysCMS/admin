@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Block;
-use EnjoysCMS\Core\Components\Helpers\ACL;
+use EnjoysCMS\Core\Components\AccessControl\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
@@ -28,7 +28,8 @@ class ActivateBlock
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly RedirectInterface $redirect,
-        private readonly Block\Collection $blockCollection
+        private readonly Block\Collection $blockCollection,
+        private readonly ACL $ACL
     ) {
         /** @var class-string $class */
         $class = $this->request->getQueryParams()['class'] ?? '';
@@ -65,7 +66,7 @@ class ActivateBlock
         $this->em->flush();
 
 
-        ACL::registerAcl(
+        $this->ACL->addAcl(
             $block->getBlockActionAcl(),
             $block->getBlockCommentAcl()
         );

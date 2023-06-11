@@ -21,16 +21,14 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
+use EnjoysCMS\Core\Components\AccessControl\ACL;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Components\Helpers\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Invoker\Exception\NotCallableException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -46,8 +44,6 @@ class EditBlock implements ModelInterface
 
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws NotSupported
      */
     public function __construct(
@@ -60,6 +56,7 @@ class EditBlock implements ModelInterface
         private readonly BlockFactory $blockFactory,
         private readonly Config $config,
         private readonly RedirectInterface $redirect,
+        private readonly ACL $ACL,
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
         $blockId = $this->request->getAttribute('id', '');
@@ -67,7 +64,7 @@ class EditBlock implements ModelInterface
             sprintf('Invalid block ID: %s', $blockId)
         );
 
-        $this->acl = ACL::getAcl($this->block->getBlockActionAcl());
+        $this->acl = $this->ACL->getAcl($this->block->getBlockActionAcl());
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 

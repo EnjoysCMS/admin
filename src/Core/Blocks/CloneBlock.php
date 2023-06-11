@@ -7,7 +7,6 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use DI\DependencyException;
-use DI\FactoryInterface;
 use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
@@ -16,7 +15,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\Components\Helpers\ACL;
+use EnjoysCMS\Core\Components\AccessControl\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -30,7 +29,8 @@ final class CloneBlock
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly BlockFactory $blockFactory,
-        private readonly RedirectInterface $redirect
+        private readonly RedirectInterface $redirect,
+        private readonly ACL $ACL
     ) {
     }
 
@@ -61,7 +61,7 @@ final class CloneBlock
         $this->em->persist($cloned);
         $this->em->flush();
 
-        ACL::registerAcl(
+        $this->ACL->addAcl(
             $cloned->getBlockActionAcl(),
             $cloned->getBlockCommentAcl()
         );

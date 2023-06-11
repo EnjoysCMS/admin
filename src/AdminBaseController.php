@@ -7,14 +7,11 @@ namespace EnjoysCMS\Module\Admin;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
+use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
-use EnjoysCMS\Core\Components\Helpers\Assets;
 use EnjoysCMS\Core\Setting\Setting;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Exception;
-use HttpSoft\Message\Response;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
 
@@ -33,7 +30,7 @@ abstract class AdminBaseController
     public function __construct(
         protected readonly Container $container,
         protected readonly Environment $twig,
-        protected readonly \Enjoys\AssetsCollector\Assets $assets,
+        protected readonly Assets $assets,
         protected readonly Setting $setting,
         protected ResponseInterface $response,
     ) {
@@ -46,7 +43,7 @@ abstract class AdminBaseController
          */
         $AssetsExtension = $this->twig->getExtension(AssetsExtension::class);
         $AssetsExtension->getAssetsCollector()->getEnvironment()->setStrategy(
-            \Enjoys\AssetsCollector\Assets::STRATEGY_MANY_FILES
+            Assets::STRATEGY_MANY_FILES
         );
 
 

@@ -19,8 +19,8 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
+use EnjoysCMS\Core\Components\AccessControl\ACL;
 use EnjoysCMS\Core\Components\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Config;
@@ -46,6 +46,7 @@ class AddBlocks implements ModelInterface
         private readonly RendererInterface $renderer,
         private readonly ContentEditor $contentEditor,
         private readonly RedirectInterface $redirect,
+        private readonly ACL $ACL,
         private readonly Config $config
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
@@ -157,10 +158,7 @@ class AddBlocks implements ModelInterface
 
         $this->em->flush();
 
-        /**
-         * @var ACL $acl
-         */
-        $acl = \EnjoysCMS\Core\Components\Helpers\ACL::registerAcl(
+        $acl = $this->ACL->addACL(
             $block->getBlockActionAcl(),
             $block->getBlockCommentAcl()
         );
