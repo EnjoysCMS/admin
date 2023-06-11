@@ -22,11 +22,11 @@ final class Edit implements ModelInterface
     private Widget $widget;
 
     public function __construct(
-        private EntityManager $em,
-        private ServerRequestInterface $request,
-        private RendererInterface $renderer,
-        private UrlGeneratorInterface $urlGenerator,
-        private RedirectInterface $redirect,
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly RendererInterface $renderer,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RedirectInterface $redirect,
     ) {
         $widget = $this->em->getRepository(Widget::class)->find($this->request->getAttribute('id'));
         if ($widget === null) {

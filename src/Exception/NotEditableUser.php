@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace EnjoysCMS\Module\Admin\Exception;
 
-class NotEditableUser extends \Exception
+use Exception;
+
+final class NotEditableUser extends Exception
 {
 
 }

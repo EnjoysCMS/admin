@@ -11,7 +11,7 @@ final class BeforeDeleteUserEvent extends Event
 {
     public const NAME = 'before.delete.user';
 
-    public function __construct(private User $user)
+    public function __construct(private readonly User $user)
     {
     }
 

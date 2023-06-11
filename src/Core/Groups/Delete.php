@@ -6,13 +6,13 @@ namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\NoResultException;
-use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,18 +21,20 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Delete implements ModelInterface
 {
     private Group $group;
-    private ObjectRepository|EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;
 
     /**
+     * @throws CannotRemoveEntity
      * @throws NoResultException
+     * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private RedirectInterface $redirect,
-        private Setting $setting,
+        private readonly EntityManager $entityManager,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 

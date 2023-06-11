@@ -25,12 +25,12 @@ final class AddSetting implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private RedirectInterface $redirect,
-        private \EnjoysCMS\Core\Setting\Setting $setting,
+        private readonly EntityManager $entityManager,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly \EnjoysCMS\Core\Setting\Setting $setting,
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
     }

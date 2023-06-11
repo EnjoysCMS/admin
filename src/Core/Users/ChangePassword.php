@@ -6,6 +6,7 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -30,13 +31,14 @@ class ChangePassword implements ModelInterface
     /**
      * @throws NotEditableUser
      * @throws NoResultException
+     * @throws NotSupported
      */
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly Setting $setting,
         private readonly RendererInterface $renderer,
-        readonly private RedirectInterface $redirect
+        private readonly RedirectInterface $redirect
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->getUser();

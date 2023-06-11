@@ -14,8 +14,8 @@ class AdminHelpersExtension extends AbstractExtension
 {
 
     public function __construct(
-        private RouteCollection $routeCollection,
-        private ModuleCollection $moduleCollection
+        private readonly RouteCollection $routeCollection,
+        private readonly ModuleCollection $moduleCollection
     ) {
     }
 

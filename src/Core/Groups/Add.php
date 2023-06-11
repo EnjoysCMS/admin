@@ -4,6 +4,7 @@ namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
@@ -12,9 +13,9 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
+use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,18 +24,21 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Add implements ModelInterface
 {
 
-    private EntityRepository|\EnjoysCMS\Core\Repositories\Group $groupsRepository;
+    private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;
 
+    /**
+     * @throws NotSupported
+     */
     public function __construct(
-        private EntityManager $entityManager,
-        private ServerRequestInterface $request,
-        private UrlGeneratorInterface $urlGenerator,
-        private RendererInterface $renderer,
-        private RedirectInterface $redirect,
-        private ACList $ACList,
-        private Setting $setting
+        private readonly EntityManager $em,
+        private readonly ServerRequestInterface $request,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly ACList $ACList,
+        private readonly Setting $setting
     ) {
-        $this->groupsRepository = $this->entityManager->getRepository(Group::class);
+        $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 
     /**
@@ -129,7 +133,7 @@ class Add implements ModelInterface
      */
     private function doAction(): void
     {
-        $acls = $this->entityManager->getRepository(ACL::class)->findBy(
+        $acls = $this->em->getRepository(ACL::class)->findBy(
             ['id' => $this->request->getParsedBody()['acl'] ?? []]
         );
 
@@ -142,8 +146,8 @@ class Add implements ModelInterface
             $group->setAcl($acl);
         }
 
-        $this->entityManager->persist($group);
-        $this->entityManager->flush();
+        $this->em->persist($group);
+        $this->em->flush();
     }
 
 
