@@ -7,7 +7,8 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use EnjoysCMS\Core\Components\Auth\Identity;
+use EnjoysCMS\Core\AccessControl\ACL;
+use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
@@ -28,7 +29,7 @@ class ActivateWidget
         private readonly ServerRequestInterface $request,
         private readonly Identity $identity,
         private readonly RedirectInterface $redirect,
-        private readonly \EnjoysCMS\Core\Components\AccessControl\ACL $ACL,
+        private readonly ACL $ACL,
     ) {
         $class = $this->request->getQueryParams()['class'] ?? null;
         if (!class_exists($class)) {

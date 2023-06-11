@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use EnjoysCMS\Core\Components\Auth\Identity;
+use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\AdminBaseController;

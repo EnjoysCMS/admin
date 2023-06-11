@@ -5,8 +5,8 @@ namespace EnjoysCMS\Module\Admin\Controller;
 
 
 use Doctrine\ORM\EntityManager;
-use EnjoysCMS\Core\Components\Auth\Identity;
-use EnjoysCMS\Core\Components\Widgets\WidgetsTwigExtension;
+use EnjoysCMS\Core\Auth\Identity;
+use EnjoysCMS\Core\Widgets\WidgetsTwigExtension;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use Psr\Http\Message\ResponseInterface;

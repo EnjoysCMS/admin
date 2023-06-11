@@ -7,7 +7,7 @@ namespace EnjoysCMS\Module\Admin\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
-use EnjoysCMS\Core\Components\Widgets\AbstractWidgets;
+use EnjoysCMS\Core\Widgets\AbstractWidgets;
 use EnjoysCMS\Core\Entities\User;
 use Symfony\Component\Yaml\Yaml;
 

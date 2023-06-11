@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Block;
-use EnjoysCMS\Core\Components\AccessControl\ACL;
+use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;

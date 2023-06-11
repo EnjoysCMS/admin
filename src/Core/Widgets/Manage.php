@@ -7,7 +7,7 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
-use EnjoysCMS\Core\Components\Auth\Identity;
+use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerInterface;
