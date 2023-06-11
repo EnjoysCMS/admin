@@ -4,18 +4,35 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Widgets\WidgetsTwigExtension;
 use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Widgets\Widgets;
 use EnjoysCMS\Module\Admin\AdminBaseController;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\TwigFunction;
 
 class Dashboard extends AdminBaseController
 {
 
+    /**
+     * @throws SyntaxError
+     * @throws NotFoundException
+     * @throws NotSupported
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws DependencyException
+     * @throws Exception
+     */
     #[Route(
         path: '/admin',
         name: 'admin/index',
@@ -23,9 +40,16 @@ class Dashboard extends AdminBaseController
             'comment' => 'Доступ к главной странице в админке (dashboard)'
         ]
     )]
-    public function dashboard(UrlGeneratorInterface $urlGenerator, Identity $identity): ResponseInterface
-    {
-        $this->twig->addExtension($this->container->get(WidgetsTwigExtension::class));
+    public function dashboard(
+        UrlGeneratorInterface $urlGenerator,
+        Identity $identity,
+        Widgets $widgets
+    ): ResponseInterface {
+        $this->twig->addFunction(
+            new TwigFunction('ViewWidget', function (int $id) use ($widgets): ?string {
+                return $widgets->getWidget($id);
+            }, ['is_safe' => ['html']])
+        );
 
         return $this->response(
             $this->twig->render(
