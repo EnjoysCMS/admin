@@ -74,6 +74,7 @@ class Edit implements ModelInterface
         $this->renderer->setForm($form);
 
         $this->breadcrumbCollection
+            ->remove('system/index')
             ->add('admin/index', 'Главная')
             ->add('admin/groups', 'Список групп пользователей')
             ->addBreadcrumbWithoutUrl(sprintf('Редактирование группы `%s`', $this->group->getName()))
