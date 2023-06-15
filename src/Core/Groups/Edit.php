@@ -74,8 +74,8 @@ class Edit implements ModelInterface
         $this->renderer->setForm($form);
 
         $this->breadcrumbCollection
-            ->addRoute('admin/index', 'Главная')
-            ->addRoute('admin/groups', 'Список групп пользователей')
+            ->add('admin/index', 'Главная')
+            ->add('admin/groups', 'Список групп пользователей')
             ->addBreadcrumbWithoutUrl(sprintf('Редактирование группы `%s`', $this->group->getName()))
         ;
 //        dd($this->breadcrumbCollection->get());
