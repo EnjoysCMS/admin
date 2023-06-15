@@ -14,6 +14,8 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
+use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollectionInterface;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
@@ -43,6 +45,7 @@ class Edit implements ModelInterface
         private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
         private readonly Setting $setting,
+        private readonly BreadcrumbCollection $breadcrumbCollection,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -70,14 +73,16 @@ class Edit implements ModelInterface
 
         $this->renderer->setForm($form);
 
+        $this->breadcrumbCollection
+            ->addRoute('admin/index', 'Главная')
+            ->addRoute('admin/groups', 'Список групп пользователей')
+            ->addBreadcrumbWithoutUrl(sprintf('Редактирование группы `%s`', $this->group->getName()))
+        ;
+//        dd($this->breadcrumbCollection->get());
         return [
             'form' => $this->renderer,
             '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/groups') => 'Список групп пользователей',
-                sprintf('Редактирование группы `%s`', $this->group->getName()),
-            ],
+            'breadcrumbs' => $this->breadcrumbCollection->getKeyValueArray(),
         ];
     }
 

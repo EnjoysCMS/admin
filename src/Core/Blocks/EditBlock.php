@@ -23,8 +23,8 @@ use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
 use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
@@ -83,6 +83,7 @@ class EditBlock implements ModelInterface
             $this->redirect->toRoute('admin/blocks', emit: true);
         }
         $this->renderer->setForm($form);
+
 
 
         return [
