@@ -38,14 +38,13 @@ class Edit implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private readonly EntityManager $entityManager,
+        private readonly EntityManager          $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
-        private readonly ACList $ACList,
-        private readonly Setting $setting,
-        private readonly BreadcrumbCollection $breadcrumbCollection,
+        private readonly RendererInterface      $renderer,
+        private readonly RedirectInterface      $redirect,
+        private readonly ACList                 $ACList,
+        private readonly Setting                $setting,
+        private readonly BreadcrumbCollection   $breadcrumbs,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -73,16 +72,16 @@ class Edit implements ModelInterface
 
         $this->renderer->setForm($form);
 
-        $this->breadcrumbCollection
-            ->setLastBreadcrumb(sprintf('Редактирование группы `%s`', $this->group->getName()))
-            //->remove('system/index')
+        $this->breadcrumbs
+            ->setLastBreadcrumb(sprintf('Редактирование группы "%s"', $this->group->getName()))
+            ->remove('system/index')
             ->add('admin/index', 'Главная')
             ->add('admin/groups', 'Список групп пользователей')
         ;
         return [
             'form' => $this->renderer,
             '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => $this->breadcrumbCollection,
+            'breadcrumbs' => $this->breadcrumbs,
         ];
     }
 
