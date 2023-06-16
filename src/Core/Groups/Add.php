@@ -19,7 +19,6 @@ use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
 {
@@ -32,7 +31,6 @@ class Add implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
@@ -58,17 +56,15 @@ class Add implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            '_title' => 'Добавление группы | Группы | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/groups') => 'Список групп пользователей',
-                'Добавить новую группу'
-            ],
+            '_title' => 'Добавление группы | Группы | Admin | ' . $this->setting->get('sitename')
         ];
     }
 
     /**
      * @throws ExceptionRule
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function getForm(): Form
     {
@@ -91,14 +87,14 @@ class Add implements ModelInterface
         unset($queryString['by']);
 
         $urlModify = $this->request->getUri()->withQuery(
-            (empty($queryStrings)) ? "t=" . time() : $queryStrings
+            (empty($queryStrings)) ? sprintf('t=%d', time()) : $queryStrings
         );
 
         $form->select('by', 'Заполнить права доступа по...')
             ->setDescription('')
             ->fill(
                 [''] + $this->groupsRepository->getListGroupsForSelectForm()
-            )->setAttribute(AttributeFactory::create('onchange', "location.href='{$urlModify}&by=' + this.value;"));
+            )->setAttribute(AttributeFactory::create('onchange', "location.href='$urlModify&by=' + this.value;"));
 
         $form->header('Информация о группе');
 
@@ -138,8 +134,8 @@ class Add implements ModelInterface
         );
 
         $group = new Group();
-        $group->setName($this->request->getParsedBody()['name'] ?? null);
-        $group->setDescription($this->request->getParsedBody()['description'] ?? null);
+        $group->setName($this->request->getParsedBody()['name'] ?? '');
+        $group->setDescription($this->request->getParsedBody()['description'] ?? '');
         $group->setStatus(1);
         $group->setSystem(false);
         foreach ($acls as $acl) {

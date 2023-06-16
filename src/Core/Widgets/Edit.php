@@ -7,25 +7,30 @@ namespace EnjoysCMS\Module\Admin\Core\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class Edit implements ModelInterface
 {
 
     private Widget $widget;
 
+    /**
+     * @throws NotSupported
+     * @throws NoResultException
+     */
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly RendererInterface $renderer,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RedirectInterface $redirect,
     ) {
         $widget = $this->em->getRepository(Widget::class)->find($this->request->getAttribute('id'));
@@ -35,6 +40,10 @@ final class Edit implements ModelInterface
         $this->widget = $widget;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -46,11 +55,6 @@ final class Edit implements ModelInterface
         return [
             'form' => $this->renderer->output(),
             'widget' => $this->widget,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/managewidgets') => 'Менеджер виджетов',
-                'Редактирование виджета',
-            ],
         ];
     }
 
@@ -75,20 +79,17 @@ final class Edit implements ModelInterface
                 case 'radio':
                     $form->radio($key, $value['title'] ?? ucfirst($key))
                         ->setDescription($value['description'] ?? '')
-                        ->fill($value['data'] ?? [], true)
-                    ;
+                        ->fill($value['data'] ?? [], true);
                     break;
                 case 'select':
                     $form->select($key, $value['title'] ?? ucfirst($key))
                         ->setDescription($value['description'] ?? '')
-                        ->fill($value['data'] ?? [], true)
-                    ;
+                        ->fill($value['data'] ?? [], true);
                     break;
                 case 'text':
                 default:
                     $form->text($key, $value['title'] ?? ucfirst($key))
-                        ->setDescription($value['description'] ?? '')
-                    ;
+                        ->setDescription($value['description'] ?? '');
                     break;
             }
         }
@@ -96,7 +97,11 @@ final class Edit implements ModelInterface
         return $form;
     }
 
-    private function doAction()
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    private function doAction(): void
     {
         $result = [];
         foreach ($this->request->getParsedBody() as $key => $value) {
@@ -108,6 +113,5 @@ final class Edit implements ModelInterface
 
         $this->widget->setOptions(array_merge_recursive_distinct($this->widget->getOptions(), $result));
         $this->em->flush();
-
     }
 }

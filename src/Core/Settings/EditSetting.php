@@ -19,7 +19,6 @@ use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class EditSetting implements ModelInterface
 {
@@ -33,7 +32,6 @@ final class EditSetting implements ModelInterface
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly \EnjoysCMS\Core\Setting\Setting $setting
@@ -69,11 +67,6 @@ final class EditSetting implements ModelInterface
         return [
             'form' => $this->renderer,
             '_title' => 'Изменение настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/setting') => 'Глобальные параметры сайта',
-                sprintf('Редактирование параметра `%s`', $this->settingEntity->getName()),
-            ],
         ];
     }
 
@@ -141,5 +134,11 @@ final class EditSetting implements ModelInterface
         $this->settingEntity->setDescription($this->request->getParsedBody()['description'] ?? null);
 
         $this->entityManager->flush();
+    }
+
+
+    public function getSettingEntity(): \EnjoysCMS\Core\Setting\Entity\Setting
+    {
+        return $this->settingEntity;
     }
 }

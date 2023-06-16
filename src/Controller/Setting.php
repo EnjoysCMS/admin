@@ -33,6 +33,8 @@ class Setting extends AdminBaseController
     )]
     public function setting(\EnjoysCMS\Module\Admin\Core\Settings\Setting $setting): ResponseInterface
     {
+        $this->breadcrumbs->setLastBreadcrumb('Глобальные настройки сайта');
+
         return $this->response(
             $this->twig->render(
                 '@a/setting/setting.twig',
@@ -51,6 +53,8 @@ class Setting extends AdminBaseController
     )]
     public function addSetting(AddSetting $addSetting): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/setting', 'Глобальные параметры сайта')
+            ->setLastBreadcrumb('Добавление нового глобального параметра');
         return $this->response(
             $this->twig->render(
                 '@a/setting/add.twig',
@@ -74,6 +78,8 @@ class Setting extends AdminBaseController
     )]
     public function editSetting(EditSetting $editSetting): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/setting', 'Глобальные параметры сайта')
+            ->setLastBreadcrumb(sprintf('Редактирование параметра `%s`', $editSetting->getSettingEntity()->getName()));
         return $this->response(
             $this->twig->render(
                 '@a/setting/add.twig',

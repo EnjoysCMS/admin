@@ -7,7 +7,9 @@ namespace EnjoysCMS\Module\Admin\Core\Groups;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
@@ -16,7 +18,6 @@ use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
 {
@@ -31,7 +32,6 @@ class Delete implements ModelInterface
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly Setting $setting,
@@ -61,6 +61,11 @@ class Delete implements ModelInterface
         return $group;
     }
 
+    /**
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -73,15 +78,14 @@ class Delete implements ModelInterface
         return [
             'form' => $this->renderer,
             'group' => $this->group,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/users') => 'Группы пользователей',
-                'Удаление группы',
-            ],
             '_title' => 'Удаление группы | Группы | Admin | ' . $this->setting->get('sitename')
         ];
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
         $this->entityManager->remove($this->group);
@@ -95,4 +99,5 @@ class Delete implements ModelInterface
         $form->submit('confirm-delete', 'Удалить')->addClass('btn-danger');
         return $form;
     }
+
 }

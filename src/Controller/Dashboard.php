@@ -15,7 +15,6 @@ use EnjoysCMS\Module\Admin\AdminBaseController;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -41,7 +40,6 @@ class Dashboard extends AdminBaseController
         ]
     )]
     public function dashboard(
-        UrlGeneratorInterface $urlGenerator,
         Identity $identity,
         Widgets $widgets
     ): ResponseInterface {
@@ -51,15 +49,13 @@ class Dashboard extends AdminBaseController
             }, ['is_safe' => ['html']])
         );
 
+        $this->breadcrumbs->setLastBreadcrumb('Dashboard');
+
         return $this->response(
             $this->twig->render(
                 '@a/dashboard/dashboard.twig',
                 [
                     '_title' => 'Dashboard | Admin | ' . $this->setting->get('sitename'),
-                    'breadcrumbs' => [
-                        $urlGenerator->generate('admin/index') => 'Главная',
-                        'Dashboard',
-                    ],
                     'widgets' => $this->container->get(EntityManager::class)->getRepository(
                         Widget::class
                     )->getSortWidgets($identity->getUser())

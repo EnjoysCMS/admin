@@ -14,8 +14,6 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
-use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollectionInterface;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
@@ -23,10 +21,7 @@ use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
 {
@@ -38,13 +33,12 @@ class Edit implements ModelInterface
      * @throws NotSupported
      */
     public function __construct(
-        private readonly EntityManager          $entityManager,
+        private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface      $renderer,
-        private readonly RedirectInterface      $redirect,
-        private readonly ACList                 $ACList,
-        private readonly Setting                $setting,
-        private readonly BreadcrumbCollection   $breadcrumbs,
+        private readonly RendererInterface $renderer,
+        private readonly RedirectInterface $redirect,
+        private readonly ACList $ACList,
+        private readonly Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -55,11 +49,10 @@ class Edit implements ModelInterface
 
 
     /**
-     * @throws OptimisticLockException
-     * @throws NotFoundExceptionInterface
-     * @throws ORMException
-     * @throws ContainerExceptionInterface
+     * @throws ExceptionRule
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function getContext(): array
     {
@@ -72,16 +65,10 @@ class Edit implements ModelInterface
 
         $this->renderer->setForm($form);
 
-        $this->breadcrumbs
-            ->setLastBreadcrumb(sprintf('Редактирование группы "%s"', $this->group->getName()))
-            ->remove('system/index')
-            ->add('admin/index', 'Главная')
-            ->add('admin/groups', 'Список групп пользователей')
-        ;
+
         return [
             'form' => $this->renderer,
-            '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => $this->breadcrumbs,
+            '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename')
         ];
     }
 
@@ -101,7 +88,7 @@ class Edit implements ModelInterface
                 'name' => $this->group->getName(),
                 'description' => $this->group->getDescription(),
                 'acl' => array_map(
-                    function ($o) {
+                    function (ACL $o): int {
                         return $o->getId();
                     },
                     $this->group->getAcl()->toArray()
@@ -166,8 +153,8 @@ class Edit implements ModelInterface
         );
 
 
-        $this->group->setName($this->request->getParsedBody()['name'] ?? null);
-        $this->group->setDescription($this->request->getParsedBody()['description'] ?? null);
+        $this->group->setName($this->request->getParsedBody()['name'] ?? '');
+        $this->group->setDescription($this->request->getParsedBody()['description'] ?? '');
 
         $this->group->removeAcl();
 
@@ -176,6 +163,11 @@ class Edit implements ModelInterface
         }
 
         $this->entityManager->flush();
+    }
+
+    public function getGroup(): Group
+    {
+        return $this->group;
     }
 
 

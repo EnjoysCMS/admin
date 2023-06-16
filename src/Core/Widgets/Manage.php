@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace EnjoysCMS\Module\Admin\Core\Widgets;
-
 
 use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
@@ -10,8 +10,10 @@ use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
+use Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class Manage implements ModelInterface
 {
@@ -25,6 +27,11 @@ class Manage implements ModelInterface
         $this->container = $container;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
+     */
     public function getContext(): array
     {
         $installedWidgets = array_map(
@@ -51,10 +58,6 @@ class Manage implements ModelInterface
         return [
             'allowedWidgets' => $allWidgets->getConfig(),
             'installedWidgets' => $installedWidgets,
-            'breadcrumbs' => [
-                $this->container->get(UrlGeneratorInterface::class)->generate('admin/index') => 'Главная',
-                'Менеджер виджетов',
-            ],
         ];
     }
 }

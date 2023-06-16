@@ -9,13 +9,15 @@ namespace EnjoysCMS\Module\Admin\Core\Settings;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class AddSetting implements ModelInterface
 {
@@ -27,7 +29,6 @@ final class AddSetting implements ModelInterface
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly \EnjoysCMS\Core\Setting\Setting $setting,
@@ -35,6 +36,12 @@ final class AddSetting implements ModelInterface
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
+     * @throws ORMException
+     * @throws NotSupported
+     */
     public function getContext(): array
     {
         $form = $this->getForm();
@@ -46,14 +53,12 @@ final class AddSetting implements ModelInterface
         return [
             'form' => $this->renderer,
             '_title' => 'Добавление настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/setting') => 'Глобальные параметры сайта',
-                'Добавление нового глобального параметра'
-            ],
         ];
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form();
@@ -87,6 +92,10 @@ final class AddSetting implements ModelInterface
         return $form;
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     private function doAction(): void
     {
         $setting = new \EnjoysCMS\Core\Setting\Entity\Setting();

@@ -8,12 +8,10 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use EnjoysCMS\Core\Block;
 use EnjoysCMS\Core\AccessControl\ACL;
+use EnjoysCMS\Core\Block;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
@@ -42,16 +40,16 @@ class ActivateBlock
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws NotFoundExceptionInterface
      * @throws ORMException
-     * @throws ContainerExceptionInterface
+     * @throws OptimisticLockException
      */
     public function __invoke(): ResponseInterface
     {
         $id = Uuid::uuid4()->toString();
 
-        $blockAnnotation = $this->blockCollection->getBlockAnnotation($this->class) ?? throw new InvalidArgumentException(
+        $blockAnnotation = $this->blockCollection->getBlockAnnotation(
+            $this->class
+        ) ?? throw new InvalidArgumentException(
             sprintf('Class "%s" not supported', $this->class->getName())
         );
 

@@ -12,7 +12,6 @@ use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class GroupsList implements ModelInterface
 {
@@ -25,7 +24,6 @@ final class GroupsList implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly Setting $setting,
-        private readonly UrlGeneratorInterface $urlGenerator
     ) {
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
@@ -39,10 +37,6 @@ final class GroupsList implements ModelInterface
         return [
             'groups' => $this->groupsRepository->findAll(),
             '_title' => 'Группы | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                'Список групп пользователей',
-            ],
         ];
     }
 }

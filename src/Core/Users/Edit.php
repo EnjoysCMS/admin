@@ -7,9 +7,9 @@ namespace EnjoysCMS\Module\Admin\Core\Users;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
@@ -21,7 +21,6 @@ use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Edit implements ModelInterface
 {
@@ -38,7 +37,6 @@ class Edit implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly Setting $setting,
@@ -89,17 +87,13 @@ class Edit implements ModelInterface
             'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/users') => 'Список пользователей',
-                'Редактирование пользователя',
-            ],
             '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
 
     /**
      * @throws ExceptionRule
+     * @throws NotSupported
      */
     private function getForm(): Form
     {
@@ -171,6 +165,9 @@ class Edit implements ModelInterface
         return $form;
     }
 
+    /**
+     * @throws NotSupported
+     */
     private function getGroupsArray(): array
     {
         $groupsArray = [];
@@ -182,6 +179,7 @@ class Edit implements ModelInterface
     }
 
     /**
+     * @throws NotSupported
      * @throws OptimisticLockException
      * @throws ORMException
      */

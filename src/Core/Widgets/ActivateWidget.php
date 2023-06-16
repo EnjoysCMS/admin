@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace EnjoysCMS\Module\Admin\Core\Widgets;
-
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
@@ -11,6 +11,7 @@ use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Entities\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use Exception;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -43,6 +44,7 @@ class ActivateWidget
      * @throws OptimisticLockException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws Exception
      */
     public function __invoke(): ResponseInterface
     {

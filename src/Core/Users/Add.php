@@ -18,17 +18,13 @@ use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Add implements ModelInterface
 {
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly Setting $setting,
@@ -38,10 +34,9 @@ class Add implements ModelInterface
 
     /**
      * @throws ExceptionRule
+     * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getContext(): array
     {
@@ -56,11 +51,6 @@ class Add implements ModelInterface
 
         return [
             'form' => $this->renderer,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/users') => 'Список пользователей',
-                'Добавить нового пользователя'
-            ],
             '_title' => 'Добавление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
@@ -85,7 +75,6 @@ class Add implements ModelInterface
 
         $this->em->persist($newUser);
         $this->em->flush();
-
     }
 
     /**
@@ -122,8 +111,8 @@ class Add implements ModelInterface
         $form->checkbox('groups', 'Группа')
             ->addRule(Rules::REQUIRED)
             ->fill(
-            $this->em->getRepository(Group::class)->getGroupsArray()
-        );
+                $this->em->getRepository(Group::class)->getGroupsArray()
+            );
 
         $form->submit('sbmt1', 'Добавить');
 

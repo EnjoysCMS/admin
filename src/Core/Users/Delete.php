@@ -10,8 +10,8 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\Persistence\ObjectRepository;
 use Enjoys\Forms\AttributeFactory;
+use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
@@ -21,11 +21,8 @@ use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Delete implements ModelInterface
 {
@@ -40,7 +37,6 @@ class Delete implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly EventDispatcher $dispatcher,
         private readonly RedirectInterface $redirect,
@@ -72,10 +68,10 @@ class Delete implements ModelInterface
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws NotFoundExceptionInterface
+     * @throws NotSupported
      * @throws ORMException
-     * @throws ContainerExceptionInterface
+     * @throws OptimisticLockException
+     * @throws ExceptionRule
      */
     public function getContext(): array
     {
@@ -92,11 +88,6 @@ class Delete implements ModelInterface
             'form' => $this->renderer,
             'username' => $this->user->getLogin(),
             'user' => $this->user,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/users') => 'Список пользователей',
-                'Удаление пользователя',
-            ],
             '_title' => 'Удаление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
         ];
     }
@@ -112,6 +103,9 @@ class Delete implements ModelInterface
         $this->em->flush();
     }
 
+    /**
+     * @throws ExceptionRule
+     */
     private function getForm(): Form
     {
         $form = new Form();

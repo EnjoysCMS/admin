@@ -19,7 +19,6 @@ use EnjoysCMS\Core\Repositories\Locations;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BlockLocations implements ModelInterface
 {
@@ -32,7 +31,6 @@ class BlockLocations implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
     ) {
@@ -59,13 +57,7 @@ class BlockLocations implements ModelInterface
 
         return [
             'form' => $this->renderer,
-            'block' => $this->block,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
-                $this->urlGenerator->generate('admin/editblock', ['id' => $this->block->getId()]) => 'Редактирование блока',
-                sprintf('Настройка расположения блока `%s`', $this->block->getName())
-            ],
+            'block' => $this->getBlock(),
         ];
     }
 
@@ -100,5 +92,10 @@ class BlockLocations implements ModelInterface
         }
 
         $this->em->flush();
+    }
+
+    public function getBlock(): Block
+    {
+        return $this->block;
     }
 }

@@ -54,11 +54,7 @@ class Setting implements ModelInterface
         $this->renderer->setForm($form);
         return [
             'form' => $this->renderer,
-            '_title' => 'Настройки | Admin | ' . $this->setting->get('sitename'),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                'Глобальные настройки сайта',
-            ],
+            '_title' => 'Настройки | Admin | ' . $this->setting->get('sitename')
         ];
     }
 

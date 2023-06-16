@@ -49,6 +49,7 @@ class Blocks extends AdminBaseController
     )]
     public function manage(ManageBlocks $manageBlocks): ResponseInterface
     {
+        $this->breadcrumbs->setLastBreadcrumb('Менеджер блоков');
         return $this->response(
             $this->twig->render(
                 '@a/blocks/manage.twig',
@@ -59,10 +60,8 @@ class Blocks extends AdminBaseController
 
 
     /**
-     * @throws OptimisticLockException
-     * @throws NotFoundExceptionInterface
      * @throws ORMException
-     * @throws ContainerExceptionInterface
+     * @throws OptimisticLockException
      */
     #[Route(
         path: '/admin/blocks/activate',
@@ -126,10 +125,13 @@ class Blocks extends AdminBaseController
 
     /**
      * @throws DependencyException
+     * @throws ExceptionRule
+     * @throws LoaderError
      * @throws NotFoundException
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws ExceptionRule
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route(
         path: '/admin/blocks/edit/{id}',
@@ -143,6 +145,8 @@ class Blocks extends AdminBaseController
     )]
     public function edit(EditBlock $editBlock): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+            ->setLastBreadcrumb(sprintf('Редактирование блока "%s"', $editBlock->getBlock()->getName()));
         return $this->response(
             $this->twig->render(
                 '@a/blocks/edit.twig',
@@ -155,11 +159,14 @@ class Blocks extends AdminBaseController
      * @throws ContainerExceptionInterface
      * @throws DependencyException
      * @throws ExceptionRule
+     * @throws LoaderError
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
+     * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws NotSupported
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route(
         path: '/admin/blocks/add',
@@ -170,6 +177,8 @@ class Blocks extends AdminBaseController
     )]
     public function add(AddBlocks $addBlocks): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+            ->setLastBreadcrumb('Добавление блока (пользовательский)');
         return $this->response(
             $this->twig->render(
                 '@a/blocks/add.twig',
@@ -179,9 +188,12 @@ class Blocks extends AdminBaseController
     }
 
     /**
+     * @throws LoaderError
      * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route(
         path: '/admin/blocks/locations/{id}',
@@ -195,6 +207,10 @@ class Blocks extends AdminBaseController
     )]
     public function location(BlockLocations $blockLocations): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+            ->add(['admin/editblock', ['id' => $blockLocations->getBlock()->getId()]], 'Редактирование блока')
+            ->setLastBreadcrumb(sprintf('Настройка расположения блока "%s"', $blockLocations->getBlock()->getName()));
+
         return $this->response(
             $this->twig->render(
                 '@a/blocks/locations.twig',
@@ -216,6 +232,8 @@ class Blocks extends AdminBaseController
     )]
     public function setUp(SetupBlocks $setupBlocks): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+            ->setLastBreadcrumb('Активация новых блоков');
         return $this->response(
             $this->twig->render(
                 '@a/blocks/setup.twig',

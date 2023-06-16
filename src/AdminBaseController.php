@@ -9,6 +9,7 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
+use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Exception;
@@ -33,6 +34,7 @@ abstract class AdminBaseController
         protected readonly Assets $assets,
         protected readonly Setting $setting,
         protected ResponseInterface $response,
+        protected BreadcrumbCollection $breadcrumbs,
     ) {
         $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
 
@@ -65,6 +67,11 @@ abstract class AdminBaseController
 //                __DIR__ . '/../node_modules/admin-lte/dist/js/demo.js',
                 __DIR__ . '/../template/assets/custom.js',
             ]
+        );
+
+        $this->twig->addGlobal('breadcrumbs', $this->breadcrumbs
+            ->remove('system/index')
+            ->add('admin/index', 'Главная')
         );
     }
 

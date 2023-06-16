@@ -18,10 +18,10 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
-use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Users\Entity\Group;
@@ -31,7 +31,6 @@ use InvalidArgumentException;
 use Invoker\Exception\NotCallableException;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EditBlock implements ModelInterface
 {
@@ -49,7 +48,6 @@ class EditBlock implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly ContentEditor $contentEditor,
         private readonly Container $container,
@@ -85,18 +83,12 @@ class EditBlock implements ModelInterface
         $this->renderer->setForm($form);
 
 
-
         return [
             'form' => $this->renderer,
-            'block' => $this->block,
+            'block' => $this->getBlock(),
             'contentEditor' => $this->contentEditor->withConfig(
                 $this->config->getContentEditorConfigParamForCustomBlocks()
             )->setSelector('#body')->getEmbedCode(),
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
-                sprintf('Редактирование блока `%s`', $this->block->getName())
-            ],
         ];
     }
 
@@ -315,5 +307,11 @@ class EditBlock implements ModelInterface
 
 
         $this->em->flush();
+    }
+
+
+    public function getBlock(): Block
+    {
+        return $this->block;
     }
 }

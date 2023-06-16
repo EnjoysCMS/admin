@@ -21,6 +21,10 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Widgets extends AdminBaseController
 {
@@ -50,7 +54,7 @@ class Widgets extends AdminBaseController
             }
             $em->remove($widget);
             $em->flush();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->jsonResponse(
                 $e->getMessage()
             )->withStatus(500);
@@ -89,6 +93,13 @@ class Widgets extends AdminBaseController
         return $redirect->toRoute('admin/index');
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws SyntaxError
+     * @throws ORMException
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route(
         path: '/admin/widgets/edit/{id}',
         name: 'admin/editwidget',
@@ -101,6 +112,8 @@ class Widgets extends AdminBaseController
     )]
     public function edit(Edit $edit): ResponseInterface
     {
+        $this->breadcrumbs->add('admin/managewidgets', 'Менеджер виджетов')
+            ->setLastBreadcrumb('Редактирование виджета');
         return $this->response(
             $this->twig->render(
                 '@a/widgets/edit.twig',
@@ -111,7 +124,10 @@ class Widgets extends AdminBaseController
 
     /**
      * @throws ContainerExceptionInterface
+     * @throws LoaderError
      * @throws NotFoundExceptionInterface
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route(
         path: '/admin/widgets/manage',
@@ -122,6 +138,8 @@ class Widgets extends AdminBaseController
     )]
     public function manage(Manage $manage): ResponseInterface
     {
+        $this->breadcrumbs
+            ->setLastBreadcrumb('Менеджер виджета');
         return $this->response(
             $this->twig->render(
                 '@a/widgets/manage.twig',
@@ -133,6 +151,8 @@ class Widgets extends AdminBaseController
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     #[Route(
         path: '/admin/widgets/activate',
@@ -185,7 +205,7 @@ class Widgets extends AdminBaseController
             return $this->jsonResponse(
                 'Расположение и размер виджетов успешно сохранены'
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->jsonResponse(
                 $e->getMessage()
             )->withStatus(500);

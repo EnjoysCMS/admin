@@ -16,20 +16,19 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
-use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Entities\Group;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AddBlocks implements ModelInterface
 {
@@ -42,7 +41,6 @@ class AddBlocks implements ModelInterface
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RendererInterface $renderer,
         private readonly ContentEditor $contentEditor,
         private readonly RedirectInterface $redirect,
@@ -75,11 +73,6 @@ class AddBlocks implements ModelInterface
                 $this->config->getContentEditorConfigParamForCustomBlocks()
             )->setSelector('#body')->getEmbedCode(),
             'form' => $this->renderer,
-            'breadcrumbs' => [
-                $this->urlGenerator->generate('admin/index') => 'Главная',
-                $this->urlGenerator->generate('admin/blocks') => 'Менеджер блоков',
-                'Добавление блока (пользовательский)'
-            ],
         ];
     }
 
@@ -137,11 +130,9 @@ class AddBlocks implements ModelInterface
 
 
     /**
-     * @throws NotFoundExceptionInterface
-     * @throws ORMException
-     * @throws ContainerExceptionInterface
-     * @throws OptimisticLockException
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function doAction(): void
     {

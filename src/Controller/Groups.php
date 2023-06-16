@@ -4,11 +4,17 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
+use Doctrine\ORM\Exception\NotSupported;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Groups\Add;
 use EnjoysCMS\Module\Admin\Core\Groups\Delete;
 use EnjoysCMS\Module\Admin\Core\Groups\Edit;
 use EnjoysCMS\Module\Admin\Core\Groups\GroupsList;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Error\LoaderError;
@@ -23,6 +29,7 @@ class Groups extends AdminBaseController
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws NotSupported
      */
     #[Route(
         path: '/admin/groups',
@@ -33,6 +40,9 @@ class Groups extends AdminBaseController
     )]
     public function list(GroupsList $groupsList): ResponseInterface
     {
+        $this->breadcrumbs
+            ->setLastBreadcrumb('Группы пользователей');
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/list.twig',
@@ -42,6 +52,16 @@ class Groups extends AdminBaseController
     }
 
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ORMException
+     * @throws ContainerExceptionInterface
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws OptimisticLockException
+     * @throws SyntaxError
+     * @throws NotSupported
+     */
     #[Route(
         path: '/admin/groups/edit/{id}',
         name: 'admin/editgroup',
@@ -54,6 +74,10 @@ class Groups extends AdminBaseController
     )]
     public function edit(Edit $edit): ResponseInterface
     {
+        $this->breadcrumbs
+            ->add('admin/groups', 'Группы пользователей')
+            ->setLastBreadcrumb(sprintf('Редактирование группы "%s"', $edit->getGroup()->getName()));
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/edit.twig',
@@ -62,15 +86,27 @@ class Groups extends AdminBaseController
         );
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws SyntaxError
+     * @throws ExceptionRule
+     * @throws ORMException
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     #[Route(
         path: '/admin/groups/add',
         name: 'admin/addgroup',
         options: [
-            'comment' => 'Добаление групп пользователей'
+            'comment' => 'Добавление групп пользователей'
         ]
     )]
     public function add(Add $add): ResponseInterface
     {
+        $this->breadcrumbs
+            ->add('admin/groups', 'Группы пользователей')
+            ->setLastBreadcrumb('Добавить новую группу');
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/add.twig',
@@ -79,6 +115,11 @@ class Groups extends AdminBaseController
         );
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     #[Route(
         path: '/admin/deletegroups@{id}',
         name: 'admin/deletegroup',
@@ -91,6 +132,10 @@ class Groups extends AdminBaseController
     )]
     public function delete(Delete $delete): ResponseInterface
     {
+        $this->breadcrumbs
+            ->add('admin/groups', 'Группы пользователей')
+            ->setLastBreadcrumb('Удаление группы');
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/delete.twig',
