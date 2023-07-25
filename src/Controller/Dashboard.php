@@ -9,8 +9,8 @@ use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Entities\Widget;
-use EnjoysCMS\Core\Widgets\Widgets;
+use EnjoysCMS\Core\Block\Entity\Widget;
+use EnjoysCMS\Core\Block\WidgetModel;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -41,11 +41,11 @@ class Dashboard extends AdminBaseController
     )]
     public function dashboard(
         Identity $identity,
-        Widgets $widgets
+        WidgetModel $widgetModel
     ): ResponseInterface {
         $this->twig->addFunction(
-            new TwigFunction('ViewWidget', function (int $id) use ($widgets): ?string {
-                return $widgets->getWidget($id);
+            new TwigFunction('ViewWidget', function (int $id) use ($widgetModel): ?string {
+                return $widgetModel->view($id);
             }, ['is_safe' => ['html']])
         );
 

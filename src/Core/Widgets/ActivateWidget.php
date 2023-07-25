@@ -9,20 +9,19 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Block\Entity\Widget;
+use EnjoysCMS\Core\Block\WidgetCollection;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use Exception;
 use InvalidArgumentException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 
 class ActivateWidget
 {
 
 
-    private string $class;
+    private ReflectionClass $class;
 
 
     public function __construct(
@@ -30,29 +29,33 @@ class ActivateWidget
         private readonly ServerRequestInterface $request,
         private readonly Identity $identity,
         private readonly RedirectInterface $redirect,
+        private readonly WidgetCollection $widgetCollection,
         private readonly ACL $ACL,
     ) {
         $class = $this->request->getQueryParams()['class'] ?? null;
         if (!class_exists($class)) {
             throw new InvalidArgumentException(sprintf('Class not found: %s', $class));
         }
-        $this->class = $class;
+        $this->class = new ReflectionClass($class);
     }
 
     /**
+     * @return ResponseInterface
      * @throws ORMException
      * @throws OptimisticLockException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws Exception
      */
     public function __invoke(): ResponseInterface
     {
-        $data = $this->class::getMeta();
+        $widgetAnnotation = $this->widgetCollection->getAnnotation(
+            $this->class
+        ) ?? throw new InvalidArgumentException(
+            sprintf('Class "%s" not supported', $this->class->getName())
+        );
+
         $widget = new Widget();
-        $widget->setName($data['name']);
-        $widget->setClass($this->class);
-        $widget->setOptions($data['options'] ?? []);
+        $widget->setName($widgetAnnotation->getName());
+        $widget->setClass($widgetAnnotation->getClassName());
+        $widget->setOptions($widgetAnnotation->getOptions());
         $widget->setUser($this->identity->getUser());
 
         $this->em->persist($widget);

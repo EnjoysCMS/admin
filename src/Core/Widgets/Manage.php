@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Block\Collection;
+use EnjoysCMS\Core\Block\Entity\Widget;
+use EnjoysCMS\Core\Block\WidgetCollection;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
@@ -22,7 +24,7 @@ class Manage implements ModelInterface
      */
     private ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, private readonly WidgetCollection $widgetCollection)
     {
         $this->container = $container;
     }
@@ -54,9 +56,8 @@ class Manage implements ModelInterface
             $allWidgets->addConfig($config, [], YAML::class);
         }
 
-
         return [
-            'allowedWidgets' => $allWidgets->getConfig(),
+            'allowedWidgets' => $this->widgetCollection,
             'installedWidgets' => $installedWidgets,
         ];
     }

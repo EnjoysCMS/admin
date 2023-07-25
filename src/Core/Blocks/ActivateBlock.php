@@ -10,6 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block;
+use EnjoysCMS\Core\Block\BlockCollection;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -26,7 +27,7 @@ class ActivateBlock
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly RedirectInterface $redirect,
-        private readonly Block\Collection $blockCollection,
+        private readonly BlockCollection $blockCollection,
         private readonly ACL $ACL
     ) {
         /** @var class-string $class */
@@ -47,7 +48,7 @@ class ActivateBlock
     {
         $id = Uuid::uuid4()->toString();
 
-        $blockAnnotation = $this->blockCollection->getBlockAnnotation(
+        $blockAnnotation = $this->blockCollection->getAnnotation(
             $this->class
         ) ?? throw new InvalidArgumentException(
             sprintf('Class "%s" not supported', $this->class->getName())

@@ -59,13 +59,13 @@
                 {% for widget in widgets %}
 
                     <div class="grid-stack-item"
-                         gs-id={{ widget.getId }} {{ (widget.options.gs ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw }}>
+                         gs-id={{ widget.id }} {{ (widget.options.gs.value ?? {"h":5})|map((value, key) => "gs-#{key}=\"#{value}\"")|join(' ')|raw }}>
                         <div class="grid-stack-item-content" style="overflow-y: hidden">
-                            {{ ViewWidget(widget.getId) }}
+                            {{ ViewWidget(widget.id) }}
                             <div class="widget-toolbox">
-                                <a href="{{ url('admin/editwidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
-                                <a href="{{ url('admin/clonewidget', {"id": widget.getId}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-copy"></i></a>
-                                <span data-url="{{ url('admin/deletewidget', {"id": widget.getId}) }}"
+                                <a href="{{ url('admin/editwidget', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
+                                <a href="{{ url('admin/clonewidget', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-copy"></i></a>
+                                <span data-url="{{ url('admin/deletewidget', {"id": widget.id}) }}"
                                       class="delete-widget btn btn-link badge bg-dark p-2"><i
                                         class="fa fa-trash"></i></span>
                             </div>

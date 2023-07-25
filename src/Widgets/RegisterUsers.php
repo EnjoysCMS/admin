@@ -7,27 +7,58 @@ namespace EnjoysCMS\Module\Admin\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
+use EnjoysCMS\Core\Block\AbstractWidget;
+use EnjoysCMS\Core\Block\Annotation\Widget;
 use EnjoysCMS\Core\Users\Entity\User;
-use EnjoysCMS\Core\Widgets\AbstractWidgets;
-use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
 
-final class RegisterUsers extends AbstractWidgets
+#[Widget(
+    name: 'Зарегистрированные пользователи',
+    options: [
+        'title' => 'Зарегистрированные пользователи',
+        'background-gradient' => [
+            'value' => 'No',
+            'type' => 'type',
+            'data' => ["No", "Yes"]
+        ],
+        'background' => [
+            'value' => 'warning',
+            'type' => 'select',
+            'data' => [
+                'primary',
+                'secondary',
+                'success',
+                'danger',
+                'warning',
+                'info',
+                'light',
+                'dark',
+                'white',
+                'transparent'
+            ]
+        ],
+        'gs' => [
+            'min-h' => 9,
+            'max-h' => 11,
+            'min-w' => 2,
+            'max-w' => 5,
+            'h' => 9,
+            'w' => 2,
+        ]
+    ]
+)]
+final class RegisterUsers extends AbstractWidget
 {
-    public static function getWidgetDefinitionFile(): string
-    {
-        return __DIR__ . '/../../widgets.yml';
-    }
 
-    public static function getMeta(): array
+    public function __construct(private Environment $twig, private EntityManager $em)
     {
-        return Yaml::parseFile(static::getWidgetDefinitionFile())[static::class];
     }
 
     public function view(): string
     {
         return $this->twig->render('@a/widgets/template/register_users.twig', [
-            'widget' => $this->widget,
-            'countUsers' => count($this->getContainer()->get(EntityManager::class)->getRepository(User::class)->findAll())
+            'widget' => $this->getEntity(),
+            'countUsers' => count($this->em->getRepository(User::class)->findAll())
         ]);
     }
 }

@@ -10,7 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Entities\Widget;
+use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
@@ -197,7 +197,7 @@ class Widgets extends AdminBaseController
                     $options[$newKey($key)] = $option;
                 }
 
-                $widget->setOptions(array_merge($widget->getOptions(), ['gs' => $options]));
+                $widget->setOptions(array_merge($widget->getOptions()->toArray(), ['gs' => $options]));
             }
 
             $em->flush();
