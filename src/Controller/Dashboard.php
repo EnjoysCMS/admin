@@ -11,10 +11,10 @@ use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Block\WidgetModel;
+use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -32,12 +32,9 @@ class Dashboard extends AdminBaseController
      * @throws DependencyException
      * @throws Exception
      */
-    #[Route(
-        path: '/admin',
+    #[Route('/admin',
         name: 'admin/index',
-        options: [
-            'comment' => 'Доступ к главной странице в админке (dashboard)'
-        ]
+        comment: 'Доступ к главной странице в админке (dashboard)'
     )]
     public function dashboard(
         Identity $identity,

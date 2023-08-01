@@ -4,33 +4,37 @@
 namespace EnjoysCMS\Module\Admin\Controller;
 
 
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Enjoys\Forms\Exception\ExceptionRule;
+use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Settings\AddSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\DeleteSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\EditSetting;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
+#[Route('/admin/setting', name: 'admin/setting')]
 class Setting extends AdminBaseController
 {
-
 
     /**
      * @throws OptimisticLockException
      * @throws ORMException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/setting',
-        name: 'admin/setting',
-        options: [
-            'comment' => 'Настройки сайта'
-        ]
-    )]
+    #[Route('', '', comment: 'Настройки сайта')]
     public function setting(\EnjoysCMS\Module\Admin\Core\Settings\Setting $setting): ResponseInterface
     {
         $this->breadcrumbs->setLastBreadcrumb('Глобальные настройки сайта');
@@ -44,12 +48,9 @@ class Setting extends AdminBaseController
     }
 
 
-    #[Route(
-        path: '/admin/setting/add',
-        name: 'admin/setting/add',
-        options: [
-            'comment' => 'Добавление глобальной настройки'
-        ]
+    #[Route('/add',
+        name: '/add',
+        comment: 'Добавление глобальной настройки'
     )]
     public function addSetting(AddSetting $addSetting): ResponseInterface
     {
@@ -65,16 +66,18 @@ class Setting extends AdminBaseController
 
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws ExceptionRule
-     * @throws OptimisticLockException
+     * @throws LoaderError
+     * @throws NotFoundExceptionInterface
      * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/setting/edit',
-        name: 'admin/setting/edit',
-        options: [
-            'comment' => 'Изменение глобальной настройки'
-        ]
+    #[Route('/edit',
+        name: '/edit',
+        comment: 'Изменение глобальной настройки'
     )]
     public function editSetting(EditSetting $editSetting): ResponseInterface
     {
@@ -95,12 +98,9 @@ class Setting extends AdminBaseController
      * @throws NoResultException
      * @throws CannotRemoveEntity
      */
-    #[Route(
-        path: '/admin/setting/delete',
-        name: 'admin/setting/delete',
-        options: [
-            'comment' => 'Удаление глобальной настройки'
-        ]
+    #[Route('/delete',
+        name: '/delete',
+        comment: 'Удаление глобальной настройки'
     )]
     public function deleteSetting(DeleteSetting $deleteSetting): ResponseInterface
     {

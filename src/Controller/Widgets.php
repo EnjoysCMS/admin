@@ -12,6 +12,7 @@ use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
 use EnjoysCMS\Module\Admin\Core\Widgets\Edit;
@@ -20,25 +21,22 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+#[Route('/admin/widgets')]
 class Widgets extends AdminBaseController
 {
 
-    #[Route(
-        path: '/admin/widgets/delete/{id}',
+    #[Route('/delete/{id}',
         name: 'admin/deletewidget',
         requirements: [
             'id' => '\d+'
         ],
-        options: [
-            'aclComment' => 'Удаление виджетов'
-        ],
-        methods: ['post']
+        methods: ['post'],
+        comment: 'Удаление виджетов'
     )]
     public function delete(ServerRequestInterface $request, EntityManager $em, Identity $identity): ResponseInterface
     {
@@ -67,15 +65,12 @@ class Widgets extends AdminBaseController
      * @throws NoResultException
      * @throws ORMException
      */
-    #[Route(
-        path: '/admin/widgets/clone/{id}',
+    #[Route('/clone/{id}',
         name: 'admin/clonewidget',
         requirements: [
             'id' => '\d+'
         ],
-        options: [
-            'aclComment' => 'Клонирование виджетов'
-        ]
+        comment: 'Клонирование виджетов'
     )]
     public function clone(
         EntityManager $em,
@@ -100,15 +95,12 @@ class Widgets extends AdminBaseController
      * @throws RuntimeError
      * @throws LoaderError
      */
-    #[Route(
-        path: '/admin/widgets/edit/{id}',
+    #[Route('/edit/{id}',
         name: 'admin/editwidget',
         requirements: [
             'id' => '\d+'
         ],
-        options: [
-            'aclComment' => 'Редактирование виджетов'
-        ]
+        comment: 'Редактирование виджетов'
     )]
     public function edit(Edit $edit): ResponseInterface
     {
@@ -130,11 +122,9 @@ class Widgets extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route(
-        path: '/admin/widgets/manage',
+        path: '/manage',
         name: 'admin/managewidgets',
-        options: [
-            'aclComment' => 'Просмотр не активированных виджетов'
-        ]
+        comment: 'Просмотр не активированных виджетов'
     )]
     public function manage(Manage $manage): ResponseInterface
     {
@@ -154,25 +144,20 @@ class Widgets extends AdminBaseController
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    #[Route(
-        path: '/admin/widgets/activate',
+    #[Route('/activate',
         name: 'admin/acivatewidget',
-        options: [
-            'aclComment' => 'Установка (активация) виджетов'
-        ]
+        comment: 'Установка (активация) виджетов'
     )]
     public function activate(ActivateWidget $activateWidget): ResponseInterface
     {
         return $activateWidget();
     }
 
-    #[Route(
-        path: '/admin/widgets/save',
+    #[Route('/save',
         name: 'admin/save-widgets',
-        options: [
-            'comment' => '[ADMIN] Сохранение расположения виджетов'
-        ],
-        methods: ['post']
+
+        methods: ['post'],
+        comment: '[ADMIN] Сохранение расположения виджетов'
     )]
     public function save(ServerRequestInterface $request, EntityManager $em): ResponseInterface
     {

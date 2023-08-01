@@ -12,6 +12,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
+use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Blocks\ActivateBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\AddBlocks;
@@ -25,11 +26,11 @@ use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+#[Route('/admin/blocks')]
 class Blocks extends AdminBaseController
 {
 
@@ -40,12 +41,9 @@ class Blocks extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/blocks/setting',
+    #[Route('/setting',
         name: 'admin/blocks',
-        options: [
-            'comment' => 'Просмотр активных блоков'
-        ]
+        comment: 'Просмотр активных блоков'
     )]
     public function manage(ManageBlocks $manageBlocks): ResponseInterface
     {
@@ -63,12 +61,9 @@ class Blocks extends AdminBaseController
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    #[Route(
-        path: '/admin/blocks/activate',
+    #[Route('/activate',
         name: 'admin/acivateblocks',
-        options: [
-            'comment' => 'Установка (активация) блоков'
-        ]
+        comment: 'Установка (активация) блоков'
     )]
     public function activate(ActivateBlock $activateBlock): ResponseInterface
     {
@@ -82,15 +77,12 @@ class Blocks extends AdminBaseController
      * @throws NotSupported
      * @throws NoResultException
      */
-    #[Route(
-        path: '/admin/blocks/delete/{id}',
+    #[Route('/delete/{id}',
         name: 'admin/deleteblocks',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
-        options: [
-            'comment' => 'Удаление блоков'
-        ]
+        comment: 'Удаление блоков'
     )]
     public function delete(DeleteBlock $deleteBlock): ResponseInterface
     {
@@ -108,15 +100,12 @@ class Blocks extends AdminBaseController
      * @throws NotSupported
      * @throws NoResultException
      */
-    #[Route(
-        path: '/admin/blocks/clone/{id}',
+    #[Route('/clone/{id}',
         name: 'admin/cloneblocks',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
-        options: [
-            'comment' => 'Клонирование блоков'
-        ]
+        comment: 'Клонирование блоков'
     )]
     public function clone(CloneBlock $cloneBlock): ResponseInterface
     {
@@ -133,15 +122,12 @@ class Blocks extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/blocks/edit/{id}',
+    #[Route('/edit/{id}',
         name: 'admin/editblock',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
-        options: [
-            'comment' => 'Редактирование блоков'
-        ]
+        comment: 'Редактирование блоков'
     )]
     public function edit(EditBlock $editBlock): ResponseInterface
     {
@@ -168,12 +154,9 @@ class Blocks extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/blocks/add',
+    #[Route('/add',
         name: 'admin/addblock',
-        options: [
-            'comment' => 'Добавление пользовательского блока (простой текстовый блок)'
-        ]
+        comment: 'Добавление пользовательского блока (простой текстовый блок)'
     )]
     public function add(AddBlocks $addBlocks): ResponseInterface
     {
@@ -195,15 +178,12 @@ class Blocks extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/blocks/locations/{id}',
+    #[Route('/locations/{id}',
         name: 'admin/blocklocation',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
-        options: [
-            'comment' => 'Установка расположения блоков'
-        ]
+        comment: 'Установка расположения блоков'
     )]
     public function location(BlockLocations $blockLocations): ResponseInterface
     {
@@ -223,12 +203,9 @@ class Blocks extends AdminBaseController
     /**
      * @throws Exception
      */
-    #[Route(
-        path: '/admin/blocks/setup',
+    #[Route('/setup',
         name: 'admin/setupblocks',
-        options: [
-            'comment' => 'Просмотре не активированных блоков'
-        ]
+        comment: 'Просмотре не активированных блоков'
     )]
     public function setUp(SetupBlocks $setupBlocks): ResponseInterface
     {

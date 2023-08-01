@@ -8,20 +8,19 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
+use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminBaseController;
 use EnjoysCMS\Module\Admin\Core\Groups\Add;
 use EnjoysCMS\Module\Admin\Core\Groups\Delete;
 use EnjoysCMS\Module\Admin\Core\Groups\Edit;
 use EnjoysCMS\Module\Admin\Core\Groups\GroupsList;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 
+#[Route('/admin/groups')]
 class Groups extends AdminBaseController
 {
 
@@ -31,12 +30,9 @@ class Groups extends AdminBaseController
      * @throws LoaderError
      * @throws NotSupported
      */
-    #[Route(
-        path: '/admin/groups',
+    #[Route(null,
         name: 'admin/groups',
-        options: [
-            'comment' => 'Доступ к просмотру списка групп'
-        ]
+        comment: 'Доступ к просмотру списка групп'
     )]
     public function list(GroupsList $groupsList): ResponseInterface
     {
@@ -53,24 +49,20 @@ class Groups extends AdminBaseController
 
 
     /**
-     * @throws NotFoundExceptionInterface
-     * @throws ORMException
-     * @throws ContainerExceptionInterface
-     * @throws RuntimeError
+     * @throws ExceptionRule
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    #[Route(
-        path: '/admin/groups/edit/{id}',
+    #[Route('/edit/{id}',
         name: 'admin/editgroup',
         requirements: [
             'id' => '\d+'
         ],
-        options: [
-            'comment' => 'Редактирование групп пользователей'
-        ]
+        comment: 'Редактирование групп пользователей'
     )]
     public function edit(Edit $edit): ResponseInterface
     {
@@ -94,12 +86,9 @@ class Groups extends AdminBaseController
      * @throws RuntimeError
      * @throws LoaderError
      */
-    #[Route(
-        path: '/admin/groups/add',
+    #[Route('/add',
         name: 'admin/addgroup',
-        options: [
-            'comment' => 'Добавление групп пользователей'
-        ]
+        comment: 'Добавление групп пользователей'
     )]
     public function add(Add $add): ResponseInterface
     {
@@ -116,19 +105,19 @@ class Groups extends AdminBaseController
     }
 
     /**
+     * @throws LoaderError
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      * @throws RuntimeError
      * @throws SyntaxError
-     * @throws LoaderError
      */
-    #[Route(
-        path: '/admin/deletegroups@{id}',
+    #[Route('/delete@{id}',
         name: 'admin/deletegroup',
         requirements: [
             'id' => '\d+'
         ],
-        options: [
-            'comment' => 'Удаление групп пользователей'
-        ]
+        comment: 'Удаление групп пользователей'
     )]
     public function delete(Delete $delete): ResponseInterface
     {
