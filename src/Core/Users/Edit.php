@@ -78,7 +78,7 @@ class Edit implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->editUser();
-            $this->redirect->toRoute('admin/users');
+            $this->redirect->toRoute('@admin_users_list');
         }
 
         $this->renderer->setForm($form);

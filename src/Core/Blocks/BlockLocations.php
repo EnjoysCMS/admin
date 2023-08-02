@@ -51,7 +51,7 @@ class BlockLocations implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
-            $this->redirect->toRoute('admin/blocks', emit: true);
+            $this->redirect->toRoute('@admin_blocks_manage', emit: true);
         }
         $this->renderer->setForm($form);
 

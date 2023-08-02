@@ -43,8 +43,8 @@
                             <td>{{ user.getLogin }}</td>
                             <td>
                                 {% if user.isEditable %}
-                                    <a href="{{ path('admin/edituser', {'id': user.getId}) }}">Редактировать</a>
-                                    <a href="{{ path('admin/deleteuser', {'id': user.getId}) }}">Удалить</a>
+                                    <a href="{{ path('@admin_users_edit', {'id': user.getId}) }}">Редактировать</a>
+                                    <a href="{{ path('@admin_users_delete', {'id': user.getId}) }}">Удалить</a>
                                 {% endif %}
                             </td>
                         </tr>

@@ -69,6 +69,6 @@ final class CloneBlock
 
         $this->blockFactory->create($block->getClassName())->setEntity($block)->postClone($cloned);
 
-        return $this->redirect->toRoute('admin/blocks');
+        return $this->redirect->toRoute('@admin_blocks_manage');
     }
 }

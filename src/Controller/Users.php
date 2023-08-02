@@ -20,7 +20,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[Route('/admin/users')]
+#[Route('/admin/users', '@admin_users_')]
 class Users extends AdminBaseController
 {
 
@@ -31,7 +31,7 @@ class Users extends AdminBaseController
      * @throws LoaderError
      */
     #[Route('/list',
-        name: 'admin/users',
+        name: 'list',
         comment: 'Доступ к просмотру списка пользователей'
     )]
     public function list(UsersList $usersList): ResponseInterface
@@ -55,7 +55,7 @@ class Users extends AdminBaseController
      * @throws NotSupported
      */
     #[Route('/edit/@{id}',
-        name: 'admin/edituser',
+        name: 'edit',
         requirements: [
             'id' => '\d+'
         ],
@@ -63,7 +63,7 @@ class Users extends AdminBaseController
     )]
     public function edit(Edit $edit): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/users', 'Список пользователей')
+        $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Редактирование пользователя');
         return $this->response(
             $this->twig->render(
@@ -83,12 +83,12 @@ class Users extends AdminBaseController
      * @throws NotSupported
      */
     #[Route('/add',
-        name: 'admin/adduser',
+        name: 'add',
         comment: 'Добавление пользователей'
     )]
     public function add(Add $add): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/users', 'Список пользователей')
+        $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Добавить нового пользователя');
         return $this->response(
             $this->twig->render(
@@ -109,7 +109,7 @@ class Users extends AdminBaseController
      * @throws NotSupported
      */
     #[Route('/delete/{id}',
-        name: 'admin/deleteuser',
+        name: 'delete',
         requirements: [
             'id' => '\d+'
         ],
@@ -117,7 +117,7 @@ class Users extends AdminBaseController
     )]
     public function delete(Delete $delete): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/users', 'Список пользователей')
+        $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Удаление пользователя');
         return $this->response(
             $this->twig->render(
@@ -136,7 +136,7 @@ class Users extends AdminBaseController
      * @throws LoaderError
      */
     #[Route('/changepassword@{id}',
-        name: 'admin/user/changepassword',
+        name: 'changepassword',
         requirements: [
             'id' => '\d+'
         ],

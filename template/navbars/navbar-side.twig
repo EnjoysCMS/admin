@@ -37,9 +37,9 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                {% if access2route('admin/index') %}
+                {% if access2route('@admin_index') %}
                     <li class="nav-item">
-                        <a href="{{ path('admin/index') }}" class="nav-link">
+                        <a href="{{ path('@admin_index') }}" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Dashboard
@@ -48,9 +48,9 @@
                     </li>
                 {% endif %}
 
-                {% if access2route('admin/setting') %}
+                {% if access2route('@admin_setting_manage') %}
                     <li class="nav-item">
-                        <a href="{{ path('admin/setting') }}" class="nav-link text-warning">
+                        <a href="{{ path('@admin_setting_manage') }}" class="nav-link text-warning">
                             <i class="nav-icon fa fa-cogs"></i>
                             <p>
                                 Настройки
@@ -59,7 +59,7 @@
                     </li>
                 {% endif %}
 
-                {% if accessInRoutes(['admin/users', 'admin/adduser', 'admin/groups']) %}
+                {% if accessInRoutes(['@admin_users_list', '@admin_users_add', '@admin_groups_list']) %}
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-users-cog"></i>
@@ -70,27 +70,27 @@
                         </a>
                         <ul class="nav nav-treeview">
 
-                            {% if access2route('admin/users') %}
+                            {% if access2route('@admin_users_list') %}
                                 <li class="nav-item">
-                                    <a href="{{ path('admin/users') }}" class="nav-link">
+                                    <a href="{{ path('@admin_users_list') }}" class="nav-link">
                                         <i class="fas fa-user-friends nav-icon"></i>
                                         <p>Все пользователи</p>
                                     </a>
                                 </li>
                             {% endif %}
 
-                            {% if access2route('admin/adduser') %}
+                            {% if access2route('@admin_users_add') %}
                                 <li class="nav-item">
-                                    <a href="{{ path('admin/adduser') }}" class="nav-link">
+                                    <a href="{{ path('@admin_users_add') }}" class="nav-link">
                                         <i class="fas fa-user-plus nav-icon"></i>
                                         <p>Добавить пользователя</p>
                                     </a>
                                 </li>
                             {% endif %}
 
-                            {% if access2route('admin/groups') %}
+                            {% if access2route('@admin_groups_list') %}
                                 <li class="nav-item">
-                                    <a href="{{ path('admin/groups') }}" class="nav-link">
+                                    <a href="{{ path('@admin_groups_list') }}" class="nav-link">
                                         <i class="fas fa-users nav-icon"></i>
                                         <p>Группы</p>
                                     </a>
@@ -102,7 +102,7 @@
                 {% endif %}
 
 
-                {% if accessInRoutes(['admin/managewidgets', 'admin/editwidget']) %}
+                {% if accessInRoutes(['@admin_widgets_manage', '@admin_widgets_edit']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-window-maximize"></i>
@@ -112,9 +112,9 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {% if access2route('admin/managewidgets') %}
+                        {% if access2route('@admin_widgets_manage') %}
                             <li class="nav-item">
-                                <a href="{{ path('admin/managewidgets') }}" class="nav-link">
+                                <a href="{{ path('@admin_widgets_manage') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Менеджер виджетов</p>
                                 </a>

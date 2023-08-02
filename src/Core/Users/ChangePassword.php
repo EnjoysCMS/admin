@@ -76,7 +76,7 @@ class ChangePassword implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->updatePassword();
-            $this->redirect->toRoute('admin/users', emit: true);
+            $this->redirect->toRoute('@admin_users_list', emit: true);
         }
 
         $this->renderer->setForm($form);

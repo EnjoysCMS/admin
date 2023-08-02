@@ -50,12 +50,12 @@
                 <input type="checkbox" class="custom-control-input" id="allowEditGrid">
                 <label class="custom-control-label" for="allowEditGrid">Редактировать виджеты</label>
 
-                <a class="btn btn-link" href="{{ path('admin/managewidgets') }}"><i class="fa fa-plus"></i>
+                <a class="btn btn-link" href="{{ path('@admin_widgets_manage') }}"><i class="fa fa-plus"></i>
                     Добавить виджеты</a>
             </div>
 
 
-            <div class="grid-stack" id="gs" data-save-url="{{ path('admin/save-widgets') }}">
+            <div class="grid-stack" id="gs" data-save-url="{{ path('@admin_widgets_save') }}">
                 {% for widget in widgets %}
 
                     <div class="grid-stack-item"
@@ -63,9 +63,9 @@
                         <div class="grid-stack-item-content" style="overflow-y: hidden">
                             {{ ViewWidget(widget.id) }}
                             <div class="widget-toolbox">
-                                <a href="{{ url('admin/editwidget', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
-                                <a href="{{ url('admin/clonewidget', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-copy"></i></a>
-                                <span data-url="{{ url('admin/deletewidget', {"id": widget.id}) }}"
+                                <a href="{{ url('@admin_widgets_edit', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-edit"></i></a>
+                                <a href="{{ url('@admin_widgets_clone', {"id": widget.id}) }}" class="badge btn btn-link  bg-dark p-2"><i class="fa fa-copy"></i></a>
+                                <span data-url="{{ url('@admin_widgets_delete', {"id": widget.id}) }}"
                                       class="delete-widget btn btn-link badge bg-dark p-2"><i
                                         class="fa fa-trash"></i></span>
                             </div>
@@ -74,7 +74,7 @@
                 {% else %}
                     <div>
                         Виджеты не добавлены, доступные виджеты можно посмотреть и установить в <a
-                            href="{{ path('admin/managewidgets') }}">этом разделе</a>
+                            href="{{ path('@admin_widgets_manage') }}">этом разделе</a>
                     </div>
                 {% endfor %}
             </div>

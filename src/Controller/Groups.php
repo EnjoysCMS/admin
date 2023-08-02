@@ -20,7 +20,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 
-#[Route('/admin/groups')]
+#[Route('/admin/groups', '@admin_groups_')]
 class Groups extends AdminBaseController
 {
 
@@ -30,8 +30,8 @@ class Groups extends AdminBaseController
      * @throws LoaderError
      * @throws NotSupported
      */
-    #[Route(null,
-        name: 'admin/groups',
+    #[Route(
+        name: 'list',
         comment: 'Доступ к просмотру списка групп'
     )]
     public function list(GroupsList $groupsList): ResponseInterface
@@ -58,7 +58,7 @@ class Groups extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/edit/{id}',
-        name: 'admin/editgroup',
+        name: 'edit',
         requirements: [
             'id' => '\d+'
         ],
@@ -67,7 +67,7 @@ class Groups extends AdminBaseController
     public function edit(Edit $edit): ResponseInterface
     {
         $this->breadcrumbs
-            ->add('admin/groups', 'Группы пользователей')
+            ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb(sprintf('Редактирование группы "%s"', $edit->getGroup()->getName()));
 
         return $this->response(
@@ -87,13 +87,13 @@ class Groups extends AdminBaseController
      * @throws LoaderError
      */
     #[Route('/add',
-        name: 'admin/addgroup',
+        name: 'add',
         comment: 'Добавление групп пользователей'
     )]
     public function add(Add $add): ResponseInterface
     {
         $this->breadcrumbs
-            ->add('admin/groups', 'Группы пользователей')
+            ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb('Добавить новую группу');
 
         return $this->response(
@@ -113,7 +113,7 @@ class Groups extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/delete@{id}',
-        name: 'admin/deletegroup',
+        name: 'delete',
         requirements: [
             'id' => '\d+'
         ],
@@ -122,7 +122,7 @@ class Groups extends AdminBaseController
     public function delete(Delete $delete): ResponseInterface
     {
         $this->breadcrumbs
-            ->add('admin/groups', 'Группы пользователей')
+            ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb('Удаление группы');
 
         return $this->response(

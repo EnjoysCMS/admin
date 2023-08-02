@@ -90,7 +90,7 @@ class Delete implements ModelInterface
     {
         $this->entityManager->remove($this->group);
         $this->entityManager->flush();
-        $this->redirect->toRoute('admin/groups', emit: true);
+        $this->redirect->toRoute('@admin_groups_list', emit: true);
     }
 
     private function getForm(): Form

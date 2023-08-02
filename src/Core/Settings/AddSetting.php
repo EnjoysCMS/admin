@@ -47,7 +47,7 @@ final class AddSetting implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
-            $this->redirect->toRoute('admin/setting', emit: true);
+            $this->redirect->toRoute('@admin_setting_manage', emit: true);
         }
         $this->renderer->setForm($form);
         return [

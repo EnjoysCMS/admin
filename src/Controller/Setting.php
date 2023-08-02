@@ -21,7 +21,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[Route('/admin/setting', name: 'admin/setting')]
+#[Route('/admin/setting', name: '@admin_setting_')]
 class Setting extends AdminBaseController
 {
 
@@ -34,7 +34,10 @@ class Setting extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route('', '', comment: 'Настройки сайта')]
+    #[Route(
+        name: 'manage',
+        comment: 'Настройки сайта'
+    )]
     public function setting(\EnjoysCMS\Module\Admin\Core\Settings\Setting $setting): ResponseInterface
     {
         $this->breadcrumbs->setLastBreadcrumb('Глобальные настройки сайта');
@@ -49,12 +52,12 @@ class Setting extends AdminBaseController
 
 
     #[Route('/add',
-        name: '/add',
+        name: 'add',
         comment: 'Добавление глобальной настройки'
     )]
     public function addSetting(AddSetting $addSetting): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/setting', 'Глобальные параметры сайта')
+        $this->breadcrumbs->add('@admin_setting_manage', 'Глобальные параметры сайта')
             ->setLastBreadcrumb('Добавление нового глобального параметра');
         return $this->response(
             $this->twig->render(
@@ -76,12 +79,12 @@ class Setting extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/edit',
-        name: '/edit',
+        name: 'edit',
         comment: 'Изменение глобальной настройки'
     )]
     public function editSetting(EditSetting $editSetting): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/setting', 'Глобальные параметры сайта')
+        $this->breadcrumbs->add('@admin_setting_manage', 'Глобальные параметры сайта')
             ->setLastBreadcrumb(sprintf('Редактирование параметра `%s`', $editSetting->getSettingEntity()->getName()));
         return $this->response(
             $this->twig->render(
@@ -99,7 +102,7 @@ class Setting extends AdminBaseController
      * @throws CannotRemoveEntity
      */
     #[Route('/delete',
-        name: '/delete',
+        name: 'delete',
         comment: 'Удаление глобальной настройки'
     )]
     public function deleteSetting(DeleteSetting $deleteSetting): ResponseInterface

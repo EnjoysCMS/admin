@@ -131,7 +131,7 @@ class Blocks extends AdminBaseController
     )]
     public function edit(EditBlock $editBlock): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+        $this->breadcrumbs->add('@admin_blocks_manage', 'Менеджер блоков')
             ->setLastBreadcrumb(sprintf('Редактирование блока "%s"', $editBlock->getBlock()->getName()));
         return $this->response(
             $this->twig->render(
@@ -160,7 +160,7 @@ class Blocks extends AdminBaseController
     )]
     public function add(AddBlocks $addBlocks): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+        $this->breadcrumbs->add('@admin_blocks_manage', 'Менеджер блоков')
             ->setLastBreadcrumb('Добавление блока (пользовательский)');
         return $this->response(
             $this->twig->render(
@@ -187,8 +187,8 @@ class Blocks extends AdminBaseController
     )]
     public function location(BlockLocations $blockLocations): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
-            ->add(['admin/editblock', ['id' => $blockLocations->getBlock()->getId()]], 'Редактирование блока')
+        $this->breadcrumbs->add('@admin_blocks_manage', 'Менеджер блоков')
+            ->add(['@admin_blocks_edit', ['id' => $blockLocations->getBlock()->getId()]], 'Редактирование блока')
             ->setLastBreadcrumb(sprintf('Настройка расположения блока "%s"', $blockLocations->getBlock()->getName()));
 
         return $this->response(
@@ -209,7 +209,7 @@ class Blocks extends AdminBaseController
     )]
     public function setUp(SetupBlocks $setupBlocks): ResponseInterface
     {
-        $this->breadcrumbs->add('admin/blocks', 'Менеджер блоков')
+        $this->breadcrumbs->add('@admin_blocks_manage', 'Менеджер блоков')
             ->setLastBreadcrumb('Активация новых блоков');
         return $this->response(
             $this->twig->render(

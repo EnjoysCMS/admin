@@ -57,7 +57,7 @@ final class DeleteBlock
         $this->em->remove($block);
         $this->em->flush();
 
-        return $this->redirect->toRoute('admin/blocks');
+        return $this->redirect->toRoute('@admin_blocks_manage');
     }
 
 }

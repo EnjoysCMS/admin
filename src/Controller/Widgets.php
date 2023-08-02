@@ -26,12 +26,12 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[Route('/admin/widgets')]
+#[Route('/admin/widgets', '@admin_widgets_')]
 class Widgets extends AdminBaseController
 {
 
     #[Route('/delete/{id}',
-        name: 'admin/deletewidget',
+        name: 'delete',
         requirements: [
             'id' => '\d+'
         ],
@@ -66,7 +66,7 @@ class Widgets extends AdminBaseController
      * @throws ORMException
      */
     #[Route('/clone/{id}',
-        name: 'admin/clonewidget',
+        name: 'clone',
         requirements: [
             'id' => '\d+'
         ],
@@ -96,7 +96,7 @@ class Widgets extends AdminBaseController
      * @throws LoaderError
      */
     #[Route('/edit/{id}',
-        name: 'admin/editwidget',
+        name: 'edit',
         requirements: [
             'id' => '\d+'
         ],
@@ -123,7 +123,7 @@ class Widgets extends AdminBaseController
      */
     #[Route(
         path: '/manage',
-        name: 'admin/managewidgets',
+        name: 'manage',
         comment: 'Просмотр не активированных виджетов'
     )]
     public function manage(Manage $manage): ResponseInterface
@@ -145,7 +145,7 @@ class Widgets extends AdminBaseController
      * @throws OptimisticLockException
      */
     #[Route('/activate',
-        name: 'admin/acivatewidget',
+        name: 'activate',
         comment: 'Установка (активация) виджетов'
     )]
     public function activate(ActivateWidget $activateWidget): ResponseInterface
@@ -154,8 +154,7 @@ class Widgets extends AdminBaseController
     }
 
     #[Route('/save',
-        name: 'admin/save-widgets',
-
+        name: 'save',
         methods: ['post'],
         comment: '[ADMIN] Сохранение расположения виджетов'
     )]

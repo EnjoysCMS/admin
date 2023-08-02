@@ -20,6 +20,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\TwigFunction;
 
+#[Route('/admin', '@admin_')]
 class Dashboard extends AdminBaseController
 {
 
@@ -32,8 +33,8 @@ class Dashboard extends AdminBaseController
      * @throws DependencyException
      * @throws Exception
      */
-    #[Route('/admin',
-        name: 'admin/index',
+    #[Route(
+        name: 'index',
         comment: 'Доступ к главной странице в админке (dashboard)'
     )]
     public function dashboard(

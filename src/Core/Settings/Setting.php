@@ -49,7 +49,7 @@ class Setting implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
-            $this->redirect->toRoute('admin/setting', emit: true);
+            $this->redirect->toRoute('@admin_setting_manage', emit: true);
         }
         $this->renderer->setForm($form);
         return [
@@ -81,13 +81,13 @@ class Setting implements ModelInterface
 
             if ($setting->isRemovable()) {
                 $name .= '<span class="float-right px-1"><a  class="small text-danger" href="' . $this->urlGenerator->generate(
-                        'admin/setting/delete',
+                        '@admin_setting_delete',
                         ['id' => $setting->getVar()]
                     ) . '">удалить</a></span>';
             }
 
             $name .= '<span class="float-right px-1"><a class="small text-secondary" href="' . $this->urlGenerator->generate(
-                    'admin/setting/edit',
+                    '@admin_setting_edit',
                     ['id' => $setting->getVar()]
                 ) . '">редактировать</a></span>';
 

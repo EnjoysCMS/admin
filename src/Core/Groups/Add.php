@@ -50,7 +50,7 @@ class Add implements ModelInterface
 
         if ($form->isSubmitted()) {
             $this->doAction();
-            $this->redirect->toRoute('admin/groups', emit: true);
+            $this->redirect->toRoute('@admin_groups_list', emit: true);
         }
 
         $this->renderer->setForm($form);

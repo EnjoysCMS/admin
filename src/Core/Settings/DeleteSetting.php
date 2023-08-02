@@ -48,6 +48,6 @@ final class DeleteSetting
         $this->em->remove($setting);
         $this->em->flush();
 
-        return $this->redirect->toRoute('admin/setting');
+        return $this->redirect->toRoute('@admin_setting_manage');
     }
 }

@@ -70,7 +70,7 @@ class ActivateBlock
             $block->getBlockCommentAcl()
         );
 
-        return $this->redirect->toRoute('admin/editblock', ['id' => $id]);
+        return $this->redirect->toRoute('@admin_blocks_manage', ['id' => $id]);
     }
 
 }
