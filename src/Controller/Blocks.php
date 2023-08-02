@@ -30,7 +30,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-#[Route('/admin/blocks')]
+#[Route('admin/blocks', '@admin_blocks_')]
 class Blocks extends AdminBaseController
 {
 
@@ -42,7 +42,7 @@ class Blocks extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/setting',
-        name: 'admin/blocks',
+        name: 'manage',
         comment: 'Просмотр активных блоков'
     )]
     public function manage(ManageBlocks $manageBlocks): ResponseInterface
@@ -62,7 +62,7 @@ class Blocks extends AdminBaseController
      * @throws OptimisticLockException
      */
     #[Route('/activate',
-        name: 'admin/acivateblocks',
+        name: 'activate',
         comment: 'Установка (активация) блоков'
     )]
     public function activate(ActivateBlock $activateBlock): ResponseInterface
@@ -78,7 +78,7 @@ class Blocks extends AdminBaseController
      * @throws NoResultException
      */
     #[Route('/delete/{id}',
-        name: 'admin/deleteblocks',
+        name: 'delete',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
@@ -101,7 +101,7 @@ class Blocks extends AdminBaseController
      * @throws NoResultException
      */
     #[Route('/clone/{id}',
-        name: 'admin/cloneblocks',
+        name: 'clone',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
@@ -123,7 +123,7 @@ class Blocks extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/edit/{id}',
-        name: 'admin/editblock',
+        name: 'edit',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
@@ -155,7 +155,7 @@ class Blocks extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/add',
-        name: 'admin/addblock',
+        name: 'add',
         comment: 'Добавление пользовательского блока (простой текстовый блок)'
     )]
     public function add(AddBlocks $addBlocks): ResponseInterface
@@ -179,7 +179,7 @@ class Blocks extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route('/locations/{id}',
-        name: 'admin/blocklocation',
+        name: 'location',
         requirements: [
             'id' => self::UUID_RULE_REQUIREMENT
         ],
@@ -204,7 +204,7 @@ class Blocks extends AdminBaseController
      * @throws Exception
      */
     #[Route('/setup',
-        name: 'admin/setupblocks',
+        name: 'setup',
         comment: 'Просмотре не активированных блоков'
     )]
     public function setUp(SetupBlocks $setupBlocks): ResponseInterface

@@ -125,7 +125,7 @@
                     {% endif %}
                 </li>
 
-                {% if accessInRoutes(['admin/blocks', 'admin/addblock', 'admin/setupblocks']) %}
+                {% if accessInRoutes(['@admin_blocks_manage', '@admin_blocks_add', '@admin_blocks_setup']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th-large"></i>
@@ -135,27 +135,27 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {% if access2route('admin/blocks') %}
+                        {% if access2route('@admin_blocks_manage') %}
                             <li class="nav-item">
-                                <a href="{{ path('admin/blocks') }}" class="nav-link">
+                                <a href="{{ path('@admin_blocks_manage') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Настройка блоков</p>
                                 </a>
                             </li>
                         {% endif %}
 
-                        {% if access2route('admin/addblock') %}
+                        {% if access2route('@admin_blocks_add') %}
                             <li class="nav-item">
-                                <a href="{{ path('admin/addblock') }}" class="nav-link">
+                                <a href="{{ path('@admin_blocks_add') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Добавить новый блок</p>
                                 </a>
                             </li>
                         {% endif %}
 
-                        {% if access2route('admin/setupblocks') %}
+                        {% if access2route('@admin_blocks_setup') %}
                             <li class="nav-item">
-                                <a href="{{ path('admin/setupblocks') }}" class="nav-link">
+                                <a href="{{ path('@admin_blocks_setup') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Установка блоков</p>
                                 </a>

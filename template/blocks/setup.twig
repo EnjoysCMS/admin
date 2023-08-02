@@ -22,7 +22,7 @@
                                 <small>{{ block.className }}</small>
                             </div>
                             <div>
-                                <a class="btn btn-sm btn-primary" href="{{ path('admin/acivateblocks', {"class": block.className}) }}">Добавить</a>
+                                <a class="btn btn-sm btn-primary" href="{{ path('@admin_blocks_acivate', {"class": block.className}) }}">Добавить</a>
                             </div>
                         </li>
                     {% else %}
