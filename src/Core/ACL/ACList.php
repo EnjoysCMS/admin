@@ -99,7 +99,7 @@ class ACList
         /**
          * Группировка ACL по модулям
          */
-        foreach ($this->moduleCollection->getCollection() as $module) {
+        foreach ($this->moduleCollection->all() as $module) {
             foreach ($module->namespaces as $ns) {
 
                 $groupedAcl[$module->moduleName] = array_filter(

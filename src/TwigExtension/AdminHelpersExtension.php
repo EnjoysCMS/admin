@@ -44,7 +44,7 @@ class AdminHelpersExtension extends AbstractExtension
     public function getModules(): array
     {
         return array_filter(
-            $this->moduleCollection->getCollection(),
+            $this->moduleCollection->all(),
             function ($m) {
                 if (!empty($m->adminLinks)) {
                     return true;
