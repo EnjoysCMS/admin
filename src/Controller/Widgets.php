@@ -85,7 +85,7 @@ class Widgets extends AdminBaseController
         $em->persist($newWidget);
         $em->flush();
 
-        return $redirect->toRoute('admin/index');
+        return $redirect->toRoute('@admin_index');
     }
 
     /**

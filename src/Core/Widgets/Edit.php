@@ -49,7 +49,7 @@ final class Edit implements ModelInterface
         $form = $this->getForm();
         if ($form->isSubmitted()) {
             $this->doAction();
-            $this->redirect->toRoute('admin/index', emit: true);
+            $this->redirect->toRoute('@admin_index', emit: true);
         }
         $this->renderer->setForm($form);
         return [

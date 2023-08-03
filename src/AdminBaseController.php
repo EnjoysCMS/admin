@@ -71,7 +71,7 @@ abstract class AdminBaseController
 
         $this->twig->addGlobal('breadcrumbs', $this->breadcrumbs
             ->remove('system/index')
-            ->add('admin/index', 'Главная')
+            ->add('@admin_index', 'Главная')
         );
     }
 

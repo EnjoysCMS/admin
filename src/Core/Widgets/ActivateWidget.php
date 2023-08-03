@@ -66,7 +66,7 @@ class ActivateWidget
             $widget->getWidgetActionAcl(),
             $widget->getWidgetCommentAcl()
         );
-        return $this->redirect->toRoute('admin/index');
+        return $this->redirect->toRoute('@admin_index');
     }
 
 
