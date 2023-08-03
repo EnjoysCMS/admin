@@ -35,7 +35,6 @@ class ACList
      */
     public function getActiveACL(): array
     {
-
         /** @var Block[] $blocks */
         $blocks = $this->em->getRepository(Block::class)->findAll();
         $allActiveBlocksController = [];
@@ -51,7 +50,7 @@ class ACList
         $allAcl = $this->repositoryAcl->findAll();
         /** @var ACL $acl */
         foreach ($allAcl as $key => $acl) {
-            if (!in_array($acl->getAction(), array_merge($allActiveControllers, $allActiveBlocksController))) {
+            if (!in_array($acl->getController(), array_merge($allActiveControllers, $allActiveBlocksController))) {
                 unset($allAcl[$key]);
                 $this->em->remove($acl);
             }
@@ -77,7 +76,12 @@ class ACList
              */
             foreach ($acls as $acl) {
                 $ret[$group][' ' . $acl->getId()] = [
-                    $acl->getComment() . '<br><small>' . $acl->getAction() . '</small>',
+                    sprintf(
+                        "%s<span class='font-weight-bold'>%s</span><br><small>%s</small>",
+                        $acl->getComment() ? $acl->getComment() . '<br>' : '',
+                        $acl->getRoute(),
+                        $acl->getController()
+                    ),
                     ['id' => $acl->getId()]
                 ];
             }
@@ -101,11 +105,10 @@ class ACList
          */
         foreach ($this->moduleCollection->all() as $module) {
             foreach ($module->namespaces as $ns) {
-
                 $groupedAcl[$module->moduleName] = array_filter(
                     $activeAcl,
                     function ($v) use ($ns) {
-                        return str_starts_with(ltrim($v->getAction(), '\\'), $ns);
+                        return str_starts_with(ltrim($v->getController(), '\\'), $ns);
                     }
                 );
                 break;
@@ -114,7 +117,7 @@ class ACList
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
 
             uasort($groupedAcl[$module->moduleName], function (ACL $a, ACL $b) {
-                return $a->getAction() <=> $b->getAction();
+                return $a->getController() <=> $b->getController();
             });
         }
 
@@ -126,7 +129,7 @@ class ACList
             $groupedAcl['@Application'] = array_filter(
                 $activeAcl,
                 function ($v) use ($ns) {
-                    return str_starts_with(ltrim($v->getAction(), '\\'), $ns);
+                    return str_starts_with(ltrim($v->getController(), '\\'), $ns);
                 }
             );
             rsort($groupedAcl['@Application']);

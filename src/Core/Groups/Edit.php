@@ -127,7 +127,7 @@ class Edit implements ModelInterface
             $aclsForCheckbox = $this->ACList->getArrayForCheckboxForm();
             foreach ($aclsForCheckbox as $label => $item) {
                 $fill = array_map(function ($i) {
-                    if (str_contains($i[0], 'Admin')) {
+                    if (str_contains($i[0], '@')) {
                         $i[0] = sprintf('<span class="font-italic">%s</span>', $i[0]);
                     }
                     return $i;
