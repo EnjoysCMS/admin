@@ -5,7 +5,6 @@
     "require": {
         "php": "^8.1",
         "enjoyscms/core": "^6.0@dev",
-        "psr/http-message": "^1.0",
         "enjoys/forms": "^5.0",
         "enjoys/bootstrap4-renderer": "^1.0"
     },
@@ -22,7 +21,7 @@
         "post-update-cmd": "EnjoysCMS\\Module\\Admin\\Composer::assetsInstall"
     },
     "require-dev": {
-        "vimeo/psalm": "^4.21"
+        "vimeo/psalm": "^4.21|^5.0"
     },
     "config": {
         "allow-plugins": {
