@@ -62,7 +62,7 @@ class ActivateWidget
         $this->em->flush();
 
 
-        $this->ACL->addAcl(
+        $this->ACL->register(
             $widget->getWidgetActionAcl(),
             $widget->getWidgetCommentAcl()
         );

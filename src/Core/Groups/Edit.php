@@ -14,6 +14,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Entities\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
@@ -38,6 +39,7 @@ class Edit implements ModelInterface
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
+        private readonly AccessControl $accessControl,
         private readonly Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
@@ -88,10 +90,10 @@ class Edit implements ModelInterface
                 'name' => $this->group->getName(),
                 'description' => $this->group->getDescription(),
                 'acl' => array_map(
-                    function (ACL $o): int {
+                    function ($o): int {
                         return $o->getId();
                     },
-                    $this->group->getAcl()->toArray()
+                    $this->accessControl->getManage()->getAccessActionsForGroup($this->group)
                 )
             ]
         );
@@ -123,6 +125,7 @@ class Edit implements ModelInterface
         } else {
             $form->header('Права доступа');
 
+
             $i = 0;
             $aclsForCheckbox = $this->ACList->getArrayForCheckboxForm();
             foreach ($aclsForCheckbox as $label => $item) {
@@ -148,19 +151,21 @@ class Edit implements ModelInterface
      */
     private function doAction(): void
     {
-        $acls = $this->entityManager->getRepository(ACL::class)->findBy(
-            ['id' => $this->request->getParsedBody()['acl'] ?? []]
-        );
 
 
         $this->group->setName($this->request->getParsedBody()['name'] ?? '');
         $this->group->setDescription($this->request->getParsedBody()['description'] ?? '');
 
-        $this->group->removeAcl();
+//dd($acls, $this->request->getParsedBody()['acl'] ?? []);
+        foreach ($this->accessControl->getManage()->getList() as $acl) {
+            if (in_array($acl->getId(), $this->request->getParsedBody()['acl'] ?? [])){
+                $acl->addGroup($this->group);
+                continue;
+            }
+            $acl->removeGroup($this->group);
 
-        foreach ($acls as $acl) {
-            $this->group->setAcl($acl);
         }
+
 
         $this->entityManager->flush();
     }

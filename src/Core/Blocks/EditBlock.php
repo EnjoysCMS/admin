@@ -18,7 +18,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\AccessControl\ACL;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
@@ -37,7 +37,6 @@ class EditBlock implements ModelInterface
 
     private Block $block;
 
-    private ?\EnjoysCMS\Core\Entities\ACL $acl;
     private EntityRepository $groupsRepository;
     private \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $blockRepository;
 
@@ -54,7 +53,7 @@ class EditBlock implements ModelInterface
         private readonly BlockFactory $blockFactory,
         private readonly Config $config,
         private readonly RedirectInterface $redirect,
-        private readonly ACL $ACL,
+        private readonly AccessControl $accessControl,
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
         $blockId = $this->request->getAttribute('id', '');
@@ -62,7 +61,7 @@ class EditBlock implements ModelInterface
             sprintf('Invalid block ID: %s', $blockId)
         );
 
-        $this->acl = $this->ACL->getAcl($this->block->getBlockActionAcl());
+
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 
@@ -107,10 +106,10 @@ class EditBlock implements ModelInterface
                 'body' => $this->block->getBody(),
                 'options' => $this->block->getOptionsKeyValue(),
                 'groups' => array_map(
-                    function ($item) {
+                    function (Group $item) {
                         return $item->getId();
                     },
-                    $this->acl->getGroups()->toArray()
+                    $this->accessControl->getAuthorizedGroups($this->block->getId())
                 ),
             ]
         );
@@ -291,17 +290,16 @@ class EditBlock implements ModelInterface
 
 
         /**
-         *
-         *
          * @var Group $group
          */
-        foreach ($this->groupsRepository->findAll() as $group) {
-            if (in_array($group->getId(), $this->request->getParsedBody()['groups'] ?? [])) {
-                $this->acl->setGroups($group);
-                continue;
-            }
-            $this->acl->removeGroups($group);
-        }
+
+        $accessAction = $this->accessControl->getManage()->getAccessAction($this->block->getId());
+        $accessAction->setGroups(
+            $this->groupsRepository->findBy([
+                'id' => $this->request->getParsedBody()['groups'] ?? []
+            ])
+        );
+
 
         $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit($oldBlock);
 

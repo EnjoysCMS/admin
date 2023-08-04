@@ -16,6 +16,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Options;
@@ -44,7 +45,7 @@ class AddBlocks implements ModelInterface
         private readonly RendererInterface $renderer,
         private readonly ContentEditor $contentEditor,
         private readonly RedirectInterface $redirect,
-        private readonly ACL $ACL,
+        private readonly AccessControl $accessControl,
         private readonly Config $config
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
@@ -137,8 +138,8 @@ class AddBlocks implements ModelInterface
     private function doAction(): void
     {
         $block = new Block();
-        $block->setName($this->request->getParsedBody()['name'] ?? null);
-        $block->setId($this->request->getParsedBody()['id'] ?? '');
+        $block->setName($this->request->getParsedBody()['name'] ?? $block->getClassName());
+        $block->setId($this->request->getParsedBody()['id'] ?? Uuid::uuid7()->toString());
         $block->setClassName(UserBlock::class);
         $block->setBody($this->request->getParsedBody()['body'] ?? null);
         $block->setRemovable(true);
@@ -149,18 +150,19 @@ class AddBlocks implements ModelInterface
 
         $this->em->flush();
 
-        $acl = $this->ACL->addACL(
-            $block->getBlockActionAcl(),
-            $block->getBlockCommentAcl()
+        $accessAction = $this->accessControl->registerAction(
+            $block->getId(),
+            '.Блок. ' . $block->getName(),
+            false
         );
 
         $groups = $this->em->getRepository(Group::class)->findBy(
             ['id' => $this->request->getParsedBody()['groups'] ?? []]
         );
         foreach ($groups as $group) {
-            $acl->setGroups($group);
+            $accessAction->addGroup($group);
         }
-        $this->em->persist($acl);
+
         $this->em->flush();
         $this->em->commit();
     }

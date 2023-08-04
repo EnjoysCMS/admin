@@ -8,6 +8,7 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block;
 use EnjoysCMS\Core\Block\BlockCollection;
@@ -28,7 +29,7 @@ class ActivateBlock
         private readonly ServerRequestInterface $request,
         private readonly RedirectInterface $redirect,
         private readonly BlockCollection $blockCollection,
-        private readonly ACL $ACL
+        private readonly AccessControl $accessControl
     ) {
         /** @var class-string $class */
         $class = $this->request->getQueryParams()['class'] ?? '';
@@ -65,9 +66,9 @@ class ActivateBlock
         $this->em->flush();
 
 
-        $this->ACL->addAcl(
-            $block->getBlockActionAcl(),
-            $block->getBlockCommentAcl()
+        $this->accessControl->getManage()->register(
+            $block->getId(),
+            '.Блок. '. $block->getClassName(),
         );
 
         return $this->redirect->toRoute('@admin_blocks_manage', ['id' => $id]);

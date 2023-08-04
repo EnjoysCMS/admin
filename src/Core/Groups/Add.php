@@ -12,7 +12,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Entities\ACL;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
@@ -34,6 +34,7 @@ class Add implements ModelInterface
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
+        private readonly AccessControl $accessControl,
         private readonly Setting $setting
     ) {
         $this->groupsRepository = $this->em->getRepository(Group::class);
@@ -76,7 +77,8 @@ class Add implements ModelInterface
                     function ($item) {
                         return $item->getId();
                     },
-                    $this->groupsRepository->find($this->request->getQueryParams()['by'] ?? 0)?->getAcl()->toArray(
+                    $this->accessControl->getManage()->getAccessActionsForGroup(
+                        $this->request->getQueryParams()['by'] ?? 0
                     ) ?? []
                 ),
                 'by' => $this->request->getQueryParams()['by'] ?? null
@@ -129,19 +131,19 @@ class Add implements ModelInterface
      */
     private function doAction(): void
     {
-        $acls = $this->em->getRepository(ACL::class)->findBy(
-            ['id' => $this->request->getParsedBody()['acl'] ?? []]
-        );
-
         $group = new Group();
         $group->setName($this->request->getParsedBody()['name'] ?? '');
         $group->setDescription($this->request->getParsedBody()['description'] ?? '');
         $group->setStatus(1);
         $group->setSystem(false);
-        foreach ($acls as $acl) {
-            $group->setAcl($acl);
-        }
 
+        foreach ($this->accessControl->getManage()->getList() as $acl) {
+            if (in_array($acl->getId(), $this->request->getParsedBody()['acl'] ?? [])) {
+                $acl->addGroup($group);
+                continue;
+            }
+            $acl->removeGroup($group);
+        }
         $this->em->persist($group);
         $this->em->flush();
     }

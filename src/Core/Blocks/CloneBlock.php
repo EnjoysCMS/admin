@@ -13,6 +13,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\AccessControl\ACL;
@@ -30,7 +31,7 @@ final class CloneBlock
         private readonly ServerRequestInterface $request,
         private readonly BlockFactory $blockFactory,
         private readonly RedirectInterface $redirect,
-        private readonly ACL $ACL
+        private readonly AccessControl $accessControl
     ) {
     }
 
@@ -61,9 +62,9 @@ final class CloneBlock
         $this->em->persist($cloned);
         $this->em->flush();
 
-        $this->ACL->addAcl(
-            $cloned->getBlockActionAcl(),
-            $cloned->getBlockCommentAcl()
+        $this->accessControl->getManage()->register(
+            $cloned->getId(),
+            sprintf(".Блок. %s [%s]", $block->getName(), $block->getClassName()),
         );
 
 
