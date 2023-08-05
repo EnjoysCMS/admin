@@ -1,6 +1,6 @@
 <?php
 
-namespace EnjoysCMS\Module\Admin\Core\ACL;
+namespace EnjoysCMS\Module\Admin\Core\Groups;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\NotSupported;

@@ -16,7 +16,6 @@ use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
-use EnjoysCMS\Module\Admin\Core\ACL\ACList;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
