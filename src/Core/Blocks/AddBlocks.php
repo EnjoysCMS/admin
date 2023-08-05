@@ -149,7 +149,7 @@ class AddBlocks implements ModelInterface
 
         $this->em->flush();
 
-        $accessAction = $this->accessControl->registerAction(
+        $accessAction = $this->accessControl->getManage()->register(
             $block->getId(),
             flush: false
         );
