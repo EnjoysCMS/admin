@@ -17,7 +17,6 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\AccessControl\AccessControl;
-use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
@@ -152,8 +151,7 @@ class AddBlocks implements ModelInterface
 
         $accessAction = $this->accessControl->registerAction(
             $block->getId(),
-            '.Блок. ' . $block->getName(),
-            false
+            flush: false
         );
 
         $groups = $this->em->getRepository(Group::class)->findBy(

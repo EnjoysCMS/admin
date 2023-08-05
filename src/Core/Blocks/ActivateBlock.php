@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\AccessControl\AccessControl;
-use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Block;
 use EnjoysCMS\Core\Block\BlockCollection;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
@@ -66,10 +65,7 @@ class ActivateBlock
         $this->em->flush();
 
 
-        $this->accessControl->getManage()->register(
-            $block->getId(),
-            '.Блок. '. $block->getClassName(),
-        );
+        $this->accessControl->getManage()->register($block->getId());
 
         return $this->redirect->toRoute('@admin_blocks_manage', ['id' => $id]);
     }

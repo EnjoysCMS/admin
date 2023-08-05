@@ -16,7 +16,6 @@ use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Core\AccessControl\ACL;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -62,10 +61,7 @@ final class CloneBlock
         $this->em->persist($cloned);
         $this->em->flush();
 
-        $this->accessControl->getManage()->register(
-            $cloned->getId(),
-            sprintf(".Блок. %s [%s]", $block->getName(), $block->getClassName()),
-        );
+        $this->accessControl->getManage()->register($cloned->getId());
 
 
         $this->blockFactory->create($block->getClassName())->setEntity($block)->postClone($cloned);
