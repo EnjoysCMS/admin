@@ -78,7 +78,7 @@ class Add implements ModelInterface
                     },
                     $this->accessControl->getManage()->getAccessActionsForGroup(
                         $this->request->getQueryParams()['by'] ?? 0
-                    ) ?? []
+                    )
                 ),
                 'by' => $this->request->getQueryParams()['by'] ?? null
             ]

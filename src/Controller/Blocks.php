@@ -41,7 +41,7 @@ class Blocks extends AdminBaseController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    #[Route('/setting',
+    #[Route('',
         name: 'manage',
         comment: 'Просмотр активных блоков'
     )]
