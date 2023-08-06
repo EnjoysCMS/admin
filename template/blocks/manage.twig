@@ -36,21 +36,21 @@
 
                             </div>
                             <div class="align-self-start">
-                                {% if access2route('@admin_blocks_location') %}
+                                {% if access('@admin_blocks_location') %}
                                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
                                        href="{{ path('@admin_blocks_location', {"id": block.id}) }}"><i
                                                 class="fa fa-th"></i>
                                         Расположение </a>
                                 {% endif %}
 
-                                {% if access2route('@admin_blocks_edit') %}
+                                {% if access('@admin_blocks_edit') %}
                                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
                                        href="{{ path('@admin_blocks_edit', {"id": block.getId}) }}"><i
                                                 class="fa fa-edit"></i>
                                         Редактировать </a>
                                 {% endif %}
 
-                                {% if access2route('@admin_blocks_clone') %}
+                                {% if access('@admin_blocks_clone') %}
                                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark "
                                        href="{{ path('@admin_blocks_clone', {"id": block.getId}) }}"><i
                                                 class="fa fa-clone"></i>
@@ -58,7 +58,7 @@
                                 {% endif %}
 
                                 {% if block.isRemovable %}
-                                    {% if access2route('@admin_blocks_delete') %}
+                                    {% if access('@admin_blocks_delete') %}
                                         <a class="mx-1 btn btn-sm  btn-sm btn-danger "
                                            href="{{ path('@admin_blocks_delete', {"id": block.getId}) }}"><i
                                                     class="fa fa-trash"></i> Удалить</a>

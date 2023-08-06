@@ -2,7 +2,7 @@
 {% if appLinks %}
     <li class="nav-header">ПРИЛОЖЕНИЕ (APPLICATION)</li>
     {% for name, route in  appLinks %}
-        {% if access2route(name) %}
+        {% if access(name) %}
             <li class="nav-item">
                 <a href="{{ path(name) }}" class="nav-link">
                     <i class="fas fa-dot-circle nav-icon"></i>

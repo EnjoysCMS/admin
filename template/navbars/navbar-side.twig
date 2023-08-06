@@ -37,7 +37,7 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                {% if access2route('@admin_index') %}
+                {% if access('@admin_index') %}
                     <li class="nav-item">
                         <a href="{{ path('@admin_index') }}" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -48,7 +48,7 @@
                     </li>
                 {% endif %}
 
-                {% if access2route('@admin_setting_manage') %}
+                {% if access('@admin_setting_manage') %}
                     <li class="nav-item">
                         <a href="{{ path('@admin_setting_manage') }}" class="nav-link text-warning">
                             <i class="nav-icon fa fa-cogs"></i>
@@ -59,7 +59,7 @@
                     </li>
                 {% endif %}
 
-                {% if accessInRoutes(['@admin_users_list', '@admin_users_add', '@admin_groups_list']) %}
+                {% if access(['@admin_users_list', '@admin_users_add', '@admin_groups_list']) %}
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-users-cog"></i>
@@ -70,7 +70,7 @@
                         </a>
                         <ul class="nav nav-treeview">
 
-                            {% if access2route('@admin_users_list') %}
+                            {% if access('@admin_users_list') %}
                                 <li class="nav-item">
                                     <a href="{{ path('@admin_users_list') }}" class="nav-link">
                                         <i class="fas fa-user-friends nav-icon"></i>
@@ -79,7 +79,7 @@
                                 </li>
                             {% endif %}
 
-                            {% if access2route('@admin_users_add') %}
+                            {% if access('@admin_users_add') %}
                                 <li class="nav-item">
                                     <a href="{{ path('@admin_users_add') }}" class="nav-link">
                                         <i class="fas fa-user-plus nav-icon"></i>
@@ -88,7 +88,7 @@
                                 </li>
                             {% endif %}
 
-                            {% if access2route('@admin_groups_list') %}
+                            {% if access('@admin_groups_list') %}
                                 <li class="nav-item">
                                     <a href="{{ path('@admin_groups_list') }}" class="nav-link">
                                         <i class="fas fa-users nav-icon"></i>
@@ -102,7 +102,7 @@
                 {% endif %}
 
 
-                {% if accessInRoutes(['@admin_widgets_manage', '@admin_widgets_edit']) %}
+                {% if access(['@admin_widgets_manage', '@admin_widgets_edit']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-window-maximize"></i>
@@ -112,7 +112,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {% if access2route('@admin_widgets_manage') %}
+                        {% if access('@admin_widgets_manage') %}
                             <li class="nav-item">
                                 <a href="{{ path('@admin_widgets_manage') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -125,7 +125,7 @@
                     {% endif %}
                 </li>
 
-                {% if accessInRoutes(['@admin_blocks_manage', '@admin_blocks_add', '@admin_blocks_setup']) %}
+                {% if access(['@admin_blocks_manage', '@admin_blocks_add', '@admin_blocks_setup']) %}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-th-large"></i>
@@ -135,7 +135,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        {% if access2route('@admin_blocks_manage') %}
+                        {% if access('@admin_blocks_manage') %}
                             <li class="nav-item">
                                 <a href="{{ path('@admin_blocks_manage') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -144,7 +144,7 @@
                             </li>
                         {% endif %}
 
-                        {% if access2route('@admin_blocks_add') %}
+                        {% if access('@admin_blocks_add') %}
                             <li class="nav-item">
                                 <a href="{{ path('@admin_blocks_add') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -153,7 +153,7 @@
                             </li>
                         {% endif %}
 
-                        {% if access2route('@admin_blocks_setup') %}
+                        {% if access('@admin_blocks_setup') %}
                             <li class="nav-item">
                                 <a href="{{ path('@admin_blocks_setup') }}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -167,7 +167,7 @@
 
                 <li class="nav-header">МОДУЛИ (PLUGINS)</li>
                 {% for module in getModules() %}
-                    {% if accessInRoutes(module.adminLinks|keys) %}
+                    {% if access(module.adminLinks|keys) %}
                         <li class="nav-item n">
                             <a href="#" class="nav-link ">
                                 <i class="nav-icon fa fa-puzzle-piece"></i>
@@ -179,7 +179,7 @@
 
                             <ul class="nav nav-treeview">
                                 {% for link, name in module.adminLinks %}
-                                    {% if access2route(link) %}
+                                    {% if access(link) %}
                                         <li class="nav-item">
                                             <a href="{{ path(link) }}" class="nav-link">
                                                 <i class="fas fa-angle-right nav-icon"></i>

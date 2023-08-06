@@ -12,7 +12,7 @@
             <!-- /.card-header -->
             <div class="card-body">
 
-                {% if access2route('@admin_blocks_location') %}
+                {% if access('@admin_blocks_location') %}
                 <div class="my-3">
                     <a class="mx-1 btn btn-sm  btn-sm btn-outline-dark"
                        href="{{ path('@admin_blocks_location', {"id": block.id}) }}"><i class="fa fa-edit"></i>
