@@ -5,7 +5,6 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -13,17 +12,16 @@ use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
+use EnjoysCMS\Core\Block\Entity\BlockLocation;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Core\Location\Entities\Location;
-use EnjoysCMS\Core\Location\Repositories\Locations;
 use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Routing\RouteCollection;
 
 class BlockLocations implements ModelInterface
 {
     private Block $block;
-    private Locations|EntityRepository $locationRepository;
 
     /**
      * @throws NotSupported
@@ -33,12 +31,11 @@ class BlockLocations implements ModelInterface
         private readonly ServerRequestInterface $request,
         private readonly RendererInterface $renderer,
         private readonly RedirectInterface $redirect,
+        private readonly RouteCollection $routeCollection,
     ) {
         $this->block = $this->em->getRepository(Block::class)->find(
             $this->request->getAttribute('id')
         ) ?? throw new InvalidArgumentException('Invalid block ID');
-
-        $this->locationRepository = $this->em->getRepository(Location::class);
     }
 
     /**
@@ -64,15 +61,31 @@ class BlockLocations implements ModelInterface
     private function getForm(): Form
     {
         $form = new Form();
-        $form->setDefaults(['locations' => $this->block->getLocationsIds()]);
+
+        $form->setDefaults(['locations' => $this->block->getLocationsValues()]);
 
 
         $form->select('locations')
             ->setMultiple()
             ->setAttribute(AttributeFactory::create('size', 20))
-            ->fill($this->locationRepository->getListLocationsForSelectForm());
+            ->fill($this->getFillLocations());
         $form->submit('send');
         return $form;
+    }
+
+    private function getFillLocations(): \Closure
+    {
+        return function () {
+            $result = [];
+            foreach ($this->routeCollection as $routeName => $route) {
+                if (str_starts_with($routeName, '@') && !($route->getOption('allowBlockLocation') ?? false)) {
+                    continue;
+                }
+                $controller = implode('::', (array)$route->getDefault('_controller'));
+                $result[$controller] = $route->getOption('title') ?? $controller;
+            }
+            return $result;
+        };
     }
 
     /**
@@ -82,15 +95,16 @@ class BlockLocations implements ModelInterface
      */
     private function doAction(): void
     {
-        $locations = $this->em->getRepository(Location::class)->findBy(
-            ['id' => $this->request->getParsedBody()['locations'] ?? []]
-        );
+        $blockLocationRepository = $this->em->getRepository(BlockLocation::class);
 
         $this->block->removeLocations();
-        foreach ($locations as $location) {
-            $this->block->setLocations($location);
+        foreach ($this->request->getParsedBody()['locations'] ?? [] as $location) {
+            /** @var string $location */
+            $blockLocation = $blockLocationRepository->findOneBy(['location' => $location]) ?? new BlockLocation();
+            $blockLocation->setLocation($location);
+            $this->em->persist($blockLocation);
+            $this->block->setLocations($blockLocation);
         }
-
         $this->em->flush();
     }
 
