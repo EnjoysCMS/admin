@@ -9,6 +9,8 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Enjoys\AssetsCollector\Assets;
 use Enjoys\AssetsCollector\Extensions\Twig\AssetsExtension;
+use Enjoys\Forms\Interfaces\RendererInterface;
+use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
 use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
@@ -29,13 +31,16 @@ abstract class AdminBaseController
      * @throws Exception
      */
     public function __construct(
-        protected readonly Container $container,
+        protected Container $container,
         protected readonly Environment $twig,
         protected readonly Assets $assets,
         protected readonly Setting $setting,
         protected ResponseInterface $response,
         protected BreadcrumbCollection $breadcrumbs,
     ) {
+
+        $this->container->set(RendererInterface::class, new Bootstrap4Renderer());
+
         $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
 
         $this->makeSymlink();
