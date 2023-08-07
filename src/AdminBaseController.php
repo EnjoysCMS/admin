@@ -33,7 +33,6 @@ abstract class AdminBaseController
     public function __construct(
         protected Container $container,
         protected readonly Environment $twig,
-        protected readonly Assets $assets,
         protected readonly Setting $setting,
         protected ResponseInterface $response,
         protected BreadcrumbCollection $breadcrumbs,
@@ -42,37 +41,7 @@ abstract class AdminBaseController
         $this->container->set(RendererInterface::class, new Bootstrap4Renderer());
 
         $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
-
-        $this->makeSymlink();
-
-        /**
-         * @var AssetsExtension $AssetsExtension
-         */
-        $AssetsExtension = $this->twig->getExtension(AssetsExtension::class);
-        $AssetsExtension->getAssetsCollector()->getEnvironment()->setStrategy(
-            Assets::STRATEGY_MANY_FILES
-        );
-
-
         $this->twig->getLoader()->addPath(__DIR__ . '/../template', 'a');
-
-        $this->assets->add('css', [
-            'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback',
-            __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/css/all.min.css',
-            __DIR__ . '/../node_modules/admin-lte/dist/css/adminlte.min.css',
-        ]);
-
-        $this->assets->add(
-            'js',
-            [
-                __DIR__ . '/../node_modules/admin-lte/plugins/jquery/jquery.min.js',
-                __DIR__ . '/../node_modules/admin-lte/plugins/jquery-ui/jquery-ui.min.js',
-                __DIR__ . '/../node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js',
-                __DIR__ . '/../node_modules/admin-lte/dist/js/adminlte.js',
-//                __DIR__ . '/../node_modules/admin-lte/dist/js/demo.js',
-                __DIR__ . '/../template/assets/custom.js',
-            ]
-        );
 
         $this->twig->addGlobal('breadcrumbs', $this->breadcrumbs
             ->remove('system/index')
@@ -80,26 +49,6 @@ abstract class AdminBaseController
         );
     }
 
-    /**
-     * @throws Exception
-     */
-    protected function makeSymlink(): void
-    {
-        $path = str_replace(getenv('ROOT_PATH'), '', realpath(__DIR__ . '/../'));
-
-        makeSymlink(
-            $_ENV['PUBLIC_DIR'] . '/assets/adminLTE/dist',
-            __DIR__ . '/../node_modules/admin-lte/dist'
-        );
-        makeSymlink(
-            sprintf('%s/assets%s/webfonts', $_ENV['PUBLIC_DIR'], $path),
-            __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
-        );
-        makeSymlink(
-            sprintf('%s/assets%s/node_modules/admin-lte/plugins/fontawesome-free/webfonts', $_ENV['PUBLIC_DIR'], $path),
-            __DIR__ . '/../node_modules/admin-lte/plugins/fontawesome-free/webfonts'
-        );
-    }
 
     protected function response(string $body): ResponseInterface
     {

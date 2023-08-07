@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+{% do asset('css', [
+    '//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback',
+    'modules/admin/node_modules/admin-lte/plugins/fontawesome-free/css/all.min.css',
+    'modules/admin/node_modules/admin-lte/dist/css/adminlte.min.css'
+]) %}
+{% do asset('js', [
+    'modules/admin/node_modules/admin-lte/plugins/jquery/jquery.min.js',
+    'modules/admin/node_modules/admin-lte/plugins/jquery-ui/jquery-ui.min.js',
+    'modules/admin/node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js',
+    'modules/admin/node_modules/admin-lte/dist/js/adminlte.js',
+    'modules/admin/template/assets/custom.js'
+]) %}
 <html lang="en">
 <head>
     <meta charset="utf-8">

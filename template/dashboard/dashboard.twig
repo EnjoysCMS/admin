@@ -1,30 +1,28 @@
 {% extends '@a/layout.twig' %}
 {% do asset('css', [
     {0: 'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css','minify': false},
-    {0:  '../modules/admin/node_modules/admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/jqvmap/jqvmap.min.css','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css','minify': false},
-    {0:  '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.css','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css','minify': false},
+    {0:  'modules/admin/node_modules/admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/jqvmap/jqvmap.min.css','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css','minify': false},
+    {0:  'modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.css','minify': false},
     'modules/admin/node_modules/toastr/build/toastr.css',
     'modules/admin/node_modules/gridstack/dist/gridstack.min.css'
 ]) %}
 {% do asset('js', [
-    {0: '../modules/admin/node_modules/admin-lte/plugins/chart.js/Chart.min.js','minify': true},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/sparklines/sparkline.js','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/jqvmap/jquery.vmap.min.js','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/jqvmap/maps/jquery.vmap.usa.js','minify': true},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/jquery-knob/jquery.knob.min.js', 'minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/moment/moment.min.js', 'minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.js','minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js', 'minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.js', 'minify': false},
-    {0: '../modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'minify': false},
-    'modules/admin/node_modules/toastr/build/toastr.min.js',
-    'modules/admin/node_modules/gridstack/dist/es5/gridstack-poly.js',
-    'modules/admin/node_modules/gridstack/dist/es5/gridstack-jq.js',
-    'modules/admin/template/assets/widgets.js',
+    {0: 'modules/admin/node_modules/admin-lte/plugins/chart.js/Chart.min.js','minify': true},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/sparklines/sparkline.js','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/moment/moment.min.js', 'minify': true},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/daterangepicker/daterangepicker.js','minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js', 'minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.js', 'minify': false},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js', 'minify': false},
+    {0: 'modules/admin/node_modules/toastr/build/toastr.min.js', 'minify': true},
+    {0: 'modules/admin/node_modules/admin-lte/plugins/summernote/summernote-bs4.min.js', 'minify': false},
+    {0: 'modules/admin/node_modules/gridstack/dist/es5/gridstack-poly.js', 'minify': true},
+    {0: 'modules/admin/node_modules/gridstack/dist/es5/gridstack-jq.js', 'minify': true},
+    {0: 'modules/admin/template/assets/widgets.js', 'minify': false},
 ]) %}
 
 {% block content %}
