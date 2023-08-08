@@ -20,7 +20,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 
-#[Route('/admin/groups', '@admin_groups_')]
+#[Route('/admin/users/groups', '@admin_groups_')]
 class Groups extends AdminBaseController
 {
 

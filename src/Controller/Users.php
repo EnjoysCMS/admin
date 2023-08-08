@@ -30,7 +30,7 @@ class Users extends AdminBaseController
      * @throws NotSupported
      * @throws LoaderError
      */
-    #[Route('/list',
+    #[Route(
         name: 'list',
         comment: 'Доступ к просмотру списка пользователей'
     )]

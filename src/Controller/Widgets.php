@@ -122,7 +122,6 @@ class Widgets extends AdminBaseController
      * @throws SyntaxError
      */
     #[Route(
-        path: '/manage',
         name: 'manage',
         comment: 'Просмотр не активированных виджетов'
     )]
