@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-        <img src="/assets/adminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo"
+        <img src="/assets/modules/admin/template/assets/logo.png" alt="Enjoys CMS"
              class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">Enjoys CMS</span>
@@ -61,7 +61,7 @@
 
                 {% if access(['@admin_users_list', '@admin_users_add', '@admin_groups_list']) %}
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="{{ path('@admin_users_list') }}" class="nav-link">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>
                                 Пользователи
@@ -104,7 +104,7 @@
 
                 {% if access(['@admin_widgets_manage', '@admin_widgets_edit']) %}
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ path('@admin_widgets_manage') }}" class="nav-link">
                         <i class="nav-icon fas fa-window-maximize"></i>
                         <p>
                             Виджеты
@@ -127,7 +127,7 @@
 
                 {% if access(['@admin_blocks_manage', '@admin_blocks_add', '@admin_blocks_setup']) %}
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ path('@admin_blocks_manage') }}" class="nav-link">
                         <i class="nav-icon fas fa-th-large"></i>
                         <p>
                             Блоки
@@ -169,7 +169,7 @@
                 {% for module in getModules() %}
                     {% if access(module.adminLinks|keys) %}
                         <li class="nav-item n">
-                            <a href="#" class="nav-link ">
+                            <a href="{{ path(module.adminLinks|keys|first) }}" class="nav-link ">
                                 <i class="nav-icon fa fa-puzzle-piece"></i>
                                 <p>
                                     {{ module.moduleName }}
