@@ -20,8 +20,8 @@ use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Delete
 {
@@ -37,7 +37,7 @@ class Delete
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
         private readonly RendererInterface $renderer,
-        private readonly EventDispatcher $dispatcher,
+        private readonly EventDispatcherInterface $dispatcher,
         private readonly RedirectInterface $redirect,
         private readonly Setting $setting,
     ) {
@@ -97,7 +97,7 @@ class Delete
      */
     private function deleteUser(): void
     {
-        $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user), BeforeDeleteUserEvent::NAME);
+        $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user));
         $this->em->remove($this->user);
         $this->em->flush();
     }
