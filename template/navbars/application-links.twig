@@ -1,5 +1,5 @@
-{% set appLinks = getApplicationAdminLinks() %}
-{% if appLinks %}
+{% set appLinks = routeCollection|filter(r => r.option('admin')) %}
+{% if appLinks|length > 0 %}
     <li class="nav-header">ПРИЛОЖЕНИЕ (APPLICATION)</li>
     {% for name, route in  appLinks %}
         {% if access(name) %}

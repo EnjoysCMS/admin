@@ -12,9 +12,9 @@ use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
 use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
 use EnjoysCMS\Core\Modules\ModuleCollection;
 use EnjoysCMS\Core\Setting\Setting;
-use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Routing\RouteCollection;
 use Twig\Environment;
 
 abstract class AdminBaseController
@@ -42,7 +42,6 @@ abstract class AdminBaseController
 
         $this->container->set(RendererInterface::class, new Bootstrap4Renderer());
 
-        $this->twig->addExtension($this->container->get(AdminHelpersExtension::class));
         $this->twig->getLoader()->addPath(__DIR__ . '/../template', 'a');
 
         $this->twig->addGlobal(
@@ -55,6 +54,10 @@ abstract class AdminBaseController
         $this->twig->addGlobal(
             'moduleCollection',
             $this->container->get(ModuleCollection::class)
+        );
+        $this->twig->addGlobal(
+            'routeCollection',
+            $this->container->get(RouteCollection::class)
         );
     }
 
