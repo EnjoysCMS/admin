@@ -22,7 +22,7 @@ class AdminHelpersExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('getModules', [$this, 'getModules']),
+//            new TwigFunction('getModules', [$this, 'getModules']),
             new TwigFunction('getApplicationAdminLinks', [$this, 'getApplicationAdminLinks']),
 
         ];
@@ -41,18 +41,18 @@ class AdminHelpersExtension extends AbstractExtension
         );
     }
 
-    public function getModules(): array
-    {
-        return array_filter(
-            $this->moduleCollection->all(),
-            function ($m) {
-                if (!empty($m->adminLinks)) {
-                    return true;
-                }
-                return false;
-            }
-        );
-    }
+//    public function getModules(): array
+//    {
+//        return array_filter(
+//            $this->moduleCollection->all(),
+//            function ($m) {
+//                if (!empty($m->adminLinks)) {
+//                    return true;
+//                }
+//                return false;
+//            }
+//        );
+//    }
 
 
 }

@@ -10,6 +10,7 @@ use DI\NotFoundException;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer;
 use EnjoysCMS\Core\Breadcrumbs\BreadcrumbCollection;
+use EnjoysCMS\Core\Modules\ModuleCollection;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Module\Admin\TwigExtension\AdminHelpersExtension;
 use Exception;
@@ -49,6 +50,11 @@ abstract class AdminBaseController
             $this->breadcrumbs
                 ->remove('system/index')
                 ->add('@admin_index', 'Главная')
+        );
+
+        $this->twig->addGlobal(
+            'moduleCollection',
+            $this->container->get(ModuleCollection::class)
         );
     }
 
