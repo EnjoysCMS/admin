@@ -13,9 +13,8 @@ use Doctrine\Persistence\ObjectRepository;
 use Enjoys\AssetsCollector\Assets;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\User;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
-final class UsersList implements ModelInterface
+final class UsersList
 {
 
     private ObjectRepository|EntityRepository $usersRepository;

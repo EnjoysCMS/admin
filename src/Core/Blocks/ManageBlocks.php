@@ -5,9 +5,8 @@ namespace EnjoysCMS\Module\Admin\Core\Blocks;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Block\Entity\Block;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
-class ManageBlocks implements ModelInterface
+class ManageBlocks
 {
 
     public function __construct(

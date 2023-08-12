@@ -15,12 +15,11 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Exception\NotFoundException;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class EditSetting implements ModelInterface
+final class EditSetting
 {
     private \EnjoysCMS\Core\Setting\Repository\Setting|EntityRepository $settingRepository;
     private \EnjoysCMS\Core\Setting\Entity\Setting $settingEntity;

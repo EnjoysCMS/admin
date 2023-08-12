@@ -15,11 +15,10 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Delete implements ModelInterface
+class Delete
 {
     private Group $group;
     private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;

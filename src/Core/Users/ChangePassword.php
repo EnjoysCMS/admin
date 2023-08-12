@@ -18,11 +18,10 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\User;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ChangePassword implements ModelInterface
+class ChangePassword
 {
     private User $user;
     private ObjectRepository|EntityRepository $usersRepository;

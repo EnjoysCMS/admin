@@ -8,16 +8,14 @@ use Doctrine\ORM\EntityManager;
 use Enjoys\Config\Config;
 use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Auth\Identity;
-use EnjoysCMS\Core\Block\Collection;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Block\WidgetCollection;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class Manage implements ModelInterface
+class Manage
 {
     /**
      * @var ContainerInterface

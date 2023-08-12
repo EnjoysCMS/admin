@@ -16,10 +16,9 @@ use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class AddSetting implements ModelInterface
+final class AddSetting
 {
     private \EnjoysCMS\Core\Setting\Repository\Setting|EntityRepository $settingRepository;
 

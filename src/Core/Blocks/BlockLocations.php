@@ -4,6 +4,7 @@
 namespace EnjoysCMS\Module\Admin\Core\Blocks;
 
 
+use Closure;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -14,12 +15,11 @@ use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Entity\BlockLocation;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-class BlockLocations implements ModelInterface
+class BlockLocations
 {
     private Block $block;
 
@@ -73,7 +73,7 @@ class BlockLocations implements ModelInterface
         return $form;
     }
 
-    private function getFillLocations(): \Closure
+    private function getFillLocations(): Closure
     {
         return function () {
             $result = [];

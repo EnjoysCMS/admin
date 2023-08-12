@@ -11,9 +11,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\NotSupported;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 
-final class GroupsList implements ModelInterface
+final class GroupsList
 {
 
     private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;

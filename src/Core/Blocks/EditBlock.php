@@ -26,13 +26,12 @@ use EnjoysCMS\Core\ContentEditor\ContentEditor;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\Config;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use InvalidArgumentException;
 use Invoker\Exception\NotCallableException;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 
-class EditBlock implements ModelInterface
+class EditBlock
 {
 
     private Block $block;

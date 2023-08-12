@@ -20,10 +20,9 @@ use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
-use EnjoysCMS\Module\Admin\Core\ModelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Edit implements ModelInterface
+class Edit
 {
     private Group $group;
     private EntityRepository|\EnjoysCMS\Core\Users\Repository\Group $groupsRepository;
