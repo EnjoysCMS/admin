@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace EnjoysCMS\Module\Admin\Core\Settings;
+namespace EnjoysCMS\Module\Admin\Settings;
 
 
 use Doctrine\ORM\EntityManager;
@@ -13,12 +13,10 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class AddSetting
+final class Add
 {
     private \EnjoysCMS\Core\Setting\Repository\Setting|EntityRepository $settingRepository;
 
@@ -26,39 +24,17 @@ final class AddSetting
      * @throws NotSupported
      */
     public function __construct(
-        private readonly EntityManager $entityManager,
+        private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
-        private readonly \EnjoysCMS\Core\Setting\Setting $setting,
     ) {
-        $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
+        $this->settingRepository = $this->em->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ExceptionRule
-     * @throws ORMException
-     * @throws NotSupported
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_setting_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer,
-            '_title' => 'Добавление настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
-        ];
-    }
 
     /**
      * @throws ExceptionRule
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->text('var', 'var')->addRule(Rules::REQUIRED)->addRule(
@@ -95,7 +71,7 @@ final class AddSetting
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $setting = new \EnjoysCMS\Core\Setting\Entity\Setting();
         $setting->setVar($this->request->getParsedBody()['var'] ?? null);
@@ -106,7 +82,7 @@ final class AddSetting
         $setting->setDescription($this->request->getParsedBody()['description'] ?? null);
         $setting->setRemovable(true);
 
-        $this->entityManager->persist($setting);
-        $this->entityManager->flush();
+        $this->em->persist($setting);
+        $this->em->flush();
     }
 }

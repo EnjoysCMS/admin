@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EnjoysCMS\Module\Admin\Core\Settings;
+namespace EnjoysCMS\Module\Admin\Settings;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -19,7 +19,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class EditSetting
+final class Edit
 {
     private \EnjoysCMS\Core\Setting\Repository\Setting|EntityRepository $settingRepository;
     private \EnjoysCMS\Core\Setting\Entity\Setting $settingEntity;
@@ -72,7 +72,7 @@ final class EditSetting
     /**
      * @throws ExceptionRule
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->setDefaults(
@@ -123,7 +123,7 @@ final class EditSetting
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $this->settingEntity->setVar($this->request->getParsedBody()['var'] ?? null);
         $this->settingEntity->setValue($this->request->getParsedBody()['value'] ?? null);

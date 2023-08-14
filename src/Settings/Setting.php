@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Settings;
+namespace EnjoysCMS\Module\Admin\Settings;
 
 
 use Doctrine\ORM\EntityManager;
@@ -10,11 +10,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting as SettingComponent;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -30,34 +26,11 @@ class Setting
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
-        private readonly SettingComponent\Setting $setting,
     ) {
         $this->settingRepository = $this->entityManager->getRepository(SettingComponent\Entity\Setting::class);
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_setting_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer,
-            '_title' => 'Настройки | Admin | ' . $this->setting->get('sitename')
-        ];
-    }
-
-    private function getForm(): Form
+    public function getForm(): Form
     {
         /** @var SettingComponent\Entity\Setting[] $settings */
         $settings = $this->settingRepository->findAll();
@@ -129,7 +102,7 @@ class Setting
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         foreach ($this->request->getParsedBody() as $k => $v) {
             /** @var SettingComponent\Entity\Setting $item */
