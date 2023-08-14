@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Dashboard;
 
 
 use DI\DependencyException;
@@ -21,7 +21,7 @@ use Twig\Error\SyntaxError;
 use Twig\TwigFunction;
 
 #[Route('/admin', '@admin_')]
-class Dashboard extends AdminController
+class Controller extends AdminController
 {
 
     /**
@@ -56,7 +56,7 @@ class Dashboard extends AdminController
                     '_title' => 'Dashboard | Admin | ' . $this->setting->get('sitename'),
                     'widgets' => $this->container->get(EntityManager::class)->getRepository(
                         Widget::class
-                    )->getSortWidgets($identity->getUser())
+                    )->getByUser($identity->getUser())
                 ]
             )
         );
