@@ -2,32 +2,33 @@
 
 declare(strict_types=1);
 
-namespace EnjoysCMS\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Config\Config;
+use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
+use EnjoysCMS\Core\Block\WidgetCollection;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminController;
-use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
-use EnjoysCMS\Module\Admin\Core\Widgets\Edit;
-use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('/admin/widgets', '@admin_widgets_')]
-class Widgets extends AdminController
+class Controller extends AdminController
 {
 
     #[Route('/delete/{id}',
@@ -38,13 +39,13 @@ class Widgets extends AdminController
         methods: ['post'],
         comment: 'Удаление виджетов'
     )]
-    public function delete(ServerRequestInterface $request, EntityManager $em, Identity $identity): ResponseInterface
+    public function delete(EntityManager $em, Identity $identity): ResponseInterface
     {
         try {
             $repository = $em->getRepository(Widget::class);
             /** @var Widget|null $widget */
             $widget = $repository->findOneBy([
-                'id' => $request->getAttribute('id'),
+                'id' => $this->request->getAttribute('id'),
                 'user' => $identity->getUser()
             ]);
             if ($widget === null) {
@@ -57,7 +58,7 @@ class Widgets extends AdminController
                 $e->getMessage()
             )->withStatus(500);
         }
-        return $this->jsonResponse(sprintf('Widget with id = %d removed', $request->getAttribute('id')));
+        return $this->jsonResponse(sprintf('Widget with id = %d removed', $this->request->getAttribute('id')));
     }
 
     /**
@@ -74,10 +75,8 @@ class Widgets extends AdminController
     )]
     public function clone(
         EntityManager $em,
-        ServerRequestInterface $request,
-        RedirectInterface $redirect,
     ): ResponseInterface {
-        $widget = $em->getRepository(Widget::class)->find($request->getAttribute('id'));
+        $widget = $em->getRepository(Widget::class)->find($this->request->getAttribute('id'));
         if ($widget === null) {
             throw new NoResultException();
         }
@@ -85,7 +84,7 @@ class Widgets extends AdminController
         $em->persist($newWidget);
         $em->flush();
 
-        return $redirect->toRoute('@admin_index');
+        return $this->redirect->toRoute('@admin_index');
     }
 
     /**
@@ -106,50 +105,113 @@ class Widgets extends AdminController
     {
         $this->breadcrumbs->add('admin/managewidgets', 'Менеджер виджетов')
             ->setLastBreadcrumb('Редактирование виджета');
+
+        $form = $edit->getForm();
+        if ($form->isSubmitted()) {
+            $edit->doAction();
+            return $this->redirect->toRoute('@admin_index');
+        }
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/widgets/edit.twig',
-                $edit->getContext()
+                [
+                    'form' => $this->renderer->output(),
+                    'widget' => $edit->getWidget(),
+                ]
             )
         );
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws LoaderError
-     * @throws NotFoundExceptionInterface
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws NotSupported
+     * @throws Exception
      */
     #[Route(
         name: 'manage',
         comment: 'Просмотр не активированных виджетов'
     )]
-    public function manage(Manage $manage): ResponseInterface
+    public function manage(EntityManager $em, Identity $identity, WidgetCollection $widgetCollection): ResponseInterface
     {
         $this->breadcrumbs
             ->setLastBreadcrumb('Менеджер виджета');
+
+        $installedWidgets = array_map(
+            function ($widget) {
+                return $widget->getClass();
+            },
+            $em->getRepository(Widget::class)->findBy([
+                'user' => $identity->getUser()
+            ])
+        );
+
+        $allWidgets = new Config();
+
+        $configs = array_merge(
+            [getenv('ROOT_PATH') . '/app/widgets.yml'],
+            glob(getenv('ROOT_PATH') . '/modules/*/widgets.yml'),
+        );
+
+        foreach ($configs as $config) {
+            $allWidgets->addConfig($config, [], YAML::class);
+        }
+
         return $this->response(
             $this->twig->render(
                 '@a/widgets/manage.twig',
-                $manage->getContext()
+                [
+                    'allowedWidgets' => $widgetCollection,
+                    'installedWidgets' => $installedWidgets,
+                ]
             )
         );
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws Exception
      */
     #[Route('/activate',
         name: 'activate',
         comment: 'Установка (активация) виджетов'
     )]
-    public function activate(ActivateWidget $activateWidget): ResponseInterface
-    {
-        return $activateWidget();
+    public function activate(
+        EntityManager $em,
+        WidgetCollection $widgetCollection,
+        Identity $identity,
+    ): ResponseInterface {
+        $class = $this->request->getQueryParams()['class'] ?? '';
+        if (!class_exists($class)) {
+            throw new InvalidArgumentException(sprintf('Class not found: %s', $class));
+        }
+        $reflectionClass = new ReflectionClass($class);
+
+        $widgetAnnotation = $widgetCollection->getAnnotation(
+            $reflectionClass
+        ) ?? throw new InvalidArgumentException(
+            sprintf('Class "%s" not supported', $reflectionClass->getName())
+        );
+
+        $widget = new Widget();
+        $widget->setName($widgetAnnotation->getName());
+        $widget->setClass($widgetAnnotation->getClassName());
+        $widget->setOptions($widgetAnnotation->getOptions());
+        $widget->setUser($identity->getUser());
+
+        $em->persist($widget);
+        $em->flush();
+
+
+//        $this->ACL->register(
+//            $widget->getWidgetActionAcl(),
+//            $widget->getWidgetCommentAcl()
+//        );
+        return $this->redirect->toRoute('@admin_index');
     }
 
     #[Route('/save',

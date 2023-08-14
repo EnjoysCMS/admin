@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace EnjoysCMS\Module\Admin\Core\Widgets;
+namespace EnjoysCMS\Module\Admin\Widgets;
 
 
 use Doctrine\ORM\EntityManager;
@@ -12,9 +12,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Widget;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class Edit
@@ -29,35 +27,14 @@ final class Edit
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
     ) {
-        $widget = $this->em->getRepository(Widget::class)->find($this->request->getAttribute('id'));
-        if ($widget === null) {
-            throw new NoResultException();
-        }
-        $this->widget = $widget;
+        $this->widget = $this->em->getRepository(Widget::class)->find(
+            $this->request->getAttribute('id')
+        ) ?? throw new NoResultException();
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_index', emit: true);
-        }
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer->output(),
-            'widget' => $this->widget,
-        ];
-    }
 
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $options = $this->widget->getOptions();
         unset($options['gs']);
@@ -100,7 +77,7 @@ final class Edit
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $result = [];
         foreach ($this->request->getParsedBody() as $key => $value) {
@@ -112,5 +89,10 @@ final class Edit
 
         $this->widget->setOptions(array_merge_recursive_distinct($this->widget->getOptions(), $result));
         $this->em->flush();
+    }
+
+    public function getWidget(): Widget
+    {
+        return $this->widget;
     }
 }
