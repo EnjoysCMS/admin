@@ -9,7 +9,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
-use EnjoysCMS\Module\Admin\AdminBaseController;
+use EnjoysCMS\Module\Admin\AdminController;
 use EnjoysCMS\Module\Admin\Core\Settings\AddSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\DeleteSetting;
 use EnjoysCMS\Module\Admin\Core\Settings\EditSetting;
@@ -22,7 +22,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('/admin/setting', name: '@admin_setting_')]
-class Setting extends AdminBaseController
+class Setting extends AdminController
 {
 
     /**

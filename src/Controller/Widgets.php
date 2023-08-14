@@ -13,7 +13,7 @@ use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Routing\Annotation\Route;
-use EnjoysCMS\Module\Admin\AdminBaseController;
+use EnjoysCMS\Module\Admin\AdminController;
 use EnjoysCMS\Module\Admin\Core\Widgets\ActivateWidget;
 use EnjoysCMS\Module\Admin\Core\Widgets\Edit;
 use EnjoysCMS\Module\Admin\Core\Widgets\Manage;
@@ -27,7 +27,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('/admin/widgets', '@admin_widgets_')]
-class Widgets extends AdminBaseController
+class Widgets extends AdminController
 {
 
     #[Route('/delete/{id}',

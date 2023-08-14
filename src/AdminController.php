@@ -14,7 +14,7 @@ use EnjoysCMS\Core\Modules\ModuleCollection;
 use Exception;
 use Symfony\Component\Routing\RouteCollection;
 
-abstract class AdminBaseController extends AbstractController
+abstract class AdminController extends AbstractController
 {
 
     public const UUID_RULE_REQUIREMENT = '[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';

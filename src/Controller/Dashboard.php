@@ -12,7 +12,7 @@ use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Block\WidgetModel;
 use EnjoysCMS\Core\Routing\Annotation\Route;
-use EnjoysCMS\Module\Admin\AdminBaseController;
+use EnjoysCMS\Module\Admin\AdminController;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
@@ -21,7 +21,7 @@ use Twig\Error\SyntaxError;
 use Twig\TwigFunction;
 
 #[Route('/admin', '@admin_')]
-class Dashboard extends AdminBaseController
+class Dashboard extends AdminController
 {
 
     /**

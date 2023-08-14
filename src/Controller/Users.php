@@ -9,7 +9,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
-use EnjoysCMS\Module\Admin\AdminBaseController;
+use EnjoysCMS\Module\Admin\AdminController;
 use EnjoysCMS\Module\Admin\Core\Users\Add;
 use EnjoysCMS\Module\Admin\Core\Users\ChangePassword;
 use EnjoysCMS\Module\Admin\Core\Users\Delete;
@@ -21,7 +21,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('/admin/users', '@admin_users_')]
-class Users extends AdminBaseController
+class Users extends AdminController
 {
 
     /**

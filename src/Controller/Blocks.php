@@ -13,7 +13,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
-use EnjoysCMS\Module\Admin\AdminBaseController;
+use EnjoysCMS\Module\Admin\AdminController;
 use EnjoysCMS\Module\Admin\Core\Blocks\ActivateBlock;
 use EnjoysCMS\Module\Admin\Core\Blocks\AddBlocks;
 use EnjoysCMS\Module\Admin\Core\Blocks\BlockLocations;
@@ -31,7 +31,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('admin/blocks', '@admin_blocks_')]
-class Blocks extends AdminBaseController
+class Blocks extends AdminController
 {
 
 
