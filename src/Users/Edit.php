@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Users;
+namespace EnjoysCMS\Module\Admin\Users;
 
 
 use Doctrine\ORM\EntityManager;
@@ -12,10 +12,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
@@ -36,65 +33,28 @@ class Edit
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
-        private readonly Setting $setting,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
-        $this->user = $this->getUser();
-    }
-
-    /**
-     * @throws NotEditableUser
-     * @throws NoResultException
-     */
-    public function getUser(): User
-    {
-        $user = $this->usersRepository->find(
+        $this->user = $this->usersRepository->find(
             $this->request->getAttribute('id')
-        );
+        ) ?? throw new NoResultException();
 
-        if ($user === null) {
-            throw new NoResultException();
-        }
-
-        if (!$user->isEditable()) {
+        if (!$this->user->isEditable()) {
             throw new NotEditableUser('User is not editable');
         }
-
-        return $user;
     }
 
-    /**
-     * @throws ExceptionRule
-     * @throws NotSupported
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function getContext(): array
+    public function getUser(): User
     {
-        $form = $this->getForm();
-
-        if ($form->isSubmitted()) {
-            $this->editUser();
-            $this->redirect->toRoute('@admin_users_list');
-        }
-
-        $this->renderer->setForm($form);
-
-        return [
-            'form' => $this->renderer,
-            'username' => $this->user->getLogin(),
-            'user' => $this->user,
-            '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
-        ];
+        return $this->user;
     }
+
 
     /**
      * @throws ExceptionRule
      * @throws NotSupported
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->setDefaults(
@@ -182,7 +142,7 @@ class Edit
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function editUser(): void
+    public function editUser(): void
     {
         $this->user->setName($this->request->getParsedBody()['name'] ?? null);
         $this->user->setLogin($this->request->getParsedBody()['login'] ?? null);

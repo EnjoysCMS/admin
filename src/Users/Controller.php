@@ -1,27 +1,25 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Users;
 
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Enjoys\AssetsCollector\Assets;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
+use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\AdminController;
-use EnjoysCMS\Module\Admin\Core\Users\Add;
-use EnjoysCMS\Module\Admin\Core\Users\ChangePassword;
-use EnjoysCMS\Module\Admin\Core\Users\Delete;
-use EnjoysCMS\Module\Admin\Core\Users\Edit;
-use EnjoysCMS\Module\Admin\Core\Users\UsersList;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 #[Route('/admin/users', '@admin_users_')]
-class Users extends AdminController
+class Controller extends AdminController
 {
 
     /**
@@ -29,18 +27,40 @@ class Users extends AdminController
      * @throws RuntimeError
      * @throws NotSupported
      * @throws LoaderError
+     * TODO: remove assets from controller, move to view
      */
     #[Route(
         name: 'list',
         comment: 'Доступ к просмотру списка пользователей'
     )]
-    public function list(UsersList $usersList): ResponseInterface
+    public function list(EntityManager $em, Assets $assets,): ResponseInterface
     {
         $this->breadcrumbs->setLastBreadcrumb('Список пользователей');
+
+        $assets->add(
+            'css',
+            [
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
+            ]
+        );
+        $assets->add(
+            'js',
+            [
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
+                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
+            ]
+        );
+
         return $this->response(
             $this->twig->render(
                 '@a/users/users-list.twig',
-                $usersList->getContext()
+                [
+                    'users' => $em->getRepository(User::class)->findAll(),
+                    '_title' => 'Пользователи | Admin | ' . $this->setting->get('sitename'),
+                ]
             )
         );
     }
@@ -65,13 +85,31 @@ class Users extends AdminController
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Редактирование пользователя');
+
+        $form = $edit->getForm();
+
+        if ($form->isSubmitted()) {
+            $edit->editUser();
+            return $this->redirect->toRoute('@admin_users_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/users/edituser.twig',
-                $edit->getContext()
+                [
+                    'form' => $this->renderer,
+                    'username' => $edit->getUser()->getLogin(),
+                    'user' => $edit->getUser(),
+                    '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . $this->setting->get(
+                            'sitename'
+                        ),
+                ]
             )
         );
     }
+
 
     /**
      * @throws ExceptionRule
@@ -90,10 +128,23 @@ class Users extends AdminController
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Добавить нового пользователя');
+
+        $form = $add->getForm();
+
+        if ($form->isSubmitted()) {
+            $add->addUser();
+            $this->redirect->toRoute('@admin_users_list', emit: true);
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/users/adduser.twig',
-                $add->getContext()
+                [
+                    'form' => $this->renderer,
+                    '_title' => 'Добавление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
+                ]
             )
         );
     }
@@ -119,10 +170,25 @@ class Users extends AdminController
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Удаление пользователя');
+
+        $form = $delete->getForm();
+
+        if ($form->isSubmitted()) {
+            $delete->doAction();
+            return $this->redirect->toRoute('@admin_users_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/users/deleteuser.twig',
-                $delete->getContext()
+                [
+                    'form' => $this->renderer,
+                    'username' => $delete->getUser()->getLogin(),
+                    'user' => $delete->getUser(),
+                    '_title' => 'Удаление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
+                ]
             )
         );
     }
@@ -144,10 +210,24 @@ class Users extends AdminController
     )]
     public function changePassword(ChangePassword $changePassword): ResponseInterface
     {
+        $form = $changePassword->getForm();
+
+        if ($form->isSubmitted()) {
+            $changePassword->doAction();
+            return $this->redirect->toRoute('@admin_users_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/users/change-password.twig',
-                $changePassword->getContext()
+                [
+                    '_title' => 'Смена пароля пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
+                    'form' => $this->renderer,
+                    'username' => $changePassword->getUser()->getLogin(),
+                    'user' => $changePassword->getUser()
+                ]
             )
         );
     }

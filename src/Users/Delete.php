@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Users;
+namespace EnjoysCMS\Module\Admin\Users;
 
 
 use Doctrine\ORM\EntityManager;
@@ -13,10 +13,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
@@ -36,66 +33,29 @@ class Delete
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
         private readonly EventDispatcherInterface $dispatcher,
-        private readonly RedirectInterface $redirect,
-        private readonly Setting $setting,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
-        $this->user = $this->getUser();
-    }
-
-    /**
-     * @throws NotEditableUser
-     * @throws NoResultException
-     */
-    public function getUser(): User
-    {
-        $user = $this->usersRepository->find(
+        $this->user = $this->usersRepository->find(
             $this->request->getAttribute('id')
-        );
+        ) ?? throw new NoResultException();
 
-        if ($user === null) {
-            throw new NoResultException();
-        }
-
-        if (!$user->isEditable()) {
+        if (!$this->user->isEditable()) {
             throw new NotEditableUser('User is not editable');
         }
-
-        return $user;
     }
 
-    /**
-     * @throws NotSupported
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ExceptionRule
-     */
-    public function getContext(): array
+
+    public function getUser(): User
     {
-        $form = $this->getForm();
-
-
-        if ($form->isSubmitted()) {
-            $this->deleteUser();
-            $this->redirect->toRoute('@admin_users_list', emit: true);
-        }
-
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer,
-            'username' => $this->user->getLogin(),
-            'user' => $this->user,
-            '_title' => 'Удаление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
-        ];
+        return $this->user;
     }
 
     /**
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function deleteUser(): void
+    public function doAction(): void
     {
         $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user));
         $this->em->remove($this->user);
@@ -105,7 +65,7 @@ class Delete
     /**
      * @throws ExceptionRule
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->text('check-delete')->addClass('d-none')->setAttribute(AttributeFactory::create('disabled'))->addRule(
