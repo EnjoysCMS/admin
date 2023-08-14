@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Components\DBAL;
+namespace EnjoysCMS\Module\Admin\Settings;
 
 
 
