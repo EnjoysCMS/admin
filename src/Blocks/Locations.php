@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Blocks;
 
 
 use Closure;
@@ -11,15 +11,13 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Entity\BlockLocation;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-class BlockLocations
+class Locations
 {
     private Block $block;
 
@@ -29,8 +27,6 @@ class BlockLocations
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
         private readonly RouteCollection $routeCollection,
     ) {
         $this->block = $this->em->getRepository(Block::class)->find(
@@ -38,27 +34,8 @@ class BlockLocations
         ) ?? throw new InvalidArgumentException('Invalid block ID');
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws NotSupported
-     * @throws ORMException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_blocks_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
 
-        return [
-            'form' => $this->renderer,
-            'block' => $this->getBlock(),
-        ];
-    }
-
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
 
@@ -93,7 +70,7 @@ class BlockLocations
      * @throws NotSupported
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $blockLocationRepository = $this->em->getRepository(BlockLocation::class);
 

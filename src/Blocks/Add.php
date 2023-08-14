@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace EnjoysCMS\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Blocks;
 
-use DI\DependencyException;
-use DI\NotFoundException;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -14,22 +12,16 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\Options;
 use EnjoysCMS\Core\Block\UserBlock;
-use EnjoysCMS\Core\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Users\Entity\Group;
-use EnjoysCMS\Module\Admin\Config;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 
-class AddBlocks
+class Add
 {
 
     private \EnjoysCMS\Core\Block\Repository\Block|EntityRepository $blockRepository;
@@ -40,47 +32,17 @@ class AddBlocks
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly ContentEditor $contentEditor,
-        private readonly RedirectInterface $redirect,
         private readonly AccessControl $accessControl,
-        private readonly Config $config
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws DependencyException
-     * @throws ExceptionRule
-     * @throws NotFoundException
-     * @throws NotFoundExceptionInterface
-     * @throws NotSupported
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_blocks_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
-        return [
-            'contentEditor' => $this->contentEditor->withConfig(
-                $this->config->getContentEditorConfigParamForCustomBlocks()
-            )->setSelector('#body')->getEmbedCode(),
-            'form' => $this->renderer,
-        ];
-    }
-
 
     /**
      * @throws ExceptionRule
      * @throws NotSupported
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->setDefaults([
@@ -133,7 +95,7 @@ class AddBlocks
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $block = new Block();
         $block->setName($this->request->getParsedBody()['name'] ?? $block->getClassName());

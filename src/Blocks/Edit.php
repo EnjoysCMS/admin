@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Blocks;
+namespace EnjoysCMS\Module\Admin\Blocks;
 
 
 use DI\Container;
@@ -16,22 +16,18 @@ use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\AccessControl\AccessControl;
 use EnjoysCMS\Core\Block\BlockFactory;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Block\UserBlock;
-use EnjoysCMS\Core\ContentEditor\ContentEditor;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Users\Entity\Group;
-use EnjoysCMS\Module\Admin\Config;
 use InvalidArgumentException;
 use Invoker\Exception\NotCallableException;
 use Psr\Http\Message\ServerRequestInterface;
 use Ramsey\Uuid\Uuid;
 
-class EditBlock
+class Edit
 {
 
     private Block $block;
@@ -46,12 +42,8 @@ class EditBlock
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly ContentEditor $contentEditor,
         private readonly Container $container,
         private readonly BlockFactory $blockFactory,
-        private readonly Config $config,
-        private readonly RedirectInterface $redirect,
         private readonly AccessControl $accessControl,
     ) {
         $this->blockRepository = $this->em->getRepository(Block::class);
@@ -60,40 +52,14 @@ class EditBlock
             sprintf('Invalid block ID: %s', $blockId)
         );
 
-
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ExceptionRule
-     * @throws ORMException
-     * @throws NotFoundException
-     * @throws DependencyException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_blocks_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
-
-
-        return [
-            'form' => $this->renderer,
-            'block' => $this->getBlock(),
-            'contentEditor' => $this->contentEditor->withConfig(
-                $this->config->getContentEditorConfigParamForCustomBlocks()
-            )->setSelector('#body')->getEmbedCode(),
-        ];
-    }
 
     /**
      * @throws ExceptionRule
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
 
@@ -272,7 +238,7 @@ class EditBlock
      * @throws ORMException
      * @throws DependencyException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $oldBlock = clone $this->block;
 
