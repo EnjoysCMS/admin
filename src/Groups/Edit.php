@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Groups;
 
 
 use Doctrine\ORM\EntityManager;
@@ -12,12 +12,8 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\AccessControl\AccessControl;
-use EnjoysCMS\Core\Entities\ACL;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,11 +30,8 @@ class Edit
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
         private readonly AccessControl $accessControl,
-        private readonly Setting $setting,
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
@@ -49,36 +42,12 @@ class Edit
 
 
     /**
-     * @throws ExceptionRule
-     * @throws NotSupported
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_groups_list', emit: true);
-        }
-
-        $this->renderer->setForm($form);
-
-
-        return [
-            'form' => $this->renderer,
-            '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename')
-        ];
-    }
-
-    /**
      * @throws OptimisticLockException
      * @throws ExceptionRule
      * @throws ORMException
      * @throws NotSupported
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
 
@@ -147,21 +116,18 @@ class Edit
      * @throws NotSupported
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
-
-
         $this->group->setName($this->request->getParsedBody()['name'] ?? '');
         $this->group->setDescription($this->request->getParsedBody()['description'] ?? '');
 
 //dd($acls, $this->request->getParsedBody()['acl'] ?? []);
         foreach ($this->accessControl->getManage()->getList() as $acl) {
-            if (in_array($acl->getId(), $this->request->getParsedBody()['acl'] ?? [])){
+            if (in_array($acl->getId(), $this->request->getParsedBody()['acl'] ?? [])) {
                 $acl->addGroup($this->group);
                 continue;
             }
             $acl->removeGroup($this->group);
-
         }
 
 

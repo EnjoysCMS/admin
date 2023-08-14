@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Groups;
 
 
 use Doctrine\ORM\EntityManager;
@@ -37,27 +37,19 @@ class Delete
     ) {
         $this->groupsRepository = $this->entityManager->getRepository(Group::class);
 
-        $this->group = $this->getGroup();
-    }
-
-    /**
-     * @throws NoResultException
-     * @throws CannotRemoveEntity
-     */
-    private function getGroup(): Group
-    {
-        $group = $this->groupsRepository->find(
+        $this->group = $this->groupsRepository->find(
             $this->request->getAttribute('id')
-        );
+        ) ?? throw new NoResultException();
 
-        if ($group === null) {
-            throw new NoResultException();
-        }
-
-        if ($group->isSystem()) {
+        if ($this->group->isSystem()) {
             throw new CannotRemoveEntity('You cannot delete a system group');
         }
-        return $group;
+    }
+
+
+    public function getGroup(): Group
+    {
+        return $this->group;
     }
 
     /**
@@ -85,14 +77,13 @@ class Delete
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $this->entityManager->remove($this->group);
         $this->entityManager->flush();
-        $this->redirect->toRoute('@admin_groups_list', emit: true);
     }
 
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
         $form->submit('confirm-delete', 'Удалить')->addClass('btn-danger');

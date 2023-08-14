@@ -1,19 +1,17 @@
 <?php
 
 
-namespace EnjoysCMS\Module\Admin\Controller;
+namespace EnjoysCMS\Module\Admin\Groups;
 
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
+use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\AdminController;
-use EnjoysCMS\Module\Admin\Core\Groups\Add;
-use EnjoysCMS\Module\Admin\Core\Groups\Delete;
-use EnjoysCMS\Module\Admin\Core\Groups\Edit;
-use EnjoysCMS\Module\Admin\Core\Groups\GroupsList;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -21,7 +19,7 @@ use Twig\Error\SyntaxError;
 
 
 #[Route('/admin/users/groups', '@admin_groups_')]
-class Groups extends AdminController
+class Controller extends AdminController
 {
 
     /**
@@ -34,7 +32,7 @@ class Groups extends AdminController
         name: 'list',
         comment: 'Доступ к просмотру списка групп'
     )]
-    public function list(GroupsList $groupsList): ResponseInterface
+    public function list(EntityManager $em): ResponseInterface
     {
         $this->breadcrumbs
             ->setLastBreadcrumb('Группы пользователей');
@@ -42,7 +40,10 @@ class Groups extends AdminController
         return $this->response(
             $this->twig->render(
                 '@a/groups/list.twig',
-                $groupsList->getContext()
+                [
+                    'groups' => $em->getRepository(Group::class)->findAll(),
+                    '_title' => 'Группы | Admin | ' . $this->setting->get('sitename'),
+                ]
             )
         );
     }
@@ -50,12 +51,12 @@ class Groups extends AdminController
 
     /**
      * @throws ExceptionRule
-     * @throws LoaderError
-     * @throws NotSupported
      * @throws ORMException
-     * @throws OptimisticLockException
      * @throws RuntimeError
+     * @throws LoaderError
+     * @throws OptimisticLockException
      * @throws SyntaxError
+     * @throws NotSupported
      */
     #[Route('/edit/{id}',
         name: 'edit',
@@ -70,10 +71,22 @@ class Groups extends AdminController
             ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb(sprintf('Редактирование группы "%s"', $edit->getGroup()->getName()));
 
+        $form = $edit->getForm();
+
+        if ($form->isSubmitted()) {
+            $edit->doAction();
+            return $this->redirect->toRoute('@admin_groups_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/edit.twig',
-                $edit->getContext()
+                [
+                    'form' => $this->renderer,
+                    '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename')
+                ]
             )
         );
     }
@@ -96,10 +109,22 @@ class Groups extends AdminController
             ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb('Добавить новую группу');
 
+        $form = $add->getForm();
+
+        if ($form->isSubmitted()) {
+            $add->doAction();
+            return $this->redirect->toRoute('@admin_groups_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/add.twig',
-                $add->getContext()
+                [
+                    'form' => $this->renderer,
+                    '_title' => 'Добавление группы | Группы | Admin | ' . $this->setting->get('sitename')
+                ]
             )
         );
     }
@@ -125,10 +150,23 @@ class Groups extends AdminController
             ->add('@admin_groups_list', 'Группы пользователей')
             ->setLastBreadcrumb('Удаление группы');
 
+        $form = $delete->getForm();
+
+        if ($form->isSubmitted()) {
+            $delete->doAction();
+            return $this->redirect->toRoute('@admin_groups_list');
+        }
+
+        $this->renderer->setForm($form);
+
         return $this->response(
             $this->twig->render(
                 '@a/groups/delete.twig',
-                $delete->getContext()
+                [
+                    'form' => $this->renderer,
+                    'group' => $delete->getGroup(),
+                    '_title' => 'Удаление группы | Группы | Admin | ' . $this->setting->get('sitename')
+                ]
             )
         );
     }

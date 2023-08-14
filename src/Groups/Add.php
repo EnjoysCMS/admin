@@ -1,6 +1,6 @@
 <?php
 
-namespace EnjoysCMS\Module\Admin\Core\Groups;
+namespace EnjoysCMS\Module\Admin\Groups;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -10,11 +10,8 @@ use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\AccessControl\AccessControl;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -29,35 +26,13 @@ class Add
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
         private readonly ACList $ACList,
-        private readonly AccessControl $accessControl,
-        private readonly Setting $setting
+        private readonly AccessControl $accessControl
     ) {
         $this->groupsRepository = $this->em->getRepository(Group::class);
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ExceptionRule
-     * @throws ORMException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
 
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_groups_list', emit: true);
-        }
-
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer,
-            '_title' => 'Добавление группы | Группы | Admin | ' . $this->setting->get('sitename')
-        ];
-    }
 
     /**
      * @throws ExceptionRule
@@ -65,7 +40,7 @@ class Add
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function getForm(): Form
+    public function getForm(): Form
     {
         $form = new Form();
 
@@ -127,7 +102,7 @@ class Add
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    private function doAction(): void
+    public function doAction(): void
     {
         $group = new Group();
         $group->setName($this->request->getParsedBody()['name'] ?? '');
