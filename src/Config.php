@@ -15,23 +15,14 @@ use EnjoysCMS\Core\Modules\AbstractModuleConfig;
 final class Config extends AbstractModuleConfig
 {
 
-    private string $package = 'enjoyscms/admin';
-
-    public function __construct(
-        private readonly \Enjoys\Config\Config $config,
-        private readonly Container $container
-    ) {
-//        $this->package = Utils::parseComposerJson(__DIR__ . '/../composer.json')->packageName;
-    }
-
-    public function getConfig(): \Enjoys\Config\Config
+    public function __construct(\Enjoys\Config\Config $config, private readonly Container $container)
     {
-        return $this->config;
+        parent::__construct($config);
     }
 
     public function getModulePackageName(): string
     {
-        return $this->package;
+        return 'enjoyscms/admin';
     }
 
     public function getContentEditorConfigParamForCustomBlocks(): string|array|null
