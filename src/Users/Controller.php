@@ -4,6 +4,8 @@
 namespace EnjoysCMS\Module\Admin\Users;
 
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -19,6 +21,7 @@ use EnjoysCMS\Core\Users\Events\BeforeChangePasswordUserEvent;
 use EnjoysCMS\Core\Users\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Core\Users\Events\BeforeEditUserEvent;
 use EnjoysCMS\Module\Admin\AdminController;
+use EnjoysCMS\Module\Admin\Config;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -55,12 +58,14 @@ class Controller extends AdminController
 
     /**
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     #[Route('/edit/@{id}',
         name: 'edit',
@@ -69,7 +74,7 @@ class Controller extends AdminController
         ],
         comment: 'Редактирование пользователей'
     )]
-    public function edit(Edit $edit): ResponseInterface
+    public function edit(Edit $edit, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Редактирование пользователя');
@@ -83,13 +88,14 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_users_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/users/edituser.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'username' => $edit->getUser()->getLogin(),
                     'user' => $edit->getUser(),
                     '_title' => 'Редактирование пользователя | Пользователи | Admin | ' . $this->setting->get(
@@ -102,19 +108,21 @@ class Controller extends AdminController
 
 
     /**
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws NotFoundException
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/add',
         name: 'add',
         comment: 'Добавление пользователей'
     )]
-    public function add(Add $add): ResponseInterface
+    public function add(Add $add, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Добавить нового пользователя');
@@ -127,13 +135,14 @@ class Controller extends AdminController
             $this->redirect->toRoute('@admin_users_list', emit: true);
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/users/adduser.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Добавление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
                 ]
             )
@@ -142,13 +151,15 @@ class Controller extends AdminController
 
 
     /**
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws NotFoundException
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/delete/{id}',
         name: 'delete',
@@ -157,7 +168,7 @@ class Controller extends AdminController
         ],
         comment: 'Удаление пользователей'
     )]
-    public function delete(Delete $delete): ResponseInterface
+    public function delete(Delete $delete, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_users_list', 'Список пользователей')
             ->setLastBreadcrumb('Удаление пользователя');
@@ -171,13 +182,14 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_users_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/users/deleteuser.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'username' => $delete->getUser()->getLogin(),
                     'user' => $delete->getUser(),
                     '_title' => 'Удаление пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
@@ -187,12 +199,15 @@ class Controller extends AdminController
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
+     * @throws NotFoundException
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/changepassword@{id}',
         name: 'changepassword',
@@ -201,7 +216,7 @@ class Controller extends AdminController
         ],
         comment: 'Изменение паролей у пользователей'
     )]
-    public function changePassword(ChangePassword $changePassword): ResponseInterface
+    public function changePassword(ChangePassword $changePassword, Config $config): ResponseInterface
     {
         $form = $changePassword->getForm();
 
@@ -212,14 +227,15 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_users_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/users/change-password.twig',
                 [
                     '_title' => 'Смена пароля пользователя | Пользователи | Admin | ' . $this->setting->get('sitename'),
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'username' => $changePassword->getUser()->getLogin(),
                     'user' => $changePassword->getUser()
                 ]

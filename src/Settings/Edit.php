@@ -11,12 +11,8 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Exception\NotFoundException;
-use EnjoysCMS\Core\Http\Response\RedirectInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class Edit
@@ -30,10 +26,7 @@ final class Edit
      */
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
-        private readonly RedirectInterface $redirect,
-        private readonly \EnjoysCMS\Core\Setting\Setting $setting
+        private readonly ServerRequestInterface $request
     ) {
         $this->settingRepository = $this->entityManager->getRepository(\EnjoysCMS\Core\Setting\Entity\Setting::class);
         $this->settingEntity = $this->settingRepository->find(
@@ -48,26 +41,6 @@ final class Edit
         );
     }
 
-    /**
-     * @throws ExceptionRule
-     * @throws OptimisticLockException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws ORMException
-     */
-    public function getContext(): array
-    {
-        $form = $this->getForm();
-        if ($form->isSubmitted()) {
-            $this->doAction();
-            $this->redirect->toRoute('@admin_setting_manage', emit: true);
-        }
-        $this->renderer->setForm($form);
-        return [
-            'form' => $this->renderer,
-            '_title' => 'Изменение настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
-        ];
-    }
 
     /**
      * @throws ExceptionRule

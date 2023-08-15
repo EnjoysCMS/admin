@@ -4,6 +4,8 @@
 namespace EnjoysCMS\Module\Admin\Groups;
 
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -12,6 +14,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Module\Admin\AdminController;
+use EnjoysCMS\Module\Admin\Config;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -50,13 +53,15 @@ class Controller extends AdminController
 
 
     /**
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws NotFoundException
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/edit/{id}',
         name: 'edit',
@@ -65,7 +70,7 @@ class Controller extends AdminController
         ],
         comment: 'Редактирование групп пользователей'
     )]
-    public function edit(Edit $edit): ResponseInterface
+    public function edit(Edit $edit, Config $config): ResponseInterface
     {
         $this->breadcrumbs
             ->add('@admin_groups_list', 'Группы пользователей')
@@ -78,13 +83,14 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_groups_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/groups/edit.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Редактирование группы | Группы | Admin | ' . $this->setting->get('sitename')
                 ]
             )
@@ -92,18 +98,21 @@ class Controller extends AdminController
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
+     * @throws NotFoundException
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/add',
         name: 'add',
         comment: 'Добавление групп пользователей'
     )]
-    public function add(Add $add): ResponseInterface
+    public function add(Add $add, Config $config): ResponseInterface
     {
         $this->breadcrumbs
             ->add('@admin_groups_list', 'Группы пользователей')
@@ -116,13 +125,14 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_groups_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/groups/add.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Добавление группы | Группы | Admin | ' . $this->setting->get('sitename')
                 ]
             )
@@ -136,6 +146,8 @@ class Controller extends AdminController
      * @throws OptimisticLockException
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     #[Route('/delete@{id}',
         name: 'delete',
@@ -144,7 +156,7 @@ class Controller extends AdminController
         ],
         comment: 'Удаление групп пользователей'
     )]
-    public function delete(Delete $delete): ResponseInterface
+    public function delete(Delete $delete, Config $config): ResponseInterface
     {
         $this->breadcrumbs
             ->add('@admin_groups_list', 'Группы пользователей')
@@ -157,13 +169,14 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_groups_list');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/groups/delete.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'group' => $delete->getGroup(),
                     '_title' => 'Удаление группы | Группы | Admin | ' . $this->setting->get('sitename')
                 ]

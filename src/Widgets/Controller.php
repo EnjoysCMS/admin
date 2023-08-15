@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace EnjoysCMS\Module\Admin\Widgets;
 
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -88,11 +90,13 @@ class Controller extends AdminController
     }
 
     /**
-     * @throws OptimisticLockException
-     * @throws SyntaxError
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     #[Route('/edit/{id}',
         name: 'edit',
@@ -101,7 +105,7 @@ class Controller extends AdminController
         ],
         comment: 'Редактирование виджетов'
     )]
-    public function edit(Edit $edit): ResponseInterface
+    public function edit(Edit $edit, \EnjoysCMS\Module\Admin\Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('admin/managewidgets', 'Менеджер виджетов')
             ->setLastBreadcrumb('Редактирование виджета');
@@ -111,13 +115,15 @@ class Controller extends AdminController
             $edit->doAction();
             return $this->redirect->toRoute('@admin_index');
         }
-        $this->renderer->setForm($form);
+
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/widgets/edit.twig',
                 [
-                    'form' => $this->renderer->output(),
+                    'form' => $rendererForm->output(),
                     'widget' => $edit->getWidget(),
                 ]
             )

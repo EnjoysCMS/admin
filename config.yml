@@ -1,4 +1,4 @@
 editor:
   custom_blocks: null
 
-renderer: \Enjoys\Forms\Renderer\AbstractRenderer
+renderer: \Enjoys\Forms\Renderer\Bootstrap4\Bootstrap4Renderer

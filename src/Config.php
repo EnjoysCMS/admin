@@ -45,8 +45,7 @@ final class Config extends AbstractModuleConfig
      */
     public function getRendererForm(): RendererInterface
     {
-        $rendererFormClassString = $this->get('renderer') ?? RendererInterface::class;
-        return $this->container->make($rendererFormClassString);
+        return $this->container->make($this->get('renderer') ?? RendererInterface::class);
     }
 
 

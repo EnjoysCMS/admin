@@ -4,6 +4,8 @@
 namespace EnjoysCMS\Module\Admin\Settings;
 
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -12,6 +14,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminController;
+use EnjoysCMS\Module\Admin\Config;
 use EnjoysCMS\Module\Admin\Exception\CannotRemoveEntity;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
@@ -23,7 +26,9 @@ class Controller extends AdminController
 {
 
     /**
+     * @throws DependencyException
      * @throws LoaderError
+     * @throws NotFoundException
      * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
@@ -34,7 +39,7 @@ class Controller extends AdminController
         name: 'manage',
         comment: 'Настройки сайта'
     )]
-    public function setting(Setting $setting): ResponseInterface
+    public function setting(Setting $setting, Config $config): ResponseInterface
     {
         $this->breadcrumbs->setLastBreadcrumb('Глобальные настройки сайта');
 
@@ -43,13 +48,14 @@ class Controller extends AdminController
             $setting->doAction();
             return $this->redirect->toRoute('@admin_setting_manage');
         }
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/setting/setting.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Настройки | Admin | ' . $this->setting->get('sitename')
                 ]
             )
@@ -58,19 +64,21 @@ class Controller extends AdminController
 
 
     /**
+     * @throws DependencyException
      * @throws ExceptionRule
-     * @throws ORMException
-     * @throws RuntimeError
      * @throws LoaderError
-     * @throws OptimisticLockException
-     * @throws SyntaxError
+     * @throws NotFoundException
      * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     #[Route('/add',
         name: 'add',
         comment: 'Добавление глобальной настройки'
     )]
-    public function add(Add $add): ResponseInterface
+    public function add(Add $add, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_setting_manage', 'Глобальные параметры сайта')
             ->setLastBreadcrumb('Добавление нового глобального параметра');
@@ -80,13 +88,14 @@ class Controller extends AdminController
             $add->doAction();
             return $this->redirect->toRoute('@admin_setting_manage');
         }
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/setting/add.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Добавление настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
                 ]
             )
@@ -102,12 +111,14 @@ class Controller extends AdminController
      * @throws OptimisticLockException
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     #[Route('/edit',
         name: 'edit',
         comment: 'Изменение глобальной настройки'
     )]
-    public function edit(Edit $edit): ResponseInterface
+    public function edit(Edit $edit, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_setting_manage', 'Глобальные параметры сайта')
             ->setLastBreadcrumb(sprintf('Редактирование параметра `%s`', $edit->getSettingEntity()->getName()));
@@ -117,13 +128,14 @@ class Controller extends AdminController
             $edit->doAction();
             return $this->redirect->toRoute('@admin_setting_manage');
         }
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/setting/add.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     '_title' => 'Изменение настройки | Настройки | Admin | ' . $this->setting->get('sitename'),
                 ]
             )

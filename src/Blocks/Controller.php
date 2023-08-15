@@ -216,13 +216,15 @@ class Controller extends AdminController
             $editBlock->doAction();
             return $this->redirect->toRoute('@admin_blocks_manage');
         }
-        $this->renderer->setForm($form);
+
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
                 '@a/blocks/edit.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'block' => $editBlock->getBlock(),
                     'contentEditor' => $contentEditor->withConfig(
                         $config->getContentEditorConfigParamForCustomBlocks()
@@ -259,7 +261,8 @@ class Controller extends AdminController
             $addBlocks->doAction();
             return $this->redirect->toRoute('@admin_blocks_manage');
         }
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
             $this->twig->render(
@@ -268,14 +271,16 @@ class Controller extends AdminController
                     'contentEditor' => $contentEditor->withConfig(
                         $config->getContentEditorConfigParamForCustomBlocks()
                     )->setSelector('#body')->getEmbedCode(),
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                 ]
             )
         );
     }
 
     /**
+     * @throws DependencyException
      * @throws LoaderError
+     * @throws NotFoundException
      * @throws NotSupported
      * @throws ORMException
      * @throws OptimisticLockException
@@ -289,7 +294,7 @@ class Controller extends AdminController
         ],
         comment: 'Установка расположения блоков'
     )]
-    public function location(Locations $blockLocations): ResponseInterface
+    public function location(Locations $blockLocations, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('@admin_blocks_manage', 'Менеджер блоков')
             ->add(['@admin_blocks_edit', ['id' => $blockLocations->getBlock()->getId()]], 'Редактирование блока')
@@ -302,14 +307,15 @@ class Controller extends AdminController
             return $this->redirect->toRoute('@admin_blocks_manage');
         }
 
-        $this->renderer->setForm($form);
+        $rendererForm = $config->getRendererForm();
+        $rendererForm->setForm($form);
 
         return $this->response(
 
             $this->twig->render(
                 '@a/blocks/locations.twig',
                 [
-                    'form' => $this->renderer,
+                    'form' => $rendererForm,
                     'block' => $blockLocations->getBlock(),
                 ]
             )
