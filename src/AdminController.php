@@ -10,15 +10,12 @@ use DI\NotFoundException;
 use EnjoysCMS\Core\AbstractController;
 use EnjoysCMS\Core\Modules\ModuleCollection;
 use Exception;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouteCollection;
 
 abstract class AdminController extends AbstractController
 {
 
     public const UUID_RULE_REQUIREMENT = '[0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
-
-    protected EventDispatcherInterface $dispatcher;
 
     /**
      * @throws DependencyException
@@ -29,8 +26,6 @@ abstract class AdminController extends AbstractController
         protected Container $container,
     ) {
         parent::__construct($container);
-
-        $this->dispatcher = $this->container->get(EventDispatcherInterface::class);
 
         $this->twig->getLoader()->addPath(__DIR__ . '/../template', 'a');
 
