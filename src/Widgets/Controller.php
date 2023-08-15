@@ -12,13 +12,12 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Enjoys\Config\Config;
-use Enjoys\Config\Parse\YAML;
 use EnjoysCMS\Core\Auth\Identity;
 use EnjoysCMS\Core\Block\Entity\Widget;
 use EnjoysCMS\Core\Block\WidgetCollection;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Module\Admin\AdminController;
+use EnjoysCMS\Module\Admin\Config;
 use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -105,7 +104,7 @@ class Controller extends AdminController
         ],
         comment: 'Редактирование виджетов'
     )]
-    public function edit(Edit $edit, \EnjoysCMS\Module\Admin\Config $config): ResponseInterface
+    public function edit(Edit $edit, Config $config): ResponseInterface
     {
         $this->breadcrumbs->add('admin/managewidgets', 'Менеджер виджетов')
             ->setLastBreadcrumb('Редактирование виджета');
@@ -154,17 +153,6 @@ class Controller extends AdminController
                 'user' => $identity->getUser()
             ])
         );
-
-        $allWidgets = new Config();
-
-        $configs = array_merge(
-            [getenv('ROOT_PATH') . '/app/widgets.yml'],
-            glob(getenv('ROOT_PATH') . '/modules/*/widgets.yml'),
-        );
-
-        foreach ($configs as $config) {
-            $allWidgets->addConfig($config, [], YAML::class);
-        }
 
         return $this->response(
             $this->twig->render(
@@ -237,10 +225,10 @@ class Controller extends AdminController
 
                 foreach ($options as $key => $option) {
                     unset($options[$key]);
-                    $newKey = function ($key) {
+                    $newKey = function (string $key): string {
                         return implode(
                             '-',
-                            array_map(function ($value) {
+                            array_map(function (string $value) {
                                 return strtolower($value);
                             }, preg_split('/(?=[A-Z])/', $key, flags: PREG_SPLIT_NO_EMPTY))
                         );
