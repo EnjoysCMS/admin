@@ -10,57 +10,28 @@ use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Enjoys\Forms\Interfaces\RendererInterface;
-use EnjoysCMS\Core\Modules\ModuleCollection;
-use Exception;
-use InvalidArgumentException;
-use Symfony\Component\Yaml\Yaml;
+use EnjoysCMS\Core\Modules\AbstractModuleConfig;
 
-final class Config
+final class Config extends AbstractModuleConfig
 {
 
-    private const MODULE_NAME = 'enjoyscms/admin';
+    private string $package = 'enjoyscms/admin';
 
-
-    /**
-     * @throws Exception
-     */
     public function __construct(
         private readonly \Enjoys\Config\Config $config,
-        private Container $container,
-        ModuleCollection $moduleCollection
+        private readonly Container $container
     ) {
-        $module = $moduleCollection->find(self::MODULE_NAME) ?? throw new InvalidArgumentException(
-            sprintf(
-                'Module %s not found. Name must be same like packageName in module composer.json',
-                self::MODULE_NAME
-            )
-        );
-
-
-        if (file_exists($module->path . '/config.yml')) {
-            $config->addConfig(
-                [
-                    self::MODULE_NAME => file_get_contents($module->path . '/config.yml')
-                ],
-                ['flags' => Yaml::PARSE_CONSTANT],
-                \Enjoys\Config\Config::YAML,
-                false
-            );
-        }
+//        $this->package = Utils::parseComposerJson(__DIR__ . '/../composer.json')->packageName;
     }
 
-    public function get(string $key = null, mixed $default = null): mixed
+    public function getConfig(): \Enjoys\Config\Config
     {
-        if ($key === null) {
-            return $this->config->get(self::MODULE_NAME);
-        }
-        return $this->config->get(sprintf('%s->%s', self::MODULE_NAME, $key), $default);
+        return $this->config;
     }
 
-
-    public function all(): array
+    public function getModulePackageName(): string
     {
-        return $this->config->get();
+        return $this->package;
     }
 
     public function getContentEditorConfigParamForCustomBlocks(): string|array|null
@@ -77,5 +48,6 @@ final class Config
         $rendererFormClassString = $this->get('renderer') ?? RendererInterface::class;
         return $this->container->make($rendererFormClassString);
     }
+
 
 }
