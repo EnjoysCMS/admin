@@ -12,6 +12,13 @@ use Enjoys\AssetsCollector\Assets;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Core\Users\Entity\User;
+use EnjoysCMS\Core\Users\Events\AfterAddUserEvent;
+use EnjoysCMS\Core\Users\Events\AfterChangePasswordUserEvent;
+use EnjoysCMS\Core\Users\Events\AfterDeleteUserEvent;
+use EnjoysCMS\Core\Users\Events\AfterEditUserEvent;
+use EnjoysCMS\Core\Users\Events\BeforeChangePasswordUserEvent;
+use EnjoysCMS\Core\Users\Events\BeforeDeleteUserEvent;
+use EnjoysCMS\Core\Users\Events\BeforeEditUserEvent;
 use EnjoysCMS\Module\Admin\AdminController;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\LoaderError;
@@ -89,7 +96,9 @@ class Controller extends AdminController
         $form = $edit->getForm();
 
         if ($form->isSubmitted()) {
+            $this->dispatcher->dispatch(new BeforeEditUserEvent($edit->getUser()));
             $edit->editUser();
+            $this->dispatcher->dispatch(new AfterEditUserEvent($edit->getUser()));
             return $this->redirect->toRoute('@admin_users_list');
         }
 
@@ -132,7 +141,8 @@ class Controller extends AdminController
         $form = $add->getForm();
 
         if ($form->isSubmitted()) {
-            $add->addUser();
+            $user = $add->doAction();
+            $this->dispatcher->dispatch(new AfterAddUserEvent($user));
             $this->redirect->toRoute('@admin_users_list', emit: true);
         }
 
@@ -174,7 +184,9 @@ class Controller extends AdminController
         $form = $delete->getForm();
 
         if ($form->isSubmitted()) {
+            $this->dispatcher->dispatch(new BeforeDeleteUserEvent($delete->getUser()));
             $delete->doAction();
+            $this->dispatcher->dispatch(new AfterDeleteUserEvent());
             return $this->redirect->toRoute('@admin_users_list');
         }
 
@@ -213,7 +225,9 @@ class Controller extends AdminController
         $form = $changePassword->getForm();
 
         if ($form->isSubmitted()) {
+            $this->dispatcher->dispatch(new BeforeChangePasswordUserEvent($changePassword->getUser()));
             $changePassword->doAction();
+            $this->dispatcher->dispatch(new AfterChangePasswordUserEvent($changePassword->getUser()));
             return $this->redirect->toRoute('@admin_users_list');
         }
 

@@ -29,7 +29,7 @@ class Add
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function addUser(): void
+    public function doAction(): User
     {
         $newUser = new User();
         $newUser->setName($this->request->getParsedBody()['name'] ?? null);
@@ -45,6 +45,8 @@ class Add
 
         $this->em->persist($newUser);
         $this->em->flush();
+
+        return $newUser;
     }
 
     /**

@@ -15,9 +15,7 @@ use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Users\Entity\User;
-use EnjoysCMS\Module\Admin\Events\BeforeDeleteUserEvent;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Delete
@@ -33,7 +31,6 @@ class Delete
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
-        private readonly EventDispatcherInterface $dispatcher,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->usersRepository->find(
@@ -57,7 +54,6 @@ class Delete
      */
     public function doAction(): void
     {
-        $this->dispatcher->dispatch(new BeforeDeleteUserEvent($this->user));
         $this->em->remove($this->user);
         $this->em->flush();
     }

@@ -16,6 +16,7 @@ use Enjoys\Forms\Rules;
 use EnjoysCMS\Core\Users\Entity\Group;
 use EnjoysCMS\Core\Users\Entity\User;
 use EnjoysCMS\Module\Admin\Exception\NotEditableUser;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Edit
@@ -33,6 +34,7 @@ class Edit
     public function __construct(
         private readonly EntityManager $em,
         private readonly ServerRequestInterface $request,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
         $this->usersRepository = $this->em->getRepository(User::class);
         $this->user = $this->usersRepository->find(
