@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Enjoys\AssetsCollector\Assets;
 use Enjoys\Forms\Exception\ExceptionRule;
 use EnjoysCMS\Core\Routing\Annotation\Route;
 use EnjoysCMS\Core\Users\Entity\User;
@@ -34,32 +33,14 @@ class Controller extends AdminController
      * @throws RuntimeError
      * @throws NotSupported
      * @throws LoaderError
-     * TODO: remove assets from controller, move to view
      */
     #[Route(
         name: 'list',
         comment: 'Доступ к просмотру списка пользователей'
     )]
-    public function list(EntityManager $em, Assets $assets,): ResponseInterface
+    public function list(EntityManager $em): ResponseInterface
     {
         $this->breadcrumbs->setLastBreadcrumb('Список пользователей');
-
-        $assets->add(
-            'css',
-            [
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
-            ]
-        );
-        $assets->add(
-            'js',
-            [
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
-                __DIR__ . '/../../../node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
-            ]
-        );
 
         return $this->response(
             $this->twig->render(

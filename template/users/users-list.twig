@@ -11,7 +11,16 @@
     </script>
 {% endblock %}
 {% block content %}
-
+    {% do asset('css', [
+        'modules/admin/node_modules/admin-lte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css',
+        'modules/admin/node_modules/admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css',
+    ]) %}
+    {% do asset('js', [
+        'modules/admin/node_modules/admin-lte/plugins/datatables/jquery.dataTables.min.js',
+        'modules/admin/node_modules/admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js',
+        'modules/admin/node_modules/admin-lte/plugins/datatables-responsive/js/dataTables.responsive.min.js',
+        'modules/admin/node_modules/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js',
+    ]) %}
     <section class="content">
 
 
