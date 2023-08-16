@@ -254,11 +254,15 @@ class Edit
         $this->block->setOptions($options);
 
 
+        $accessControlManager = $this->accessControl->getManage();
         /**
          * @var Group $group
          */
 
-        $accessAction = $this->accessControl->getManage()->getAccessAction($this->block->getId());
+        $accessAction = $accessControlManager->getAccessAction(
+            $this->block->getId()
+        ) ?? $accessControlManager->register($this->block->getId());
+
         $accessAction->setGroups(
             $this->groupsRepository->findBy([
                 'id' => $this->request->getParsedBody()['groups'] ?? []
@@ -266,7 +270,10 @@ class Edit
         );
 
 
-        $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit($oldBlock, $this->block);
+        $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit(
+            $oldBlock,
+            $this->block
+        );
 
 
         $this->em->flush();
