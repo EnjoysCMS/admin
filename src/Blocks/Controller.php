@@ -134,7 +134,7 @@ class Controller extends AdminController
         }
 
         try {
-            $blockFactory->create($block->getClassName())->setEntity($block)->preRemove();
+            $blockFactory->create($block->getClassName())->setEntity($block)->preRemove($block);
         } catch (DependencyException|NotFoundException) {
         }
 
@@ -184,7 +184,7 @@ class Controller extends AdminController
 
         $accessControl->getManage()->register($cloned->getId());
 
-        $blockFactory->create($block->getClassName())->setEntity($block)->postClone();
+        $blockFactory->create($block->getClassName())->setEntity($block)->postClone($cloned);
 
         return $this->redirect->toRoute('@admin_blocks_manage');
     }

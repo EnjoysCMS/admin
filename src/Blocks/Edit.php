@@ -266,7 +266,7 @@ class Edit
         );
 
 
-        $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit($oldBlock);
+        $this->blockFactory->create($this->block->getClassName())->setEntity($this->block)->postEdit($oldBlock, $this->block);
 
 
         $this->em->flush();
