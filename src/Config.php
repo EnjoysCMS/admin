@@ -9,6 +9,7 @@ namespace EnjoysCMS\Module\Admin;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
+use Enjoys\Forms\Form;
 use Enjoys\Forms\Interfaces\RendererInterface;
 use EnjoysCMS\Core\Modules\AbstractModuleConfig;
 
@@ -34,9 +35,14 @@ final class Config extends AbstractModuleConfig
      * @throws DependencyException
      * @throws NotFoundException
      */
-    public function getRendererForm(): RendererInterface
+    public function getRendererForm(?Form $form = null): RendererInterface
     {
-        return $this->container->make($this->get('renderer') ?? RendererInterface::class);
+        /** @var RendererInterface $renderer */
+        $renderer = $this->container->make($this->get('renderer') ?? RendererInterface::class);
+        if ($form !== null){
+            $renderer->setForm($form);
+        }
+        return $renderer;
     }
 
 
