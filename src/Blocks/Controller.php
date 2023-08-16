@@ -177,6 +177,7 @@ class Controller extends AdminController
 
         $cloned = clone $block;
         $cloned->setId(Uuid::uuid4()->toString());
+        $cloned->setAlias(null);
         $cloned->setRemovable(true);
         $cloned->setCloned(true);
         $em->persist($cloned);
