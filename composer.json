@@ -18,8 +18,8 @@
         "module-name": "Admin panel"
     },
     "scripts": {
-        "post-install-cmd": "EnjoysCMS\\Module\\Admin\\Composer::assetsInstall",
-        "post-update-cmd": "EnjoysCMS\\Module\\Admin\\Composer::assetsInstall"
+        "post-install-cmd": "EnjoysCMS\\Module\\Admin\\Assets::install",
+        "post-update-cmd": "EnjoysCMS\\Module\\Admin\\Assets::install"
     },
     "require-dev": {
         "vimeo/psalm": "^4.21|^5.0"
