@@ -11,15 +11,17 @@
     "autoload": {
         "psr-4": {
             "EnjoysCMS\\Module\\Admin\\": "src/",
-            "EnjoysCMS\\Module\\Admin\\Widgets\\": "widgets/"
+            "EnjoysCMS\\Module\\Admin\\Widgets\\": "widgets/",
+            "EnjoysCMS\\Module\\Admin\\Composer\\Scripts\\": "scripts/"
         }
     },
     "extra": {
         "module-name": "Admin panel"
     },
     "scripts": {
-        "post-install-cmd": "EnjoysCMS\\Module\\Admin\\Assets::install",
-        "post-update-cmd": "EnjoysCMS\\Module\\Admin\\Assets::install"
+        "admin-assets-install": "EnjoysCMS\\Module\\Admin\\Composer\\Scripts\\AssetsInstallCommand",
+        "post-install-cmd": "@admin-assets-install",
+        "post-update-cmd": "@admin-assets-install"
     },
     "require-dev": {
         "vimeo/psalm": "^4.21|^5.0"
