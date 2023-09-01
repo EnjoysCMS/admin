@@ -20,8 +20,14 @@
     },
     "scripts": {
         "admin-assets-install": "EnjoysCMS\\Module\\Admin\\Composer\\Scripts\\AssetsInstallCommand",
-        "post-install-cmd": "@admin-assets-install",
-        "post-update-cmd": "@admin-assets-install"
+        "post-install-cmd": [
+            "echo -e \"\\x1b[1mAdmin\\x1b[00m\"",
+            "@admin-assets-install"
+        ],
+        "post-update-cmd": [
+            "echo -e \"\\x1b[1mAdmin\\x1b[00m\"",
+            "@admin-assets-install"
+        ]
     },
     "require-dev": {
         "vimeo/psalm": "^4.21|^5.0"
