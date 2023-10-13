@@ -4,6 +4,9 @@
 namespace EnjoysCMS\Module\Admin\Blocks;
 
 
+use DeepCopy\DeepCopy;
+use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
+use DeepCopy\Matcher\PropertyTypeMatcher;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
@@ -240,13 +243,28 @@ class Edit
      */
     public function doAction(): void
     {
-        $oldBlock = clone $this->block;
-
+        $copier = new DeepCopy();
+        $copier->addFilter(
+            new DoctrineCollectionFilter(),
+            new PropertyTypeMatcher('Doctrine\Common\Collections\Collection')
+        );
+        /** @var Block $oldBlock */
+        $oldBlock = $copier->copy($this->block);
 
         $this->block->setName($this->request->getParsedBody()['name'] ?? null);
         $this->block->setId($this->request->getParsedBody()['id'] ?? null);
         $this->block->setAlias($this->request->getParsedBody()['alias'] ?? null);
         $this->block->setBody($this->request->getParsedBody()['body'] ?? null);
+
+        /**
+         * TODO: need fix error, then remove $this->block->removeLocations();
+         * Cannot delete or update a parent row: a foreign key constraint fails
+         * (`dbname`.`blocks_locations`, CONSTRAINT `FK_BB11FDDCE9ED820C` FOREIGN KEY (`block_id`) REFERENCES `blocks` (`id`))
+         */
+        if ($this->block->getId() !== $oldBlock->getId()) {
+            $this->block->removeLocations();
+        }
+
 
         $options = $this->block->getOptions();
         $options->setValues($this->request->getParsedBody()['options'] ?? []);
@@ -264,9 +282,7 @@ class Edit
         ) ?? $accessControlManager->register($this->block->getId());
 
         $accessAction->setGroups(
-            $this->groupsRepository->findBy([
-                'id' => $this->request->getParsedBody()['groups'] ?? []
-            ])
+            $this->groupsRepository->findBy(['id' => $this->request->getParsedBody()['groups'] ?? []])
         );
 
 
@@ -280,7 +296,8 @@ class Edit
     }
 
 
-    public function getBlock(): Block
+    public
+    function getBlock(): Block
     {
         return $this->block;
     }
