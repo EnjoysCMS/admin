@@ -80,7 +80,7 @@ class Locations
             $blockLocation = $blockLocationRepository->findOneBy(['location' => $location]) ?? new BlockLocation();
             $blockLocation->setLocation($location);
             $this->em->persist($blockLocation);
-            $this->block->setLocations($blockLocation);
+            $this->block->addLocation($blockLocation);
         }
         $this->em->flush();
     }
