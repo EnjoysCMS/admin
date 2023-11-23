@@ -75,11 +75,6 @@ class ACList
     }
 
 
-    /**
-     * @throws OptimisticLockException
-     * @throws NotSupported
-     * @throws ORMException
-     */
     public function getArrayForCheckboxForm(): array
     {
         $ret = [];
