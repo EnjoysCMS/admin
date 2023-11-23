@@ -168,7 +168,7 @@
                 <li class="nav-header">МОДУЛИ (PLUGINS)</li>
                 {% for module in moduleCollection|filter(m => m.adminLinks|length > 0) %}
                     {% if access(module.adminLinks|keys) %}
-                        <li class="nav-item n">
+                        <li class="nav-item menu-is-opening menu-open">
                             <a href="{{ path(module.adminLinks|keys|first) }}" class="nav-link ">
                                 <i class="nav-icon fa fa-puzzle-piece"></i>
                                 <p>
