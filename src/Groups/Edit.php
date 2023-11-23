@@ -10,6 +10,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Enjoys\Forms\AttributeFactory;
 use Enjoys\Forms\Exception\ExceptionRule;
 use Enjoys\Forms\Form;
 use Enjoys\Forms\Rules;
@@ -102,7 +103,11 @@ class Edit
                     }
                     return $i;
                 }, $item);
-                $form->checkbox(str_repeat(' ', $i++) . "acl", $label)->fill($fill);
+                $form->checkbox(str_repeat(' ', $i++) . "acl", $label)
+                    ->addClasses(['bg-dark','h5', 'p-2', 'sticky-top'], Form::ATTRIBUTES_LABEL)
+                    ->addAttribute(AttributeFactory::create('style', 'top: 10px;'), Form::ATTRIBUTES_LABEL)
+                    ->addClasses(['py-3'], Form::ATTRIBUTES_FILLABLE_BASE)
+                    ->fill($fill);
             }
         }
 

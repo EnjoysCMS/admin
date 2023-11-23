@@ -7,6 +7,7 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use EnjoysCMS\Core\AccessControl\AccessControl;
+use EnjoysCMS\Core\AccessControl\ACL\Entity\ACLEntity;
 use EnjoysCMS\Core\Block\Entity\Block;
 use EnjoysCMS\Core\Extensions\Composer\Utils;
 use EnjoysCMS\Core\Modules\ModuleCollection;
@@ -52,9 +53,10 @@ class ACList
             $this->accessControl->getManage()->register(
                 $routeName,
                 sprintf(
-                    '%s<br>%s',
+                    '%s<div><strong>%s</strong></div>',
+                    implode(':', (array)$route->getDefault('_controller')),
                     $route->getOption('comment'),
-                    implode(':', (array)$route->getDefault('_controller'))
+
                 ),
                 false
             );
@@ -86,8 +88,8 @@ class ACList
             foreach ($acls as $acl) {
                 $ret[$group][' ' . $acl->getId()] = [
                     sprintf(
-                        "<span class='font-weight-bold'>%s</span><br>%s",
-                        $acl->getAction() ,
+                        "<div class='h5'>%s</div><div>%s</div>",
+                        $acl->getAction(),
                         $acl->getComment()
                     ),
                     $acl->getAction(),
@@ -101,9 +103,7 @@ class ACList
 
 
     /**
-     * @throws OptimisticLockException
-     * @throws NotSupported
-     * @throws ORMException
+     * @return array<string, ACLEntity[]>
      */
     public function getGroupedAcl(): array
     {
@@ -114,20 +114,16 @@ class ACList
          * Группировка ACL по модулям
          */
         foreach ($this->moduleCollection->all() as $module) {
-
             if ($module->namespaces === []) {
                 continue;
             }
 
-            foreach ($module->namespaces as $ns) {
-                $groupedAcl[$module->moduleName] = array_filter(
-                    $activeAcl,
-                    function ($v) use ($ns) {
-                        return str_contains(ltrim($v->getComment(), '\\'), $ns);
-                    }
-                );
-                break;
-            }
+            $groupedAcl[$module->moduleName] = array_filter(
+                $activeAcl,
+                function ($v) use ($module) {
+                    return str_contains(ltrim($v->getComment(), '\\'), current($module->namespaces));
+                }
+            );
 
             $activeAcl = array_diff_key($activeAcl, $groupedAcl[$module->moduleName]);
 
