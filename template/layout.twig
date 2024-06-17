@@ -13,18 +13,7 @@
     'modules/admin/template/assets/custom.js'
 ]) %}
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ _title ?? ('Admin - ' ~ setting('sitename')) }}</title>
-    {% block __css__ deferred %}
-    {{ eCSS() }}
-    {{ getStyles() }}
-    {% endblock %}
-</head>
-<body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
-
+{% set bodyContent %}
     {% include "@a/navbars/navbar-top.twig" %}
 
     {% include "@a/navbars/navbar-side.twig" %}
@@ -81,14 +70,24 @@
         </div>
     </footer>
 
+{% endset %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ _title ?? ('Admin - ' ~ setting('sitename')) }}</title>
+    {{ eCSS() }}
+    {{ getStyles() }}
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+{{ bodyContent }}
 
 </div>
 <!-- ./wrapper -->
 
-{% block __js__ deferred %}
 {{ eJS() }}
 {{ getScripts() }}
-{% endblock %}
 
 {% block scripts %}
 {% endblock %}
