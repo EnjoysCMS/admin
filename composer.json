@@ -3,8 +3,8 @@
     "description": "Module Admin for EnjoysCMS",
     "type": "enjoyscms-module",
     "require": {
-        "php": "^8.1",
-        "enjoyscms/core": "^6.0@dev",
+        "php": "^8.3",
+        "enjoyscms/core": "^7.0@dev",
         "enjoys/forms": "^5.0",
         "enjoys/bootstrap4-renderer": "^1.0"
     },
