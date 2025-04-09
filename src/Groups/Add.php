@@ -104,8 +104,7 @@ class Add
      */
     public function doAction(): void
     {
-        $group = new Group();
-        $group->setName($this->request->getParsedBody()['name'] ?? '');
+        $group = new Group($this->request->getParsedBody()['name'] ?? '');
         $group->setDescription($this->request->getParsedBody()['description'] ?? '');
         $group->setStatus(1);
         $group->setSystem(false);
