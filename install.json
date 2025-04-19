@@ -1,5 +1,11 @@
 {
-    "cmd": {
-        "Assets install": ["yarn", "install"]
-    }
+  "cmd": {
+    "Assets install": [
+      "yarn",
+      "install"
+    ]
+  },
+  "symlink": {
+    "node_modules": "/modules/admin/node_modules"
+  }
 }
