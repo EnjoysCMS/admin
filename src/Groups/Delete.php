@@ -11,7 +11,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
+use Enjoys\Forms\Renderer\Renderer;
 use EnjoysCMS\Core\Http\Response\RedirectInterface;
 use EnjoysCMS\Core\Setting\Setting;
 use EnjoysCMS\Core\Users\Entity\Group;
@@ -31,7 +31,7 @@ class Delete
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly ServerRequestInterface $request,
-        private readonly RendererInterface $renderer,
+        private readonly Renderer $renderer,
         private readonly RedirectInterface $redirect,
         private readonly Setting $setting,
     ) {

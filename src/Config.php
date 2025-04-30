@@ -10,7 +10,7 @@ use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Enjoys\Forms\Form;
-use Enjoys\Forms\Interfaces\RendererInterface;
+use Enjoys\Forms\Renderer\Renderer;
 use EnjoysCMS\Core\Modules\AbstractModuleConfig;
 
 final class Config extends AbstractModuleConfig
@@ -35,10 +35,10 @@ final class Config extends AbstractModuleConfig
      * @throws DependencyException
      * @throws NotFoundException
      */
-    public function getRendererForm(?Form $form = null): RendererInterface
+    public function getRendererForm(?Form $form = null): Renderer
     {
-        /** @var RendererInterface $renderer */
-        $renderer = $this->container->make($this->get('renderer') ?? RendererInterface::class);
+        /** @var Renderer $renderer */
+        $renderer = $this->container->make($this->get('renderer') ?? Renderer::class);
         if ($form !== null){
             $renderer->setForm($form);
         }
