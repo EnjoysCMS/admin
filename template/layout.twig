@@ -4,14 +4,14 @@
     'modules/admin/node_modules/admin-lte/plugins/fontawesome-free/css/all.min.css',
     'modules/admin/node_modules/admin-lte/dist/css/adminlte.min.css',
     'modules/admin/template/assets/custom.css'
-]) %}
+], method: 'unshift') %}
 {% do asset('js', [
     'modules/admin/node_modules/admin-lte/plugins/jquery/jquery.min.js',
     'modules/admin/node_modules/admin-lte/plugins/jquery-ui/jquery-ui.min.js',
     'modules/admin/node_modules/admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js',
     'modules/admin/node_modules/admin-lte/dist/js/adminlte.js',
     'modules/admin/template/assets/custom.js'
-]) %}
+], method: 'unshift') %}
 <html lang="en">
 {% set bodyContent %}
     {% include "@a/navbars/navbar-top.twig" %}
