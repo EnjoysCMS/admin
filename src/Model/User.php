@@ -20,4 +20,13 @@ class User
         $this->em->flush();
         return $user;
     }
+
+    public function editUser(AddUserRequest $request): \EnjoysCMS\Core\Users\Entity\User {
+        $user = new \EnjoysCMS\Core\Users\Entity\User();
+        $user->setLogin($request->login);
+        $user->setName($request->name);
+        $user->genAndSetPasswordHash($request->password);
+        $this->em->flush();
+        return $user;
+    }
 }

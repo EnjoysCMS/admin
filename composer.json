@@ -27,7 +27,8 @@
         "module-name": "Admin panel"
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.0"
+        "phpunit/phpunit": "^12.0",
+        "symfony/var-dumper": "^7.2"
     },
     "config": {
         "allow-plugins": {
